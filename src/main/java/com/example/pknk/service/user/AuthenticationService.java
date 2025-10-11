@@ -1,11 +1,15 @@
 package com.example.pknk.service.user;
 
 import com.example.pknk.domain.dto.request.user.AuthenticationRequest;
+import com.example.pknk.domain.dto.request.user.UserCreateRequest;
 import com.example.pknk.domain.dto.response.user.AuthenticationResponse;
-import com.example.pknk.domain.entity.user.User;
+import com.example.pknk.domain.entity.user.*;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
+import com.example.pknk.repository.PatientRepository;
+import com.example.pknk.repository.RoleRepository;
 import com.example.pknk.repository.UserRepository;
+import com.example.pknk.repository.VerificationCodeRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -15,14 +19,18 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +38,114 @@ import java.util.StringJoiner;
 @Slf4j
 public class AuthenticationService {
     PasswordEncoder passwordEncoder;
-    UserRepository userRepository;
+    JavaMailSender mailSender;
 
-    @Value("${jwt.signerKey")
+    UserRepository userRepository;
+    VerificationCodeRepository verificationCodeRepository;
+    PatientRepository patientRepository;
+    RoleRepository roleRepository;
+
+    @Value("${jwt.signerKey}")
     @NonFinal
     String signerKey;
 
+    public String createPatient(UserCreateRequest request){
+        if(userRepository.existsByUsername(request.getUsername())){
+            log.error("Tài khoản: {} đã tồn tại, đăng kí tài khoản bệnh nhân thất bại", request.getUsername());
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+
+        Role role = roleRepository.findById("PATIENT").orElseThrow(() -> {
+            log.error("Role: PATIENT không tồn tại, đăng kí tài khoản bệnh nhân thất bại.");
+            throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
+        });
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+
+        UserDetail userDetail = new UserDetail();
+        userDetail.setFullName(request.getFullName());
+        userDetail.setEmail(request.getEmail());
+        userDetail.setPhone(request.getPhone());
+        userDetail.setAddress(request.getAddress());
+        userDetail.setGender(request.getGender());
+        userDetail.setDob(request.getDob());
+        userDetail.setCreateAt(LocalDate.now());
+
+        Patient patient = Patient.builder()
+                .build();
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .disable(false)
+                .roles(roles)
+                .userDetail(userDetail)
+                .patient(patient)
+                .build();
+
+        userDetail.setUser(user);
+        patient.setUser(user);
+
+        VerificationCode verificationCode = verificationCodeRepository.findByEmail(request.getEmail()).orElseThrow(() -> {
+            log.error("Email: {} chưa có mã xác thực đăng kí tài khoản, đăng kí tài khoản bệnh nhân thất bại.", request.getEmail());
+            throw new AppException(ErrorCode.VERIFIED_CODE_NOT_EXISTED);
+        });
+
+        if(request.getVerifiedCode().equals(verificationCode.getCode()) && verificationCode.getExpiredAt().isAfter(LocalDateTime.now())){
+            userRepository.save(user);
+            log.info("Tài khoản: {} đăng kí thành công.", request.getUsername());
+        }else{
+            log.error("Mã xác thực của email: {} không hợp lệ hoặc đã hết hạn, đăng kí tài khoản bệnh nhân thất bại.", request.getEmail());
+            throw new AppException(ErrorCode.VERIFIED_CODE_INVALID);
+        }
+
+        return "Đăng kí tài khoản thành công.";
+    }
+
+    @Transactional
+    public String verifiedCode(String email){
+        if(verificationCodeRepository.existsByEmail(email)){
+            verificationCodeRepository.deleteAllByEmail(email);
+        }
+
+        VerificationCode verificationCode = VerificationCode.builder()
+                .email(email)
+                .code(generateRandomCode())
+                .expiredAt(LocalDateTime.now().plusMinutes(2))
+                .build();
+
+        verificationCodeRepository.save(verificationCode);
+
+        StringBuilder content = new StringBuilder("Mã Xác thực đăng kí tài khoản phòng khám của bạn là: " + verificationCode.getCode() + ".\n\n");
+        content.append("Mã sẽ hết hạn sau 2 phút, hãy chú ý.");
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Mã xác thực đăng kí tài khoản phòng khám");
+        message.setText(content.toString());
+
+        mailSender.send(message);
+        log.info("Gửi mã xác thực cho email: {} thành công.", email);
+
+        return "Gửi mã xác thực thành công.";
+    }
+
+    private String generateRandomCode() {
+        int length = 6;
+        Random random = new Random();
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            sb.append(random.nextInt(10)); // từ 0-9
+        }
+
+        return sb.toString();
+    }
+
+
     public AuthenticationResponse login(AuthenticationRequest request){
-        User user = userRepository.findByUserName(request.getUsername()).orElseThrow(() -> {
+        User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> {
             log.error("Tài khoản: {} không tồn tại, đăng nhập thất bại.", request.getUsername());
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         });

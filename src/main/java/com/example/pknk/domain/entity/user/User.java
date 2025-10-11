@@ -24,13 +24,17 @@ public class User {
     String password;
     boolean disable;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     UserDetail userDetail;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     Patient patient;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    Doctor doctor;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    Nurse nurse;
 
     @ManyToMany
     Set<Role> roles = new HashSet<>();
