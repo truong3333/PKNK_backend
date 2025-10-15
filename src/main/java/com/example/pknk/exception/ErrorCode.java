@@ -7,12 +7,20 @@ public enum ErrorCode {
     USER_NOT_EXISTED(100, "Tài khoản không tồn tại.", HttpStatus.NOT_FOUND),
     USER_EXISTED(100, "Tài khoản đã tồn tại.", HttpStatus.BAD_REQUEST),
     USER_DISABLE(100, "Người dùng đã bị vô hiệu hoá.", HttpStatus.BAD_REQUEST),
-    ROLE_NOT_EXISTED(100, "Vai trò không tồn tại.", HttpStatus.NOT_FOUND),
     VERIFIED_CODE_NOT_EXISTED(100, "Email chưa có mã xác thực đăng kí tài khoản.", HttpStatus.NOT_FOUND),
-    VERIFIED_CODE_INVALID(100, "Mã xác thực không hợp lệ hoặc đã hết hạn.", HttpStatus.NOT_FOUND),
+    VERIFIED_CODE_INVALID(100, "Mã xác thực đăng kí tài khoản không hợp lệ hoặc đã hết hạn.", HttpStatus.BAD_REQUEST),
+    VERIFY_FORGOT_PASSWORD_CODE_NOT_EXISTED(100, "Mã xác thực yêu cầu đổi mật khẩu không tồn tại.", HttpStatus.NOT_FOUND),
+    VERIFY_FORGOT_PASSWORD_INVALID(100, "Mã xác thực yêu cầu đổi mật khẩu không hợp lệ hoặc đã hết hạn.", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(100, "Tài khoản chưa được xác thực, xác thực thất bại", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(100,"Tài khoản không đủ quyền để truy cập", HttpStatus.UNAUTHORIZED),
     INVALID_KEY(100,"Lỗi dữ liệu đầu vào", HttpStatus.BAD_REQUEST),
+    ROLE_EXISTED(100,"Role đã tồn tại", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_EXISTED(100,"Role không tồn tại", HttpStatus.NOT_FOUND),
+    PERMISSION_EXISTED(100,"Permission đã tồn tại", HttpStatus.BAD_REQUEST),
+    PERMISSION_NOT_EXISTED(100,"Permission không tồn tại", HttpStatus.NOT_FOUND),
+    PASSWORD_INCORRECT(100,"Mật khẩu không chính xác.", HttpStatus.BAD_REQUEST),
+    OLD_PASSWORD_INCORRECT(100,"Mật khẩu cũ không chính xác.", HttpStatus.BAD_REQUEST),
+
     ;
 
 
