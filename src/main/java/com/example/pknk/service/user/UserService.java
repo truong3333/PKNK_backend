@@ -12,11 +12,13 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -94,6 +96,29 @@ public class UserService {
                         .address(user.getUserDetail().getAddress())
                         .gender(user.getUserDetail().getGender())
                         .dob(user.getUserDetail().getDob())
+                        .build();
+        }
+
+        public UserResponse getMyInfo(){
+                var context = SecurityContextHolder.getContext();
+                String name = context.getAuthentication().getName();
+
+                User user = userRepository.findByUsername(name).orElseThrow(() -> {
+                        log.error("Username: {} not found, get info failed.", name);
+                        throw new AppException(ErrorCode.USER_NOT_EXISTED);
+                });
+
+                UserDetail userDetail = user.getUserDetail();
+
+                return UserResponse.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .fullName(userDetail.getFullName())
+                        .email(userDetail.getEmail())
+                        .phone(userDetail.getPhone())
+                        .address(userDetail.getAddress())
+                        .gender(userDetail.getGender())
+                        .dob(userDetail.getDob())
                         .build();
         }
 
