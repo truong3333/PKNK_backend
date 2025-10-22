@@ -7,13 +7,12 @@ import com.example.pknk.domain.entity.user.Permission;
 import com.example.pknk.domain.entity.user.Role;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
-import com.example.pknk.repository.PermissionRepository;
-import com.example.pknk.repository.RoleRepository;
+import com.example.pknk.repository.user.PermissionRepository;
+import com.example.pknk.repository.user.RoleRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

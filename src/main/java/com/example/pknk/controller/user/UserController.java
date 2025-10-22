@@ -1,4 +1,4 @@
-package com.example.pknk.controller;
+package com.example.pknk.controller.user;
 
 import com.example.pknk.domain.dto.request.user.UserUpdateInfoRequest;
 import com.example.pknk.domain.dto.request.user.UserUpdatePasswordRequest;

@@ -1,4 +1,4 @@
-package com.example.pknk.controller;
+package com.example.pknk.controller.user;
 
 import com.example.pknk.domain.dto.request.user.RoleRequest;
 import com.example.pknk.domain.dto.response.user.ApiResponses;

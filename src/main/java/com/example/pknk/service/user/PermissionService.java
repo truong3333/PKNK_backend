@@ -5,7 +5,7 @@ import com.example.pknk.domain.dto.response.user.PermissionResponse;
 import com.example.pknk.domain.entity.user.Permission;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
-import com.example.pknk.repository.PermissionRepository;
+import com.example.pknk.repository.user.PermissionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,6 +35,7 @@ public class PermissionService {
 
         permissionRepository.save(permission);
         log.info("Tạo quyền: {} thành công.", request.getName());
+
 
         return "Tạo quyền thành công.";
     }

@@ -7,14 +7,12 @@ import com.example.pknk.domain.dto.response.user.VerifyResetPasswordResponse;
 import com.example.pknk.domain.entity.user.*;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
-import com.example.pknk.repository.*;
+import com.example.pknk.repository.user.*;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -42,6 +40,8 @@ import java.util.*;
 public class AuthenticationService {
     PasswordEncoder passwordEncoder;
     JavaMailSender mailSender;
+
+    AuditLogService auditLogService;
 
     UserRepository userRepository;
     VerificationCodeRepository verificationCodeRepository;
@@ -229,13 +229,13 @@ public class AuthenticationService {
         VerificationCode verificationCode = VerificationCode.builder()
                 .email(email)
                 .code(generateRandomCode())
-                .expiredAt(LocalDateTime.now().plusMinutes(5))
+                .expiredAt(LocalDateTime.now().plusMinutes(10))
                 .build();
 
         verificationCodeRepository.save(verificationCode);
 
         StringBuilder content = new StringBuilder("Mã Xác thực đăng kí tài khoản phòng khám của bạn là: " + verificationCode.getCode() + ".\n\n");
-        content.append("Mã sẽ hết hạn sau 5 phút, hãy chú ý.");
+        content.append("Mã sẽ hết hạn sau 10 phút, hãy chú ý.");
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
@@ -272,6 +272,8 @@ public class AuthenticationService {
                 .build();
 
         invalidatedTokenRepository.save(invalidatedToken);
+        log.info("Người dùng: {} đã đăng xuất.", signToken.getJWTClaimsSet().getSubject());
+        auditLogService.logFree("Đăng xuất", signToken.getJWTClaimsSet().getSubject());
 
     }
 
@@ -333,6 +335,7 @@ public class AuthenticationService {
         }
 
         String token = generateToken(user);
+        auditLogService.logFree("Đăng nhập", user.getUsername());
 
         return AuthenticationResponse.builder()
                 .authenticated(isAuthenticated)

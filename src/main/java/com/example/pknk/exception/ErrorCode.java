@@ -21,6 +21,15 @@ public enum ErrorCode {
     PASSWORD_INCORRECT(100,"Mật khẩu không chính xác.", HttpStatus.BAD_REQUEST),
     OLD_PASSWORD_INCORRECT(100,"Mật khẩu cũ không chính xác.", HttpStatus.BAD_REQUEST),
 
+
+    PATIENT_NOT_EXISTED(100,"Bệnh nhân không tồn tại", HttpStatus.BAD_REQUEST),
+
+
+    DOCTOR_NOT_EXISTED(100,"Bác sĩ không tồn tại", HttpStatus.BAD_REQUEST),
+
+    APPOINTMENT_NOT_EXISTED(100,"Lịch hẹn không tồn tại", HttpStatus.BAD_REQUEST),
+    APPOINTMENT_EXISTED(100,"Lịch hẹn đã tồn tại", HttpStatus.BAD_REQUEST),
+
     ;
 
 

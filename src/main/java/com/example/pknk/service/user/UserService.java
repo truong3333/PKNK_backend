@@ -7,27 +7,30 @@ import com.example.pknk.domain.entity.user.User;
 import com.example.pknk.domain.entity.user.UserDetail;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
-import com.example.pknk.repository.UserRepository;
+import com.example.pknk.repository.user.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 @Slf4j
 public class UserService {
+        AuditLogService auditLogService;
+
         PasswordEncoder passwordEncoder;
         UserRepository userRepository;
 
+        @PreAuthorize("hasRole('ADMIN')")
         public List<UserResponse> getAll(){
                 List<User> listUser = new ArrayList<>(userRepository.findAll());
 
@@ -46,13 +49,14 @@ public class UserService {
                 ).toList();
         }
 
+
         public UserResponse getById(String userId){
                 User user = userRepository.findById(userId).orElseThrow(() -> {
                         log.error("UserId: {} không tồn tại, xem thông tin người dùng thất bại", userId);
                         throw new AppException(ErrorCode.USER_NOT_EXISTED);
                 });
 
-                log.info("UserId: {} trả về thông thành công theo id", userId);
+                log.info("UserId: {} lấy thông tin thành công theo id", userId);
 
                 return UserResponse.builder()
                         .id(user.getId())
@@ -65,6 +69,7 @@ public class UserService {
                         .dob(user.getUserDetail().getDob())
                         .build();
         }
+
 
         public UserResponse updateInfo(String userId, UserUpdateInfoRequest request){
                 User user = userRepository.findById(userId).orElseThrow(() -> {
@@ -85,7 +90,8 @@ public class UserService {
                 userDetail.setUser(user);
 
                 userRepository.save(user);
-                log.info("Cập nhật thông tin người dùng ID: {} thành công,",userId);
+                log.info("Cập nhật thông tin người dùng ID: {} thành công.",userId);
+                auditLogService.log("Cập nhật thông tin cá nhân");
 
                 return UserResponse.builder()
                         .id(user.getId())
@@ -137,6 +143,7 @@ public class UserService {
 
                 userRepository.save(user);
                 log.info("UserId: {} đổi mật khẩu thành công.", userId);
+                auditLogService.log("Đổi mật khẩu");
 
                 return "Đôi mật khẩu thành công";
         }
@@ -151,7 +158,23 @@ public class UserService {
 
                 userRepository.save(user);
                 log.info("UserId: {} vô hiệu hoá thành công.",userId);
+                auditLogService.log("Vô hiệu hoá userId: " + userId);
 
                 return "Vô hiệu hoá tài khoản thành công";
+        }
+
+        public String enableUser(String userId){
+                User user = userRepository.findById(userId).orElseThrow(() -> {
+                        log.error("UserId: {} không tồn tại, đổi mật khẩu thất bại", userId);
+                        throw new AppException(ErrorCode.USER_NOT_EXISTED);
+                });
+
+                user.setDisable(false);
+
+                userRepository.save(user);
+                log.info("UserId: {} mở khoá thành công.",userId);
+                auditLogService.log("Mở khoá userId: " + userId);
+
+                return "Mở khoá tài khoản thành công";
         }
 }
