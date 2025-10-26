@@ -105,7 +105,7 @@ public class DoctorService {
         ).toList();
     }
 
-    public List<AppointmentResponse> getAllAppointmentScheduledOfMyDoctor(){
+    public List<AppointmentResponse> getAllAppointmentOfMyDoctor(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByUsername(username).orElseThrow(() -> {

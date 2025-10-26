@@ -5,15 +5,18 @@ import com.example.pknk.domain.dto.request.patient.EmergencyContactRequest;
 import com.example.pknk.domain.dto.request.patient.MedicalInformationRequest;
 import com.example.pknk.domain.dto.response.clinic.AppointmentResponse;
 import com.example.pknk.domain.dto.response.clinic.ExaminationResponse;
+import com.example.pknk.domain.dto.response.clinic.TreatmentPlansResponse;
 import com.example.pknk.domain.dto.response.patient.BookingDateTimeResponse;
 import com.example.pknk.domain.dto.response.patient.EmergencyContactResponse;
 import com.example.pknk.domain.dto.response.patient.MedicalInformationResponse;
 import com.example.pknk.domain.dto.response.patient.PatientResponse;
 import com.example.pknk.domain.dto.response.user.ApiResponses;
 import com.example.pknk.service.patient.PatientService;
+import com.example.pknk.service.patient.TreatmentPlansService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PatientController {
     PatientService patientService;
+    TreatmentPlansService treatmentPlansService;
 
     @GetMapping("/{patientId}")
     ApiResponses<PatientResponse> getBasicInfo(@PathVariable String patientId){
@@ -102,6 +106,22 @@ public class PatientController {
         return ApiResponses.<ExaminationResponse>builder()
                 .code(1000)
                 .result(patientService.getExaminationDetailById(examinationId))
+                .build();
+    }
+
+    @GetMapping("/treatmentPlans/{patientId}")
+    ApiResponses<List<TreatmentPlansResponse>> getAllTreatmentPlansByPatientId(@PathVariable String patientId){
+        return ApiResponses.<List<TreatmentPlansResponse>>builder()
+                .code(1000)
+                .result(treatmentPlansService.getAllTreatmentPlansByPatientId(patientId))
+                .build();
+    }
+
+    @GetMapping("/myTreatmentPlans")
+    ApiResponses<List<TreatmentPlansResponse>> getMyTreatmentPlansOfPatient(){
+        return ApiResponses.<List<TreatmentPlansResponse>>builder()
+                .code(1000)
+                .result(treatmentPlansService.getMyTreatmentPlansOfPatient())
                 .build();
     }
 }

@@ -117,6 +117,11 @@ public class TreatmentPhasesService {
             throw new AppException(ErrorCode.TREATMENTPHASES_NOT_EXISTED);
         });
 
+        TreatmentPlans treatmentPlans = treatmentPlansRepository.findById(treatmentPhases.getTreatmentPlans().getId()).orElseThrow(() -> {
+            log.error("Phác đồ điều trị id: {} không tồn tại, cập nhật tiến trình điều trị thất bại.", treatmentPhases.getTreatmentPlans().getId());
+            throw new AppException(ErrorCode.TREATMENTPLANS_NOT_EXISTED);
+        });
+
         DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
@@ -124,6 +129,7 @@ public class TreatmentPhasesService {
 
         if(request.getNextAppointment() != null){
             if(treatmentPhases.getNextAppointment() != null){
+                appointmentRepository.deleteByDoctorIdAndDateTime(treatmentPhases.getTreatmentPlans().getDoctor().getId(), treatmentPhases.getNextAppointment());
                 bookingDateTimeRepository.deleteByDoctorIdAndDateTime(treatmentPhases.getTreatmentPlans().getDoctor().getId(), treatmentPhases.getNextAppointment());
             }
 
@@ -188,6 +194,9 @@ public class TreatmentPhasesService {
             }
         }
 
+        treatmentPlans.getListTreatmentPhases().removeIf(treatmentPhasesRemove -> treatmentPhasesRemove.getId().equals(treatmentPhasesId));
+        treatmentPlans.getListTreatmentPhases().add(treatmentPhases);
+
         treatmentPhasesRepository.save(treatmentPhases);
         log.info("Tiến trình điều trị id: {} được cập nhật thành công.", treatmentPhasesId);
 
@@ -207,6 +216,31 @@ public class TreatmentPhasesService {
                         .build()
                 ).toList())
                 .build();
+    }
+
+    public List<TreatmentPhasesResponse> getAllTreatmentPhasesOfTreatmentPlansId(String treatmentPlansId){
+        if(!treatmentPlansRepository.existsById(treatmentPlansId)){
+            log.error("Phác đồ điều trị id: {} không tồn tại, lấy danh sách tiến trình điều trị thất bại.", treatmentPlansId);
+            throw new AppException(ErrorCode.TREATMENTPLANS_NOT_EXISTED);
+        }
+
+        return treatmentPhasesRepository.findAllByTreatmentPlansId(treatmentPlansId).stream().map(treatmentPhases -> TreatmentPhasesResponse.builder()
+                        .id(treatmentPhases.getId())
+                        .phaseNumber(treatmentPhases.getPhaseNumber())
+                        .description(treatmentPhases.getDescription())
+                        .listDentalServiceEntity(treatmentPhases.getListDentalServiceEntity())
+                        .cost(treatmentPhases.getCost())
+                        .status(treatmentPhases.getStatus())
+                        .startDate(treatmentPhases.getStartDate())
+                        .endDate(treatmentPhases.getEndDate())
+                        .nextAppointment(treatmentPhases.getNextAppointment().toString())
+                        .listImage(treatmentPhases.getListImage().stream().map(image -> ImageResponse.builder()
+                                .publicId(image.getPublicId())
+                                .url(image.getUrl())
+                                .build()
+                        ).toList())
+                        .build()
+                ).toList();
     }
 
 }

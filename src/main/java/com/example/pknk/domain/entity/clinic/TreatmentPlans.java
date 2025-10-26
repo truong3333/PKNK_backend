@@ -2,10 +2,12 @@ package com.example.pknk.domain.entity.clinic;
 
 import com.example.pknk.domain.entity.user.Doctor;
 import com.example.pknk.domain.entity.user.Patient;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,9 @@ public class TreatmentPlans {
     String notes;
     double totalCost;
     String status;
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    LocalDate createAt;
 
     @ManyToOne
     @JoinColumn(name = "patient_id")

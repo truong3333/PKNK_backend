@@ -26,6 +26,7 @@ public class DoctorController {
     TreatmentPlansService treatmentPlansService;
     TreatmentPhasesService treatmentPhasesService;
 
+    // Appointment
     @GetMapping("/appointment/scheduled/{doctorId}")
     ApiResponses<List<AppointmentResponse>> getAppointmentScheduledOfDoctor(@PathVariable String doctorId){
         return ApiResponses.<List<AppointmentResponse>>builder()
@@ -54,10 +55,12 @@ public class DoctorController {
     ApiResponses<List<AppointmentResponse>> getAllAppointmentScheduledOfMyDoctor(){
         return ApiResponses.<List<AppointmentResponse>>builder()
                 .code(1000)
-                .result(doctorService.getAllAppointmentScheduledOfMyDoctor())
+                .result(doctorService.getAllAppointmentOfMyDoctor())
                 .build();
     }
 
+
+    // Examination
     @PostMapping("/{appointmentId}/examination")
     ApiResponses<ExaminationResponse> createExamination(@PathVariable String appointmentId, @ModelAttribute ExaminationRequest request) throws IOException {
         return ApiResponses.<ExaminationResponse>builder()
@@ -98,6 +101,8 @@ public class DoctorController {
                 .build();
     }
 
+
+    // Treatment Plans
     @PostMapping("/treatmentPlans")
     ApiResponses<TreatmentPlansResponse> createTreatmentPlans(@RequestBody TreatmentPlansRequest request){
         return ApiResponses.<TreatmentPlansResponse>builder()
@@ -114,6 +119,22 @@ public class DoctorController {
                 .build();
     }
 
+    @GetMapping("/myTreatmentPlans")
+    ApiResponses<List<TreatmentPlansResponse>> getMyTreatmentPlansOfDoctor(){
+        return ApiResponses.<List<TreatmentPlansResponse>>builder()
+                .code(1000)
+                .result(treatmentPlansService.getMyTreatmentPlansOfDoctor())
+                .build();
+    }
+
+    @PutMapping("/treatmentPlans/{treatmentPlansId}")
+    ApiResponses<TreatmentPlansResponse> updateTreatmentPlans(@PathVariable String treatmentPlansId, @RequestBody TreatmentPlansUpdateRequest request){
+        return ApiResponses.<TreatmentPlansResponse>builder()
+                .code(1000)
+                .result(treatmentPlansService.updateTreatmentPlans(treatmentPlansId, request))
+                .build();
+    }
+
     // treatmentPhases
     @PostMapping("/{treatmentPlansId}/treatmentPhases")
     ApiResponses<TreatmentPhasesResponse> createTreatmentPhases(@PathVariable String treatmentPlansId, @ModelAttribute TreatmentPhasesRequest request){
@@ -124,10 +145,18 @@ public class DoctorController {
     }
 
     @PutMapping("/treatmentPhases/{treatmentPhasesId}")
-    ApiResponses<TreatmentPhasesResponse> createTreatmentPhases(@PathVariable String treatmentPhasesId, @ModelAttribute TreatmentPhasesUpdateRequest request) throws IOException {
+    ApiResponses<TreatmentPhasesResponse> updateTreatmentPhases(@PathVariable String treatmentPhasesId, @ModelAttribute TreatmentPhasesUpdateRequest request) throws IOException {
         return ApiResponses.<TreatmentPhasesResponse>builder()
                 .code(1000)
                 .result(treatmentPhasesService.updateTreatmentPhases(treatmentPhasesId, request))
+                .build();
+    }
+
+    @GetMapping("/treatmentPhases/{treatmentPlansId}")
+    ApiResponses<List<TreatmentPhasesResponse>> getAllTreatmentPhasesOfTreatmentPlansId(@PathVariable String treatmentPlansId){
+        return ApiResponses.<List<TreatmentPhasesResponse>>builder()
+                .code(1000)
+                .result(treatmentPhasesService.getAllTreatmentPhasesOfTreatmentPlansId(treatmentPlansId))
                 .build();
     }
 
