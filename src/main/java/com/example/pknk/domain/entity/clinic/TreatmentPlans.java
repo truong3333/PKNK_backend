@@ -1,5 +1,7 @@
 package com.example.pknk.domain.entity.clinic;
 
+import com.example.pknk.domain.entity.user.Doctor;
+import com.example.pknk.domain.entity.user.Patient;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,8 +24,18 @@ public class TreatmentPlans {
 
     String title;
     String description;
+    String duration;
+    String notes;
     double totalCost;
     String status;
+
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
+    Patient patient;
+
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    Doctor doctor;
 
     @OneToMany(mappedBy = "treatmentPlans", cascade = CascadeType.ALL)
     List<TreatmentPhases> listTreatmentPhases = new ArrayList<>();

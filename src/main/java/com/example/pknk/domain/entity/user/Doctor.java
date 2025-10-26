@@ -2,6 +2,7 @@ package com.example.pknk.domain.entity.user;
 
 import com.example.pknk.domain.entity.clinic.Appointment;
 import com.example.pknk.domain.entity.clinic.BookingDateTime;
+import com.example.pknk.domain.entity.clinic.TreatmentPlans;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -32,6 +33,9 @@ public class Doctor {
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     List<Appointment> listAppointment = new ArrayList<>();
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    List<TreatmentPlans> listTreatmentPlans = new ArrayList<>();
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     List<BookingDateTime> listBookingDateTime = new ArrayList<>();

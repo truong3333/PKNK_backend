@@ -1,7 +1,7 @@
-package com.example.pknk.domain.entity.clinic;
+package com.example.pknk.domain.dto.response.clinic;
 
+import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,19 +9,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Examination {
+public class ExaminationResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-
     String symptoms;        //triệu chứng
     String diagnosis;       //chẩn đoán
     String notes;
@@ -29,14 +25,11 @@ public class Examination {
     String examined_at;
     double totalCost;
 
-    @ElementCollection
+    List<ImageResponse> listImage = new ArrayList<>();
+
     List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
 
-    @OneToMany(mappedBy = "examination", cascade = CascadeType.ALL)
-    @Builder.Default
-    List<Image> listImage = new ArrayList<>();
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    LocalDate createAt;
 
-    @OneToOne
-    @JoinColumn(name = "appointment_id")
-    Appointment appointment;
 }

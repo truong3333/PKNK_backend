@@ -22,13 +22,19 @@ public enum ErrorCode {
     OLD_PASSWORD_INCORRECT(100,"Mật khẩu cũ không chính xác.", HttpStatus.BAD_REQUEST),
 
 
-    PATIENT_NOT_EXISTED(100,"Bệnh nhân không tồn tại", HttpStatus.BAD_REQUEST),
+    PATIENT_NOT_EXISTED(100,"Bệnh nhân không tồn tại", HttpStatus.NOT_FOUND),
 
 
-    DOCTOR_NOT_EXISTED(100,"Bác sĩ không tồn tại", HttpStatus.BAD_REQUEST),
+    DOCTOR_NOT_EXISTED(100,"Bác sĩ không tồn tại", HttpStatus.NOT_FOUND),
 
-    APPOINTMENT_NOT_EXISTED(100,"Lịch hẹn không tồn tại", HttpStatus.BAD_REQUEST),
+    APPOINTMENT_NOT_EXISTED(100,"Lịch hẹn không tồn tại", HttpStatus.NOT_FOUND),
     APPOINTMENT_EXISTED(100,"Lịch hẹn đã tồn tại", HttpStatus.BAD_REQUEST),
+
+    EXAMINATION_NOT_EXISTED(100,"Kết quả khám không tồn tại", HttpStatus.NOT_FOUND),
+
+    TREATMENTPLANS_NOT_EXISTED(100,"Phác đồ điều trị không tồn tại", HttpStatus.NOT_FOUND),
+
+    TREATMENTPHASES_NOT_EXISTED(100,"Tiến trình điều trị không tồn tại", HttpStatus.NOT_FOUND),
 
     ;
 

@@ -4,6 +4,7 @@ import com.example.pknk.domain.dto.request.patient.AppointmentRequest;
 import com.example.pknk.domain.dto.request.patient.EmergencyContactRequest;
 import com.example.pknk.domain.dto.request.patient.MedicalInformationRequest;
 import com.example.pknk.domain.dto.response.clinic.AppointmentResponse;
+import com.example.pknk.domain.dto.response.clinic.ExaminationResponse;
 import com.example.pknk.domain.dto.response.patient.BookingDateTimeResponse;
 import com.example.pknk.domain.dto.response.patient.EmergencyContactResponse;
 import com.example.pknk.domain.dto.response.patient.MedicalInformationResponse;
@@ -80,4 +81,27 @@ public class PatientController {
                 .build();
     }
 
+    @GetMapping("/myAppointment")
+    ApiResponses<List<AppointmentResponse>> getMyAppointment(){
+        return ApiResponses.<List<AppointmentResponse>>builder()
+                .code(1000)
+                .result(patientService.getMyAppointment())
+                .build();
+    }
+
+    @GetMapping("/myExamination")
+    ApiResponses<List<ExaminationResponse>> getMyExamination(){
+        return ApiResponses.<List<ExaminationResponse>>builder()
+                .code(1000)
+                .result(patientService.getMyExamination())
+                .build();
+    }
+
+    @GetMapping("/examination/{examinationId}")
+    ApiResponses<ExaminationResponse> getExaminationDetailById(@PathVariable String examinationId){
+        return ApiResponses.<ExaminationResponse>builder()
+                .code(1000)
+                .result(patientService.getExaminationDetailById(examinationId))
+                .build();
+    }
 }

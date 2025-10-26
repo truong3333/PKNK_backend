@@ -4,18 +4,22 @@ import com.example.pknk.domain.dto.request.patient.AppointmentRequest;
 import com.example.pknk.domain.dto.request.patient.EmergencyContactRequest;
 import com.example.pknk.domain.dto.request.patient.MedicalInformationRequest;
 import com.example.pknk.domain.dto.response.clinic.AppointmentResponse;
+import com.example.pknk.domain.dto.response.clinic.ExaminationResponse;
+import com.example.pknk.domain.dto.response.clinic.ImageResponse;
 import com.example.pknk.domain.dto.response.patient.BookingDateTimeResponse;
 import com.example.pknk.domain.dto.response.patient.EmergencyContactResponse;
 import com.example.pknk.domain.dto.response.patient.MedicalInformationResponse;
 import com.example.pknk.domain.dto.response.patient.PatientResponse;
 import com.example.pknk.domain.entity.clinic.Appointment;
 import com.example.pknk.domain.entity.clinic.BookingDateTime;
+import com.example.pknk.domain.entity.clinic.Examination;
 import com.example.pknk.domain.entity.user.Doctor;
 import com.example.pknk.domain.entity.user.Patient;
 import com.example.pknk.domain.entity.user.User;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
 import com.example.pknk.repository.clinic.AppointmentRepository;
+import com.example.pknk.repository.clinic.ExaminationRepository;
 import com.example.pknk.repository.doctor.DoctorRepository;
 import com.example.pknk.repository.doctor.BookingDateTimeRepository;
 import com.example.pknk.repository.patient.PatientRepository;
@@ -44,6 +48,7 @@ public class PatientService {
         PatientRepository patientRepository;
         BookingDateTimeRepository bookingDateTimeRepository;
         AppointmentRepository appointmentRepository;
+        ExaminationRepository examinationRepository;
 
         AuditLogService auditLogService;
 
@@ -147,6 +152,7 @@ public class PatientService {
             log.info("Đặt lịch khám thành công giữa bệnh nhân username: {} và bác sĩ username: {}", user.getUsername(), doctor.getUser().getUsername());
 
             return AppointmentResponse.builder()
+                    .id(appointment.getId())
                     .dateTime(request.getDateTime())
                     .status("Scheduled")
                     .type(request.getType())
@@ -175,12 +181,13 @@ public class PatientService {
 
             appointment.setStatus("Cancel");
 
+            bookingDateTimeRepository.deleteByDoctorIdAndDateTime(appointment.getDoctor().getId(), appointment.getDateTime());
+
             appointmentRepository.save(appointment);
             log.info("Huỷ lịch hẹn id: {} thành công.", appointmentId);
 
-            bookingDateTimeRepository.deleteByDoctorIdAndDateTime(appointment.getDoctor().getId(), appointment.getDateTime());
-
             return AppointmentResponse.builder()
+                    .id(appointmentId)
                     .dateTime(appointment.getDateTime().toString())
                     .status("Cancel")
                     .type(appointment.getType())
@@ -237,6 +244,7 @@ public class PatientService {
             log.info("Cập nhật lịch khám thành công giữa bệnh nhân username: {} và bác sĩ username: {}", user.getUsername(), doctor.getUser().getUsername());
 
             return AppointmentResponse.builder()
+                    .id(appointmentId)
                     .dateTime(request.getDateTime())
                     .status("Scheduled")
                     .type(request.getType())
@@ -246,5 +254,72 @@ public class PatientService {
                     .doctorSpecialization(doctor.getSpecialization())
                     .build();
         }
+
+        public List<AppointmentResponse> getMyAppointment(){
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+            User user = userRepository.findByUsername(username).orElseThrow(() -> {
+                log.error("Username: {} không tồn tại, Lấy danh sách lịch hẹn thất bại.", username);
+                throw new AppException(ErrorCode.USER_NOT_EXISTED);
+            });
+
+            return appointmentRepository.findAllByPatientId(user.getPatient().getId()).stream().map(appointment -> AppointmentResponse.builder()
+                    .id(appointment.getId())
+                    .dateTime(appointment.getDateTime().toString())
+                    .status(appointment.getStatus())
+                    .type(appointment.getType())
+                    .notes(appointment.getNotes())
+                    .listDentalServicesEntity(appointment.getListDentalServicesEntity())
+                    .doctorFullName(appointment.getDoctor().getUser().getUserDetail().getFullName())
+                    .doctorSpecialization(appointment.getDoctor().getSpecialization())
+                    .build()
+            ).toList();
+        }
+
+        public List<ExaminationResponse> getMyExamination(){
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+            User user = userRepository.findByUsername(username).orElseThrow(() -> {
+                log.error("Username: {} không tồn tại, Lấy danh sách kết quả thất bại.", username);
+                throw new AppException(ErrorCode.USER_NOT_EXISTED);
+            });
+
+            List<Appointment> listAppointment = new ArrayList<>(appointmentRepository.findAllByPatientId(user.getPatient().getId()));
+
+            return listAppointment.stream()
+                    .filter(appointment -> appointment.getExamination() != null)
+                    .map(appointment -> ExaminationResponse.builder()
+                            .id(appointment.getExamination().getId())
+                            .symptoms(appointment.getExamination().getSymptoms())
+                            .diagnosis(appointment.getExamination().getDiagnosis())
+                            .notes(appointment.getExamination().getNotes())
+                            .treatment(appointment.getExamination().getTreatment())
+                            .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
+                            .createAt(appointment.getDateTime().toLocalDate())
+                            .build()
+            ).toList();
+        }
+
+    public ExaminationResponse getExaminationDetailById(String examinationId){
+        Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
+            log.error("Kết quả khám id: {} không tồn tại, xem chi tiết kết quả khám thất bại.", examinationId);
+            throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
+        });
+
+        return ExaminationResponse.builder()
+                .id(examination.getId())
+                .symptoms(examination.getSymptoms())
+                .diagnosis(examination.getDiagnosis())
+                .notes(examination.getNotes())
+                .treatment(examination.getTreatment())
+                .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
+                        .publicId(image.getPublicId())
+                        .url(image.getUrl())
+                        .build()
+                ).toList())
+                .createAt(examination.getAppointment().getDateTime().toLocalDate())
+                .build();
+    }
 
 }

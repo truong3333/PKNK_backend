@@ -16,6 +16,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AppointmentResponse {
 
+    String id;
     String dateTime;
     String type;
     String notes;

@@ -11,14 +11,22 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DentalServicesEntity {
+public class Image {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    String name;
-    String description;
-    double price;
+    String publicId;
+    String url;
+    String type;
+
+    @ManyToOne
+    @JoinColumn(name = "examination_id")
+    Examination examination;
+
+    @ManyToOne
+    @JoinColumn(name = "treatmentPhases_id")
+    TreatmentPhases treatmentPhases;
 
 }

@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,8 +30,8 @@ public class Appointment {
     String type;
     String notes;
 
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
-    List<DentalServicesEntity> listDentalServicesEntity;
+    @ElementCollection
+    List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
     Examination examination;
