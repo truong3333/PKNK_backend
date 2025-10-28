@@ -1,24 +1,22 @@
-package com.example.pknk.domain.entity.clinic;
+package com.example.pknk.domain.dto.request.clinic;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Embeddable;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Entity
+@Embeddable
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DentalServicesEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+public class DentalServicesEntityOrderRequest {
 
     String name;
     String unit;
     double unitPrice;
+    int quantity;
+    double cost;
 
 }

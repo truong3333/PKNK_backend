@@ -11,14 +11,15 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DentalServicesEntity {
+public class Prescription {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
-
     String name;
-    String unit;
+
+    String dosage;      // liều lượng
+    String frequency;   // số lần dùng/ngày
+    String duration;    // khoảng thời gian dùng(sau ăn, 15p trước ăn)
+    String notes;
     double unitPrice;
 
 }

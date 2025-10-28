@@ -1,6 +1,7 @@
 package com.example.pknk.domain.dto.request.doctor;
 
-import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
+import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityOrderRequest;
+import com.example.pknk.domain.dto.request.clinic.PrescriptionOrderRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,12 +21,13 @@ public class ExaminationUpdateRequest {
     String diagnosis;       //chẩn đoán
     String notes;
     String treatment;
-    double cost;
+    double totalCost;
 
     List<MultipartFile> listImageFile;
 
     List<String> listDeleteImageByPublicId;
 
-    List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
+    List<DentalServicesEntityOrderRequest> listDentalServicesEntityOrder = new ArrayList<>();
 
+    List<PrescriptionOrderRequest> listPrescriptionOrder = new ArrayList<>();
 }

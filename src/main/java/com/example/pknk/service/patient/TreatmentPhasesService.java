@@ -51,15 +51,12 @@ public class TreatmentPhasesService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        double cost = 0;
-        for(DentalServicesEntity services : request.getListDentalServiceEntity())
-            cost += services.getPrice();
-
         TreatmentPhases treatmentPhases = TreatmentPhases.builder()
                 .phaseNumber(request.getPhaseNumber())
                 .description(request.getDescription())
-                .listDentalServiceEntity(request.getListDentalServiceEntity())
-                .cost(cost)
+                .listDentalServiceEntityOrder(request.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(request.getListPrescriptionOrder())
+                .cost(request.getCost())
                 .status("Inprogress")
                 .startDate(LocalDate.parse(request.getStartDate(), formatter))
                 .endDate(LocalDate.parse(request.getEndDate(), formatter))
@@ -97,8 +94,9 @@ public class TreatmentPhasesService {
                 .id(treatmentPhases.getId())
                 .phaseNumber(request.getPhaseNumber())
                 .description(request.getDescription())
-                .listDentalServiceEntity(request.getListDentalServiceEntity())
-                .cost(cost)
+                .listDentalServicesEntityOrder(request.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(request.getListPrescriptionOrder())
+                .cost(request.getCost())
                 .status("Inprogress")
                 .startDate(LocalDate.parse(request.getStartDate(), formatter))
                 .endDate(LocalDate.parse(request.getEndDate(), formatter))
@@ -162,11 +160,8 @@ public class TreatmentPhasesService {
         treatmentPhases.setStartDate(LocalDate.parse(request.getStartDate(), formatterDate));
         treatmentPhases.setEndDate(LocalDate.parse(request.getEndDate(), formatterDate));
         treatmentPhases.setNextAppointment(inputDateTime);
-        treatmentPhases.setListDentalServiceEntity(request.getListDentalServiceEntity());
-
-        double cost = 0;
-        for(DentalServicesEntity services : request.getListDentalServiceEntity())
-            cost += services.getPrice();
+        treatmentPhases.setListDentalServiceEntityOrder(request.getListDentalServicesEntityOrder());
+        treatmentPhases.setListPrescriptionOrder(request.getListPrescriptionOrder());
 
         if (request.getListDeleteImageByPublicId() != null && !request.getListDeleteImageByPublicId().isEmpty()) {
             for (String publicId : request.getListDeleteImageByPublicId()) {
@@ -204,8 +199,9 @@ public class TreatmentPhasesService {
                 .id(treatmentPhases.getId())
                 .phaseNumber(request.getPhaseNumber())
                 .description(request.getDescription())
-                .listDentalServiceEntity(request.getListDentalServiceEntity())
-                .cost(cost)
+                .listDentalServicesEntityOrder(request.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(request.getListPrescriptionOrder())
+                .cost(request.getCost())
                 .status(request.getStatus())
                 .startDate(LocalDate.parse(request.getStartDate(), formatterDate))
                 .endDate(LocalDate.parse(request.getEndDate(), formatterDate))
@@ -228,7 +224,8 @@ public class TreatmentPhasesService {
                         .id(treatmentPhases.getId())
                         .phaseNumber(treatmentPhases.getPhaseNumber())
                         .description(treatmentPhases.getDescription())
-                        .listDentalServiceEntity(treatmentPhases.getListDentalServiceEntity())
+                        .listDentalServicesEntityOrder(treatmentPhases.getListDentalServiceEntityOrder())
+                        .listPrescriptionOrder(treatmentPhases.getListPrescriptionOrder())
                         .cost(treatmentPhases.getCost())
                         .status(treatmentPhases.getStatus())
                         .startDate(treatmentPhases.getStartDate())

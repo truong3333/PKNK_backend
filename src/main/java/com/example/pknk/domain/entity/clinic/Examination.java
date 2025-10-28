@@ -1,11 +1,11 @@
 package com.example.pknk.domain.entity.clinic;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityOrderRequest;
+import com.example.pknk.domain.dto.request.clinic.PrescriptionOrderRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +30,10 @@ public class Examination {
     double totalCost;
 
     @ElementCollection
-    List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
+    List<DentalServicesEntityOrderRequest> listDentalServicesEntityOrder = new ArrayList<>();
+
+    @ElementCollection
+    List<PrescriptionOrderRequest> listPrescriptionOrder = new ArrayList<>();
 
     @OneToMany(mappedBy = "examination", cascade = CascadeType.ALL)
     @Builder.Default

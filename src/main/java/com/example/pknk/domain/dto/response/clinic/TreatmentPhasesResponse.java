@@ -1,6 +1,7 @@
 package com.example.pknk.domain.dto.response.clinic;
 
-import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
+import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityOrderRequest;
+import com.example.pknk.domain.dto.request.clinic.PrescriptionOrderRequest;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -28,7 +29,9 @@ public class TreatmentPhasesResponse {
     LocalDate endDate;
     String nextAppointment;
 
-    List<DentalServicesEntity> listDentalServiceEntity = new ArrayList<>();
+    List<DentalServicesEntityOrderRequest> listDentalServicesEntityOrder = new ArrayList<>();
+
+    List<PrescriptionOrderRequest> listPrescriptionOrder = new ArrayList<>();
 
     List<ImageResponse> listImage = new ArrayList<>();
 }

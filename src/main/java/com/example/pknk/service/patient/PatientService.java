@@ -313,6 +313,8 @@ public class PatientService {
                 .notes(examination.getNotes())
                 .treatment(examination.getTreatment())
                 .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(examination.getListPrescriptionOrder())
                 .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
                         .publicId(image.getPublicId())
                         .url(image.getUrl())

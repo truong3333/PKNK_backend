@@ -132,10 +132,6 @@ public class DoctorService {
             throw new AppException(ErrorCode.APPOINTMENT_NOT_EXISTED);
         });
 
-        double cost = 0;
-        for(DentalServicesEntity services : request.getListDentalServicesEntity())
-            cost += services.getPrice();
-
         appointment.setStatus("Done");
 
         Examination examination = Examination.builder()
@@ -143,8 +139,9 @@ public class DoctorService {
                 .diagnosis(request.getDiagnosis())
                 .notes(request.getNotes())
                 .treatment(request.getTreatment())
-                .listDentalServicesEntity(request.getListDentalServicesEntity())
-                .totalCost(cost)
+                .listDentalServicesEntityOrder(request.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(request.getListPrescriptionOrder())
+                .totalCost(request.getTotalCost())
                 .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
                 .build();
 
@@ -183,8 +180,9 @@ public class DoctorService {
                 .notes(request.getNotes())
                 .treatment(request.getTreatment())
                 .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                .totalCost(cost)
-                .listDentalServicesEntity(request.getListDentalServicesEntity())
+                .totalCost(request.getTotalCost())
+                .listDentalServicesEntityOrder(request.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(request.getListPrescriptionOrder())
                 .listImage(listImage.stream().map(image -> ImageResponse.builder()
                         .publicId(image.getPublicId())
                         .url(image.getUrl())
@@ -201,16 +199,13 @@ public class DoctorService {
             throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
         });
 
-        double cost = 0;
-        for(DentalServicesEntity services : request.getListDentalServicesEntity())
-            cost += services.getPrice();
-
         examination.setSymptoms(request.getSymptoms());
         examination.setDiagnosis(request.getDiagnosis());
         examination.setNotes(request.getNotes());
         examination.setTreatment(request.getTreatment());
-        examination.setListDentalServicesEntity(request.getListDentalServicesEntity());
-        examination.setTotalCost(cost);
+        examination.setListDentalServicesEntityOrder(request.getListDentalServicesEntityOrder());
+        examination.setListPrescriptionOrder(request.getListPrescriptionOrder());
+        examination.setTotalCost(request.getTotalCost());
 
         if (request.getListDeleteImageByPublicId() != null && !request.getListDeleteImageByPublicId().isEmpty()) {
             for (String publicId : request.getListDeleteImageByPublicId()) {
@@ -248,6 +243,9 @@ public class DoctorService {
                 .notes(request.getNotes())
                 .treatment(request.getTreatment())
                 .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                .listDentalServicesEntityOrder(request.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(request.getListPrescriptionOrder())
+                .totalCost(request.getTotalCost())
                 .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
                         .publicId(image.getPublicId())
                         .url(image.getUrl())
@@ -299,13 +297,6 @@ public class DoctorService {
                         .treatment(appointment.getExamination().getTreatment())
                         .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
                         .createAt(appointment.getDateTime().toLocalDate())
-                        .listDentalServicesEntity(appointment.getExamination().getListDentalServicesEntity())
-                        .totalCost(appointment.getExamination().getTotalCost())
-                        .listImage(appointment.getExamination().getListImage().stream().map(image -> ImageResponse.builder()
-                                .publicId(image.getPublicId())
-                                .url(image.getUrl())
-                                .build()
-                        ).toList())
                         .build()
         ).toList();
     }
@@ -323,7 +314,8 @@ public class DoctorService {
                     .notes(examination.getNotes())
                     .treatment(examination.getTreatment())
                     .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
-                    .listDentalServicesEntity(examination.getListDentalServicesEntity())
+                    .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
+                    .listPrescriptionOrder(examination.getListPrescriptionOrder())
                     .totalCost(examination.getTotalCost())
                     .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
                             .publicId(image.getPublicId())

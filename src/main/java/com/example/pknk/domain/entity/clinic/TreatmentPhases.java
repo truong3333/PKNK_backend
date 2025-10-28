@@ -1,5 +1,7 @@
 package com.example.pknk.domain.entity.clinic;
 
+import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityOrderRequest;
+import com.example.pknk.domain.dto.request.clinic.PrescriptionOrderRequest;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,7 +38,10 @@ public class TreatmentPhases {
     LocalDateTime nextAppointment;
 
     @ElementCollection
-    List<DentalServicesEntity> listDentalServiceEntity = new ArrayList<>();
+    List<DentalServicesEntityOrderRequest> listDentalServiceEntityOrder = new ArrayList<>();
+
+    @ElementCollection
+    List<PrescriptionOrderRequest> listPrescriptionOrder = new ArrayList<>();
 
     @OneToMany(mappedBy = "treatmentPhases", cascade = CascadeType.ALL)
     @Builder.Default

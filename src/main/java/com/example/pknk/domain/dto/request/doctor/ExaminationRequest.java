@@ -1,14 +1,11 @@
 package com.example.pknk.domain.dto.request.doctor;
 
-import com.example.pknk.domain.entity.clinic.Appointment;
-import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.*;
+import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityOrderRequest;
+import com.example.pknk.domain.dto.request.clinic.PrescriptionOrderRequest;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +21,11 @@ public class ExaminationRequest {
     String diagnosis;       //chẩn đoán
     String notes;
     String treatment;
+    double totalCost;
 
     List<MultipartFile> listImageFile;
 
-    List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
+    List<DentalServicesEntityOrderRequest> listDentalServicesEntityOrder = new ArrayList<>();
+
+    List<PrescriptionOrderRequest> listPrescriptionOrder = new ArrayList<>();
 }

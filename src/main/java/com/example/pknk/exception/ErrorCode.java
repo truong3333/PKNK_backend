@@ -36,6 +36,11 @@ public enum ErrorCode {
 
     TREATMENTPHASES_NOT_EXISTED(100,"Tiến trình điều trị không tồn tại", HttpStatus.NOT_FOUND),
 
+    PRESCRIPTION_EXISTED(100,"Thuốc đã tồn tại", HttpStatus.BAD_REQUEST),
+    PRESCRIPTION_NOT_EXISTED(100,"Thuốc không tồn tại", HttpStatus.BAD_REQUEST),
+
+    SERVICE_NOT_EXISTED(100,"Dịch vụ không tồn tại", HttpStatus.BAD_REQUEST),
+
     ;
 
 
