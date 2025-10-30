@@ -36,7 +36,13 @@ public class PatientController {
                 .result(patientService.getBasicInfo(patientId))
                 .build();
     }
-
+    @GetMapping("/myInfo")
+    public ApiResponses<PatientResponse> getMyInfo(){
+        return ApiResponses.<PatientResponse>builder()
+                .code(1000)
+                .result(patientService.getMyPatientInfo())
+                .build();
+    }
     @PutMapping("/emergencyContact/{patientId}")
     ApiResponses<EmergencyContactResponse> updateEmergencyContact(@PathVariable String patientId, @RequestBody EmergencyContactRequest request){
         return ApiResponses.<EmergencyContactResponse>builder()

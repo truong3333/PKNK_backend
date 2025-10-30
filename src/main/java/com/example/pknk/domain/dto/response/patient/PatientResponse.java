@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PatientResponse {
 
+    String id;
     String fullName;
     String email;
     String phone;

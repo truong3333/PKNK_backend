@@ -7,6 +7,8 @@ import com.example.pknk.domain.dto.request.doctor.ExaminationUpdateRequest;
 import com.example.pknk.domain.dto.response.clinic.AppointmentResponse;
 import com.example.pknk.domain.dto.response.clinic.ExaminationResponse;
 import com.example.pknk.domain.dto.response.clinic.ImageResponse;
+import com.example.pknk.domain.dto.response.doctor.DoctorSummaryResponse;
+import com.example.pknk.domain.entity.user.Doctor;
 import com.example.pknk.domain.entity.clinic.Appointment;
 import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
 import com.example.pknk.domain.entity.clinic.Examination;
@@ -45,6 +47,16 @@ public class DoctorService {
     ImageRepository imageRepository;
 
     Cloudinary cloudinary;
+
+    public List<DoctorSummaryResponse> getAllDoctors(){
+        List<Doctor> doctors = new ArrayList<>(doctorRepository.findAll());
+        return doctors.stream().map(d -> DoctorSummaryResponse.builder()
+                .id(d.getId())
+                .fullName(d.getUser().getUserDetail().getFullName())
+                .specialization(d.getSpecialization())
+                .build()
+        ).toList();
+    }
 
     public List<AppointmentResponse> getAppointmentScheduledOfDoctor(String doctorId){
         if(!doctorRepository.existsById(doctorId)){

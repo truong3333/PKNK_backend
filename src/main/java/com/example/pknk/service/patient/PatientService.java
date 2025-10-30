@@ -59,6 +59,7 @@ public class PatientService {
             });
 
             return PatientResponse.builder()
+                    .id(patient.getId())
                     .fullName(patient.getUser().getUserDetail().getFullName())
                     .email(patient.getUser().getUserDetail().getEmail())
                     .phone(patient.getUser().getUserDetail().getPhone())
@@ -72,7 +73,25 @@ public class PatientService {
                     .medicalHistory(patient.getMedicalHistory())
                     .build();
         }
-
+        public PatientResponse getMyPatientInfo() {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+            Patient patient = patientRepository.findByUserUsername(username)
+                    .orElseThrow(() -> new AppException(ErrorCode.PATIENT_NOT_EXISTED));
+            return PatientResponse.builder()
+                    .id(patient.getId())
+                    .fullName(patient.getUser().getUserDetail().getFullName())
+                    .email(patient.getUser().getUserDetail().getEmail())
+                    .phone(patient.getUser().getUserDetail().getPhone())
+                    .address(patient.getUser().getUserDetail().getAddress())
+                    .gender(patient.getUser().getUserDetail().getGender())
+                    .dob(patient.getUser().getUserDetail().getDob())
+                    .emergencyContactName(patient.getEmergencyContactName())
+                    .emergencyPhoneNumber(patient.getEmergencyPhoneNumber())
+                    .bloodGroup(patient.getBloodGroup())
+                    .allergy(patient.getAllergy())
+                    .medicalHistory(patient.getMedicalHistory())
+                    .build();
+        }
         public EmergencyContactResponse updateEmergencyContact(String patientId, EmergencyContactRequest request){
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> {
                 log.error("Bệnh nhân id: {} không tồn tại, cập nhật thông tin liên hệ khẩn cấp thất bại.", patientId);

@@ -6,6 +6,7 @@ import com.example.pknk.domain.dto.response.clinic.ExaminationResponse;
 import com.example.pknk.domain.dto.response.clinic.TreatmentPhasesResponse;
 import com.example.pknk.domain.dto.response.clinic.TreatmentPlansResponse;
 import com.example.pknk.domain.dto.response.user.ApiResponses;
+import com.example.pknk.domain.dto.response.doctor.DoctorSummaryResponse;
 import com.example.pknk.service.doctor.DoctorService;
 import com.example.pknk.service.patient.TreatmentPhasesService;
 import com.example.pknk.service.patient.TreatmentPlansService;
@@ -25,6 +26,15 @@ public class DoctorController {
     DoctorService doctorService;
     TreatmentPlansService treatmentPlansService;
     TreatmentPhasesService treatmentPhasesService;
+
+    // Public doctor list for selection
+    @GetMapping("/doctors")
+    ApiResponses<List<DoctorSummaryResponse>> getAllDoctors(){
+        return ApiResponses.<List<DoctorSummaryResponse>>builder()
+                .code(1000)
+                .result(doctorService.getAllDoctors())
+                .build();
+    }
 
     // Appointment
     @GetMapping("/appointment/scheduled/{doctorId}")

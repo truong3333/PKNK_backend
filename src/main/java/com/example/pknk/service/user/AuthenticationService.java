@@ -362,7 +362,7 @@ public class AuthenticationService {
 
         verifyForgotPasswordRepository.save(verifyForgotPassword);
 
-        StringBuilder content = new StringBuilder("Tài khoản phòng khám của bạn vừa được yêu cầu đặt lại mật khẩu, vui lòng truy cập:  http://localhost:8080/api/v1/auth/resetPassword/" + idVerify + "\n\n");
+        StringBuilder content = new StringBuilder("Tài khoản phòng khám của bạn vừa được yêu cầu đặt lại mật khẩu, vui lòng truy cập:  http://localhost:5173/reset-password/" + idVerify + "\n\n");
         content.append("Mã sẽ hết hạn sau 10 phút, hãy chú ý." + "\n");
         content.append("Nếu không phải bạn, vui lòng bỏ qua.");
 
