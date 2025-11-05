@@ -1,4 +1,4 @@
-package com.example.pknk.domain.dto.response.clinic;
+package com.example.pknk.domain.dto.request.clinic;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,10 +9,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ImageResponse {
-
-    String publicId;
-    String type;
-    String url;
-
+public class CategoryDentalServiceRequest {
+    String name;
 }

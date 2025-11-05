@@ -43,7 +43,7 @@ public class TreatmentPhasesService {
 
     Cloudinary cloudinary;
 
-    public TreatmentPhasesResponse createTreatmentPhases(String treatmentPlansId,TreatmentPhasesRequest request){
+    public TreatmentPhasesResponse createTreatmentPhases(String treatmentPlansId,TreatmentPhasesRequest request) throws IOException {
         TreatmentPlans treatmentPlans = treatmentPlansRepository.findById(treatmentPlansId).orElseThrow(() -> {
             log.error("Phác đồ điều trị id: {} không tồn tại, thêm tiến trình điều trị thất bại.", treatmentPlansId);
             throw new AppException(ErrorCode.TREATMENTPLANS_NOT_EXISTED);
@@ -63,25 +63,55 @@ public class TreatmentPhasesService {
                 .treatmentPlans(treatmentPlans)
                 .build();
 
-        List<Image> listImage = new ArrayList<>();
+        if (request.getListImageXray() != null && !request.getListImageXray().isEmpty()) {
+            for (MultipartFile file : request.getListImageXray()) {
+                if (file.isEmpty()) continue;
 
-        try {
-            for(MultipartFile file : request.getListImageFile()) {
-                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type","auto"));
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
 
                 Image image = Image.builder()
                         .publicId((String) result.get("public_id"))
                         .url((String) result.get("secure_url"))
-                        .type("treatmentPhases")
+                        .type("treatmentPhasesXray")
                         .treatmentPhases(treatmentPhases)
                         .build();
 
                 treatmentPhases.getListImage().add(image);
-                listImage.add(image);
             }
+        }
 
-        } catch (IOException e){
-            e.printStackTrace();
+        if (request.getListImageFace() != null && !request.getListImageFace().isEmpty()) {
+            for (MultipartFile file : request.getListImageFace()) {
+                if (file.isEmpty()) continue;
+
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+
+                Image image = Image.builder()
+                        .publicId((String) result.get("public_id"))
+                        .url((String) result.get("secure_url"))
+                        .type("treatmentPhasesFace")
+                        .treatmentPhases(treatmentPhases)
+                        .build();
+
+                treatmentPhases.getListImage().add(image);
+            }
+        }
+
+        if (request.getListImageTeeth() != null && !request.getListImageTeeth().isEmpty()) {
+            for (MultipartFile file : request.getListImageTeeth()) {
+                if (file.isEmpty()) continue;
+
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+
+                Image image = Image.builder()
+                        .publicId((String) result.get("public_id"))
+                        .url((String) result.get("secure_url"))
+                        .type("treatmentPhasesTeeth")
+                        .treatmentPhases(treatmentPhases)
+                        .build();
+
+                treatmentPhases.getListImage().add(image);
+            }
         }
 
         treatmentPhases.setTreatmentPlans(treatmentPlans);
@@ -100,8 +130,9 @@ public class TreatmentPhasesService {
                 .status("Inprogress")
                 .startDate(LocalDate.parse(request.getStartDate(), formatter))
                 .endDate(LocalDate.parse(request.getEndDate(), formatter))
-                .listImage(listImage.stream().map(image -> ImageResponse.builder()
+                .listImage(treatmentPhases.getListImage().stream().map(image -> ImageResponse.builder()
                         .publicId(image.getPublicId())
+                        .type(image.getType())
                         .url(image.getUrl())
                         .build()
                 ).toList())
@@ -172,8 +203,8 @@ public class TreatmentPhasesService {
             }
         }
 
-        if (request.getListImageFile() != null && !request.getListImageFile().isEmpty()) {
-            for (MultipartFile file : request.getListImageFile()) {
+        if (request.getListImageXray() != null && !request.getListImageXray().isEmpty()) {
+            for (MultipartFile file : request.getListImageXray()) {
                 if (file.isEmpty()) continue;
 
                 Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
@@ -181,7 +212,41 @@ public class TreatmentPhasesService {
                 Image image = Image.builder()
                         .publicId((String) result.get("public_id"))
                         .url((String) result.get("secure_url"))
-                        .type("examination")
+                        .type("treatmentPhasesXray")
+                        .treatmentPhases(treatmentPhases)
+                        .build();
+
+                treatmentPhases.getListImage().add(image);
+            }
+        }
+
+        if (request.getListImageFace() != null && !request.getListImageFace().isEmpty()) {
+            for (MultipartFile file : request.getListImageFace()) {
+                if (file.isEmpty()) continue;
+
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+
+                Image image = Image.builder()
+                        .publicId((String) result.get("public_id"))
+                        .url((String) result.get("secure_url"))
+                        .type("treatmentPhasesFace")
+                        .treatmentPhases(treatmentPhases)
+                        .build();
+
+                treatmentPhases.getListImage().add(image);
+            }
+        }
+
+        if (request.getListImageTeeth() != null && !request.getListImageTeeth().isEmpty()) {
+            for (MultipartFile file : request.getListImageTeeth()) {
+                if (file.isEmpty()) continue;
+
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+
+                Image image = Image.builder()
+                        .publicId((String) result.get("public_id"))
+                        .url((String) result.get("secure_url"))
+                        .type("treatmentPhasesTeeth")
                         .treatmentPhases(treatmentPhases)
                         .build();
 
@@ -205,9 +270,10 @@ public class TreatmentPhasesService {
                 .status(request.getStatus())
                 .startDate(LocalDate.parse(request.getStartDate(), formatterDate))
                 .endDate(LocalDate.parse(request.getEndDate(), formatterDate))
-                .nextAppointment(request.getNextAppointment())
+                .nextAppointment(treatmentPhases.getNextAppointment())
                 .listImage(treatmentPhases.getListImage().stream().map(image -> ImageResponse.builder()
                         .publicId(image.getPublicId())
+                        .type(image.getType())
                         .url(image.getUrl())
                         .build()
                 ).toList())
@@ -230,9 +296,10 @@ public class TreatmentPhasesService {
                         .status(treatmentPhases.getStatus())
                         .startDate(treatmentPhases.getStartDate())
                         .endDate(treatmentPhases.getEndDate())
-                        .nextAppointment(treatmentPhases.getNextAppointment().toString())
+                        .nextAppointment(treatmentPhases.getNextAppointment())
                         .listImage(treatmentPhases.getListImage().stream().map(image -> ImageResponse.builder()
                                 .publicId(image.getPublicId())
+                                .type(image.getType())
                                 .url(image.getUrl())
                                 .build()
                         ).toList())

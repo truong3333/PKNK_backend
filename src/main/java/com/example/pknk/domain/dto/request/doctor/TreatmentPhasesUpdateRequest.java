@@ -29,7 +29,9 @@ public class TreatmentPhasesUpdateRequest {
 
     List<PrescriptionOrderRequest> listPrescriptionOrder = new ArrayList<>();
 
-    List<MultipartFile> listImageFile;
+    List<MultipartFile> listImageXray;
+    List<MultipartFile> listImageFace;
+    List<MultipartFile> listImageTeeth;
 
     List<String> listDeleteImageByPublicId;
 

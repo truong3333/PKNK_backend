@@ -147,7 +147,7 @@ public class DoctorController {
 
     // treatmentPhases
     @PostMapping("/{treatmentPlansId}/treatmentPhases")
-    ApiResponses<TreatmentPhasesResponse> createTreatmentPhases(@PathVariable String treatmentPlansId, @ModelAttribute TreatmentPhasesRequest request){
+    ApiResponses<TreatmentPhasesResponse> createTreatmentPhases(@PathVariable String treatmentPlansId, @ModelAttribute TreatmentPhasesRequest request) throws IOException {
         return ApiResponses.<TreatmentPhasesResponse>builder()
                 .code(1000)
                 .result(treatmentPhasesService.createTreatmentPhases(treatmentPlansId, request))

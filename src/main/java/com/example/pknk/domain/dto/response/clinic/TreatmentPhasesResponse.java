@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,9 @@ public class TreatmentPhasesResponse {
     LocalDate startDate;
     @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate endDate;
-    String nextAppointment;
+
+    @JsonFormat(pattern = "HH:mm dd/MM/yyyy")
+    LocalDateTime nextAppointment;
 
     List<DentalServicesEntityOrderRequest> listDentalServicesEntityOrder = new ArrayList<>();
 

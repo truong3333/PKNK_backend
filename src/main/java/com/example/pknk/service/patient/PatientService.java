@@ -336,6 +336,7 @@ public class PatientService {
                 .listPrescriptionOrder(examination.getListPrescriptionOrder())
                 .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
                         .publicId(image.getPublicId())
+                        .type(image.getType())
                         .url(image.getUrl())
                         .build()
                 ).toList())

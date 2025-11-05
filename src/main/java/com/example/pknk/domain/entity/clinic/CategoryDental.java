@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -11,17 +14,14 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DentalServicesEntity {
+public class CategoryDental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
     String name;
-    String unit;
-    double unitPrice;
 
-    @ManyToOne
-    @JoinColumn(name = "categoryDental_id")
-    CategoryDental categoryDental;
+    @OneToMany(mappedBy = "categoryDental", cascade = CascadeType.ALL)
+    List<DentalServicesEntity> listDentalService = new ArrayList<>();
 }

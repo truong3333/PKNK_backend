@@ -157,25 +157,55 @@ public class DoctorService {
                 .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
                 .build();
 
-        List<Image> listImage = new ArrayList<>();
+        if (request.getListImageXray() != null && !request.getListImageXray().isEmpty()) {
+            for (MultipartFile file : request.getListImageXray()) {
+                if (file.isEmpty()) continue;
 
-        try {
-            for(MultipartFile file : request.getListImageFile()) {
-                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type","auto"));
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
 
                 Image image = Image.builder()
                         .publicId((String) result.get("public_id"))
                         .url((String) result.get("secure_url"))
-                        .type("examination")
+                        .type("examinationXray")
                         .examination(examination)
                         .build();
 
                 examination.getListImage().add(image);
-                listImage.add(image);
             }
+        }
 
-        } catch (IOException e){
-            e.printStackTrace();
+        if (request.getListImageFace() != null && !request.getListImageFace().isEmpty()) {
+            for (MultipartFile file : request.getListImageFace()) {
+                if (file.isEmpty()) continue;
+
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+
+                Image image = Image.builder()
+                        .publicId((String) result.get("public_id"))
+                        .url((String) result.get("secure_url"))
+                        .type("examinationFace")
+                        .examination(examination)
+                        .build();
+
+                examination.getListImage().add(image);
+            }
+        }
+
+        if (request.getListImageTeeth() != null && !request.getListImageTeeth().isEmpty()) {
+            for (MultipartFile file : request.getListImageTeeth()) {
+                if (file.isEmpty()) continue;
+
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+
+                Image image = Image.builder()
+                        .publicId((String) result.get("public_id"))
+                        .url((String) result.get("secure_url"))
+                        .type("examinationTeeth")
+                        .examination(examination)
+                        .build();
+
+                examination.getListImage().add(image);
+            }
         }
 
         examination.setAppointment(appointment);
@@ -191,16 +221,17 @@ public class DoctorService {
                 .diagnosis(request.getDiagnosis())
                 .notes(request.getNotes())
                 .treatment(request.getTreatment())
-                .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                .totalCost(request.getTotalCost())
+                .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
                 .listDentalServicesEntityOrder(request.getListDentalServicesEntityOrder())
                 .listPrescriptionOrder(request.getListPrescriptionOrder())
-                .listImage(listImage.stream().map(image -> ImageResponse.builder()
+                .totalCost(request.getTotalCost())
+                .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
                         .publicId(image.getPublicId())
+                        .type(image.getType())
                         .url(image.getUrl())
                         .build()
                 ).toList())
-                .createAt(appointment.getDateTime().toLocalDate())
+                .createAt(examination.getAppointment().getDateTime().toLocalDate())
                 .build();
     }
 
@@ -228,8 +259,8 @@ public class DoctorService {
             }
         }
 
-        if (request.getListImageFile() != null && !request.getListImageFile().isEmpty()) {
-            for (MultipartFile file : request.getListImageFile()) {
+        if (request.getListImageXray() != null && !request.getListImageXray().isEmpty()) {
+            for (MultipartFile file : request.getListImageXray()) {
                 if (file.isEmpty()) continue;
 
                 Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
@@ -237,7 +268,41 @@ public class DoctorService {
                 Image image = Image.builder()
                         .publicId((String) result.get("public_id"))
                         .url((String) result.get("secure_url"))
-                        .type("examination")
+                        .type("examinationXray")
+                        .examination(examination)
+                        .build();
+
+                examination.getListImage().add(image);
+            }
+        }
+
+        if (request.getListImageFace() != null && !request.getListImageFace().isEmpty()) {
+            for (MultipartFile file : request.getListImageFace()) {
+                if (file.isEmpty()) continue;
+
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+
+                Image image = Image.builder()
+                        .publicId((String) result.get("public_id"))
+                        .url((String) result.get("secure_url"))
+                        .type("examinationFace")
+                        .examination(examination)
+                        .build();
+
+                examination.getListImage().add(image);
+            }
+        }
+
+        if (request.getListImageTeeth() != null && !request.getListImageTeeth().isEmpty()) {
+            for (MultipartFile file : request.getListImageTeeth()) {
+                if (file.isEmpty()) continue;
+
+                Map result = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+
+                Image image = Image.builder()
+                        .publicId((String) result.get("public_id"))
+                        .url((String) result.get("secure_url"))
+                        .type("examinationTeeth")
                         .examination(examination)
                         .build();
 
@@ -260,6 +325,7 @@ public class DoctorService {
                 .totalCost(request.getTotalCost())
                 .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
                         .publicId(image.getPublicId())
+                        .type(image.getType())
                         .url(image.getUrl())
                         .build()
                 ).toList())
@@ -331,6 +397,7 @@ public class DoctorService {
                     .totalCost(examination.getTotalCost())
                     .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
                             .publicId(image.getPublicId())
+                            .type(image.getType())
                             .url(image.getUrl())
                             .build()
                     ).toList())

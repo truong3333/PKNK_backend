@@ -23,7 +23,9 @@ public class ExaminationRequest {
     String treatment;
     double totalCost;
 
-    List<MultipartFile> listImageFile;
+    List<MultipartFile> listImageXray;
+    List<MultipartFile> listImageFace;
+    List<MultipartFile> listImageTeeth;
 
     List<DentalServicesEntityOrderRequest> listDentalServicesEntityOrder = new ArrayList<>();
 

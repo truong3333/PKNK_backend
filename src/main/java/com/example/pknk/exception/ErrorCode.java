@@ -39,6 +39,9 @@ public enum ErrorCode {
     PRESCRIPTION_EXISTED(100,"Thuốc đã tồn tại", HttpStatus.BAD_REQUEST),
     PRESCRIPTION_NOT_EXISTED(100,"Thuốc không tồn tại", HttpStatus.BAD_REQUEST),
 
+    CATEGORY_SERVICE_NOT_EXISTED(100,"Loại dịch vụ không tồn tại", HttpStatus.BAD_REQUEST),
+    CATEGORY_SERVICE_EXISTED(100,"Loại dịch vụ đã tồn tại", HttpStatus.BAD_REQUEST),
+
     SERVICE_NOT_EXISTED(100,"Dịch vụ không tồn tại", HttpStatus.BAD_REQUEST),
 
     ;

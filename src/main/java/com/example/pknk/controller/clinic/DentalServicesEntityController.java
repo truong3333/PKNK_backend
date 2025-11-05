@@ -18,11 +18,11 @@ import java.util.List;
 public class DentalServicesEntityController {
     DentalServicesEntityService dentalServicesEntityService;
 
-    @PostMapping
-    ApiResponses<DentalServicesEntityResponse> createService(@RequestBody DentalServicesEntityRequest request){
+    @PostMapping("/{categoryDentalServiceId}")
+    ApiResponses<DentalServicesEntityResponse> createService(@PathVariable String categoryDentalServiceId, @RequestBody DentalServicesEntityRequest request){
         return ApiResponses.<DentalServicesEntityResponse>builder()
                 .code(1000)
-                .result(dentalServicesEntityService.createService(request))
+                .result(dentalServicesEntityService.createService(categoryDentalServiceId, request))
                 .build();
     }
 

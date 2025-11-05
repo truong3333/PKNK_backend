@@ -2,9 +2,11 @@ package com.example.pknk.service.clinic;
 
 import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityRequest;
 import com.example.pknk.domain.dto.response.clinic.DentalServicesEntityResponse;
+import com.example.pknk.domain.entity.clinic.CategoryDental;
 import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
+import com.example.pknk.repository.CategoryDentalRepository;
 import com.example.pknk.repository.clinic.DentalServicesEntityServiceRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +23,22 @@ import java.util.List;
 @Slf4j
 public class DentalServicesEntityService {
         DentalServicesEntityServiceRepository dentalServicesEntityServiceRepository;
+        CategoryDentalRepository categoryDentalRepository;
 
-        public DentalServicesEntityResponse createService(DentalServicesEntityRequest request){
+        public DentalServicesEntityResponse createService(String categoryDentalServiceId, DentalServicesEntityRequest request){
+            CategoryDental categoryDental = categoryDentalRepository.findById(categoryDentalServiceId).orElseThrow(() -> {
+                log.error("Loại dịch vụ: {} không tồn tại, thêm dịch vụ mới thất bại.", request.getName());
+                throw new AppException(ErrorCode.CATEGORY_SERVICE_NOT_EXISTED);
+            });
+
             DentalServicesEntity dentalServicesEntity = DentalServicesEntity.builder()
                     .name(request.getName())
                     .unit(request.getUnit())
                     .unitPrice(request.getUnitPrice())
+                    .categoryDental(categoryDental)
                     .build();
+
+            categoryDental.getListDentalService().add(dentalServicesEntity);
 
             dentalServicesEntityServiceRepository.save(dentalServicesEntity);
             log.info("Dịch vụ: {} được thêm thành công.", request.getName());
