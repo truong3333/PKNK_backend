@@ -24,7 +24,6 @@ import com.example.pknk.repository.doctor.DoctorRepository;
 import com.example.pknk.repository.doctor.BookingDateTimeRepository;
 import com.example.pknk.repository.patient.PatientRepository;
 import com.example.pknk.repository.user.UserRepository;
-import com.example.pknk.service.user.AuditLogService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -49,8 +48,6 @@ public class PatientService {
         BookingDateTimeRepository bookingDateTimeRepository;
         AppointmentRepository appointmentRepository;
         ExaminationRepository examinationRepository;
-
-        AuditLogService auditLogService;
 
         public PatientResponse getBasicInfo(String patientId){
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> {
@@ -103,8 +100,6 @@ public class PatientService {
 
             patientRepository.save(patient);
             log.info("Bệnh nhân id: {} cập nhật thông tin liên hệ khẩn cấp thành công", patientId);
-            auditLogService.log("cập nhật thông tin liên hệ khẩn cấp");
-
 
             return EmergencyContactResponse.builder()
                     .emergencyContactName(request.getEmergencyContactName())
@@ -124,7 +119,6 @@ public class PatientService {
 
             patientRepository.save(patient);
             log.info("Bệnh nhân id: {} cập nhật thông tin y tế thành công", patientId);
-            auditLogService.log("cập nhật thông tin y tế");
 
             return MedicalInformationResponse.builder()
                     .bloodGroup(request.getBloodGroup())

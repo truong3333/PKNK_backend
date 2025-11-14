@@ -78,32 +78,6 @@ INSERT INTO `appointment_list_dental_services_entity` VALUES ('b73fc62d-e69f-4cb
 UNLOCK TABLES;
 
 --
--- Table structure for table `audit_log`
---
-
-DROP TABLE IF EXISTS `audit_log`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `audit_log` (
-  `id` varchar(255) NOT NULL,
-  `action` varchar(255) DEFAULT NULL,
-  `timestamp` datetime(6) DEFAULT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `audit_log`
---
-
-LOCK TABLES `audit_log` WRITE;
-/*!40000 ALTER TABLE `audit_log` DISABLE KEYS */;
-INSERT INTO `audit_log` VALUES ('07258aa3-480a-4d44-8d82-cdd28d96552c','Đăng nhập','2025-11-05 13:38:40.506975','test1'),('17e43baf-d2cc-441a-807c-75a3a8fcfd4e','cập nhật thông tin y tế','2025-11-01 12:00:49.676792','test1'),('1b4e902c-fcdc-424e-b2c2-a2f316daa2bf','Đăng nhập','2025-10-26 11:27:38.293620','doctor2'),('1e2be48e-e8d2-46c6-a23e-e887481e99b0','cập nhật thông tin liên hệ khẩn cấp','2025-11-01 13:58:17.592323','test1'),('25f0c45b-ff99-41c1-be68-b4e35410b23a','Đăng nhập','2025-10-23 19:35:45.723309','doctor2'),('2faef296-d5ee-4a81-b443-e432e92376e0','Đăng nhập','2025-10-26 20:09:49.860541','doctor2'),('31dfcf2c-b400-4a3d-9457-c77764c95059','Đăng nhập','2025-10-28 16:53:20.875290','test1'),('337958d3-e239-47d8-a23b-bd4c0bd28ebb','Đăng nhập','2025-10-22 10:54:40.536339','admin'),('3586900d-1a34-4520-b300-44b61160da70','Đăng nhập','2025-10-20 11:29:52.013018','admin'),('41210af8-3f26-44d1-8c6d-39621eca1c41','Đăng nhập','2025-10-24 15:57:56.135744','test1'),('4726b910-15f5-47b6-a2cf-5874f48a5ab6','Cập nhật thông tin cá nhân','2025-11-01 13:57:47.320037','test1'),('489e1ae8-13ea-4915-ad35-f709662d833e','Đăng nhập','2025-11-01 11:46:44.130440','doctor1'),('4d2de234-d419-46cd-8b3a-330956a399ac','Đăng nhập','2025-10-22 14:40:29.389477','test1'),('4d31f273-f255-4808-946b-7169f563e905','Đăng nhập','2025-11-01 11:30:41.352011','admin'),('53ab2ac6-e62b-4e66-b2c8-b2a9d7c316d7','Đăng nhập','2025-11-05 14:40:45.755853','test1'),('55c94a99-2132-4729-9d55-d407baac0410','Đăng nhập','2025-10-22 11:07:39.989784','test1'),('5dfe4edc-dbcd-424a-8dad-cf051a9ed6e7','Đăng xuất','2025-10-19 10:19:42.124030','admin'),('64b782e4-3c24-450f-a0ba-288160bbd6cb','Đăng nhập','2025-10-23 11:14:14.360197','doctor1'),('6896f388-480d-4c69-89e3-15c09ed2c206','Đăng nhập','2025-10-23 15:48:54.877919','test1'),('6b6d10cc-352a-4050-b308-4b10b8e47aac','Đăng nhập','2025-10-23 19:36:00.511648','test1'),('6f1b9896-9134-4e1e-9f0c-625925d75afd','Đăng nhập','2025-11-01 11:30:03.820525','doctor1'),('70b1f632-e27e-4eae-a57a-10e7f9f85fd6','Đăng nhập','2025-10-24 17:54:29.875271','doctor2'),('78e9a741-dc8a-4f77-ab8e-87dc9a274d25','Đăng xuất','2025-11-01 14:14:52.893618','testtest2'),('790128fe-fcbc-47d9-8c20-17604896d1c3','Đăng nhập','2025-10-26 11:42:00.431987','doctor2'),('84d162d6-156b-47eb-b532-4f612a003f53','Đăng nhập','2025-10-23 16:10:53.505576','test1'),('8ecedfb3-47b4-4804-a83b-1d9172707d2f','Đăng nhập','2025-10-19 14:34:25.095182','admin'),('8f4aa0e1-1172-451f-9a12-d3dc13b87b7a','Đăng nhập','2025-10-28 21:22:23.500555','test1'),('9bb6bcbb-911c-4576-aaf2-ae52441ffd4b','Đăng nhập','2025-10-22 20:33:18.817475','test1'),('9c869f65-b902-437a-8f3f-dc8d21bc9150','Đăng nhập','2025-10-22 15:02:46.912274','doctor1'),('9e9984a6-1e1d-4aa9-a639-07943b628f62','Đăng nhập','2025-10-26 12:39:55.266675','doctor2'),('9fee47cd-ca31-4e4a-a03b-27bca12e8caf','Đăng nhập','2025-10-19 14:52:21.502046','test3'),('a0c3ae34-0942-46f2-80ad-77a323ff688f','Đăng nhập','2025-11-05 10:46:11.536185','test1'),('a278573e-1d97-480f-b7a6-3527b09ec059','cập nhật thông tin liên hệ khẩn cấp','2025-10-22 10:57:36.660291','admin'),('a4bc3037-45ec-4f6b-87c0-e412bd5d352d','cập nhật thông tin y tế','2025-10-22 11:00:28.359640','admin'),('ae2dbe81-0a94-4e8a-b5d3-df9da83acd2c','Đăng nhập','2025-10-19 15:07:56.562431','test3'),('aecc0f4f-e66a-468e-9b60-a21ef62faf31','Đăng nhập','2025-11-01 11:24:58.197434','test1'),('bab3fbcd-e079-4625-956e-86334b34cb18','Đăng nhập','2025-10-19 11:45:23.385402','admin'),('c6313361-41ef-434b-8343-01363639be9b','Đăng nhập','2025-11-01 13:56:48.066307','test1'),('c713210f-ac0e-4fb5-afc5-38effd288746','Cập nhật thông tin cá nhân','2025-10-20 11:34:06.318255','admin'),('cb5769a2-6817-4a81-9e2c-00525675bfb6','Đăng nhập','2025-11-05 10:45:43.442802','doctor1'),('cf5d6310-54fe-4185-a3d2-9b927bcb9a88','Đăng nhập','2025-10-22 17:08:54.646075','doctor1'),('d2ecde34-8778-4baf-9bba-af165f98ce04','Đăng nhập','2025-11-01 14:11:44.356028','testtest2'),('d4f81a15-5fb5-496b-a339-f74fb7e569a6','Đăng nhập','2025-10-19 10:21:06.753757','admin'),('d6d9f8c9-f89d-4866-b5c3-d38d437bbb15','Đăng nhập','2025-10-22 17:45:41.967141','admin'),('db485675-ec12-46d6-91f1-9b5265cf8688','Đăng nhập','2025-10-26 20:52:57.611011','test1'),('e372980e-c8a6-4bcf-9528-5667d601ebe4','Đăng nhập','2025-11-01 14:15:27.576181','test1'),('e3fc7925-c9bf-4714-8fcf-3fc48693d05e','Đăng nhập','2025-10-24 15:55:01.975656','doctor2'),('e6c576d0-7eba-4f95-8d27-0ddd781909e9','Đăng nhập','2025-10-24 17:36:16.660900','doctor2'),('ebe6e847-4706-4611-9f88-9f520703a318','Đăng nhập','2025-10-19 21:54:20.564861','admin'),('f09cb03c-5a4b-48d7-b411-a6a800aa9697','Đăng nhập','2025-10-23 15:48:35.113772','doctor1'),('f0e1c06e-56d0-4179-bf76-6a3b80329ea9','Đăng nhập','2025-10-23 16:41:22.991734','doctor2'),('fcec146e-57f7-442f-81c0-c053df412b7e','Đăng xuất','2025-11-01 14:11:29.323154','test1');
-/*!40000 ALTER TABLE `audit_log` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `booking_date_time`
 --
 
@@ -155,6 +129,96 @@ INSERT INTO `category_dental` VALUES ('0d6f425e-577b-44c3-806e-d616c02a9b5d','Tr
 UNLOCK TABLES;
 
 --
+-- Table structure for table `cost`
+--
+
+DROP TABLE IF EXISTS `cost`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cost` (
+  `id` varchar(255) NOT NULL,
+  `payment_date` date DEFAULT NULL,
+  `payment_method` varchar(255) DEFAULT NULL,
+  `status` varchar(255) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `total_cost` double NOT NULL,
+  `vnp_txn_ref` varchar(255) DEFAULT NULL,
+  `patient_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FKexauo4htrd4c6j98vv31lp372` (`patient_id`),
+  CONSTRAINT `FKexauo4htrd4c6j98vv31lp372` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cost`
+--
+
+LOCK TABLES `cost` WRITE;
+/*!40000 ALTER TABLE `cost` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cost` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cost_list_dental_service_entity_order`
+--
+
+DROP TABLE IF EXISTS `cost_list_dental_service_entity_order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cost_list_dental_service_entity_order` (
+  `cost_id` varchar(255) NOT NULL,
+  `cost` double DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `quantity` int DEFAULT NULL,
+  `unit` varchar(255) DEFAULT NULL,
+  `unit_price` double DEFAULT NULL,
+  KEY `FK2v0feum1rn94phqttsg5bhy8r` (`cost_id`),
+  CONSTRAINT `FK2v0feum1rn94phqttsg5bhy8r` FOREIGN KEY (`cost_id`) REFERENCES `cost` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cost_list_dental_service_entity_order`
+--
+
+LOCK TABLES `cost_list_dental_service_entity_order` WRITE;
+/*!40000 ALTER TABLE `cost_list_dental_service_entity_order` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cost_list_dental_service_entity_order` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `cost_list_prescription_order`
+--
+
+DROP TABLE IF EXISTS `cost_list_prescription_order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cost_list_prescription_order` (
+  `cost_id` varchar(255) NOT NULL,
+  `cost` double DEFAULT NULL,
+  `dosage` varchar(255) DEFAULT NULL,
+  `duration` varchar(255) DEFAULT NULL,
+  `frequency` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `notes` varchar(255) DEFAULT NULL,
+  `quantity` int DEFAULT NULL,
+  `unit_price` double DEFAULT NULL,
+  KEY `FKhrrgi74x4n21930f17mj0no58` (`cost_id`),
+  CONSTRAINT `FKhrrgi74x4n21930f17mj0no58` FOREIGN KEY (`cost_id`) REFERENCES `cost` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `cost_list_prescription_order`
+--
+
+LOCK TABLES `cost_list_prescription_order` WRITE;
+/*!40000 ALTER TABLE `cost_list_prescription_order` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cost_list_prescription_order` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `dental_services_entity`
 --
 
@@ -167,6 +231,7 @@ CREATE TABLE `dental_services_entity` (
   `unit` varchar(255) DEFAULT NULL,
   `unit_price` double NOT NULL,
   `category_dental_id` varchar(255) DEFAULT NULL,
+  `discount` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK1uot0jm4np2m8hiqpfl0sfsui` (`category_dental_id`),
   CONSTRAINT `FK1uot0jm4np2m8hiqpfl0sfsui` FOREIGN KEY (`category_dental_id`) REFERENCES `category_dental` (`id`)
@@ -179,7 +244,7 @@ CREATE TABLE `dental_services_entity` (
 
 LOCK TABLES `dental_services_entity` WRITE;
 /*!40000 ALTER TABLE `dental_services_entity` DISABLE KEYS */;
-INSERT INTO `dental_services_entity` VALUES ('12d50d4c-e075-4be6-b07a-259395db2cd8','Trụ Implant Mỹ','Răng',23000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da'),('1a9ec7ea-193d-4ba7-817a-dc341c2c332d','Nhổ răng khôn hàm trên mọc thẳng','Răng',1300000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('1da9e760-6181-4d2a-8cbd-19fcd9289aaa','Nhổ răng khôn hàm dưới mọc lệch 45 độ','Răng',2500000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('2075642f-de85-458b-9e18-442f690c3a91','Răng sứ Titan','Răng',2500000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('208bf601-827f-4fbf-84f3-72a1741e441f','Mắc cài tự động','1 Hàm',5000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea'),('26686096-cc6b-450b-a584-3a8dfc74a9bf','Trụ Implant Hàn Quốc thế hệ 1','Răng',15000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da'),('3302b02a-5d67-460e-ad67-354af0b70f8a','Nhổ răng khôn hàm dưới mọc thẳng','Răng',2000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('3ae42d2c-4007-4271-ab8d-88c449bc2ca0','Rạch lợi trùm','Răng',1100000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('3ecb6672-1ff1-409f-9ca3-a54a4c4a9024','Phẫu thuật lấy trụ Implant cũ','Răng',5000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da'),('46259e94-7c5e-4ce7-a48f-eb9df9515398','Chỉnh nha trẻ em (1 – 2 răng)','Trọn gói',5000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea'),('485e30f6-bcfd-4c57-a7a4-5f02cac6be08','Đánh bóng răng','1 Ca',100000,'52e8d218-3c5c-45ce-9464-438c573653ca'),('48bf8b1d-10e1-4d14-9e1e-60e310f57f89','Lấy cao răng độ 3','1 Ca',400000,'52e8d218-3c5c-45ce-9464-438c573653ca'),('48cca822-d243-4800-9617-4c2d1f5265f6','Gắn lại mão răng','Răng',500000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('4d82c2ce-bd78-40d0-8398-b8a7ecdc6390','Răng sứ Ziconia','Răng',4000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('5557288f-d84d-4981-9dfe-30fa037ef37f','Răng sứ Nacera','Răng',6000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('594b8779-92ea-4712-8d57-1a84665aa755','Phẫu thuật tạo hình nướu quanh Implant','Răng',2000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da'),('59f09e80-5f7c-43d6-a07f-3abb1d700bce','Niềng răng mắc cài kim loại','2 Hàm',35000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea'),('5e016c1e-3e3b-48b3-8143-8ad921ac9efa','Răng sứ Venus','Răng',3500000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('608e5edb-958b-48ba-b68d-4ea5e2fb1326','Nhổ răng khôn hàm dưới mọc lệch ngầm','Răng',4000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('61601930-e811-4662-b9eb-317a194387b8','Nhổ răng hàm lớn (6,7)','Răng',2000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('61ab9da1-492f-4ced-ab6c-339c434bac76','Đúc cùi giả toàn sứ','Răng',3000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('62a5d1bb-e30e-46a4-af53-1f04087431f2','Nhổ răng khôn hàm trên mọc lệch','Răng',2000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('62dcf052-52af-4803-a71c-77e56bae6d90','Trụ Neoden – Thụy Sĩ','Răng',30000000,NULL),('64c0d3fe-0464-4e72-baa6-0790857e9a1c','Nhổ răng khôn hàm trên mọc ngầm','Răng',3000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('7c5f7b44-6a11-42e8-8f28-bf66718385a7','Nhổ răng hàm nhỏ (4,5)','Răng',900000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('80831500-a21a-439e-9116-2dcfd26e8c02','Nhổ răng khôn hàm dưới mọc lệch 90 độ','Răng',3000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('88261112-6186-442a-9267-133ce25d5c52','Răng sứ Veneer Lisi','Răng',11000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('9826c34c-f8b0-4ade-97b1-d314ef4789ff','Trụ Implant Hàn Quốc thế hệ 2','Răng',13500000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da'),('98bc7ff7-aa36-42e5-8f52-169a297ca0f8','Niềng răng mắc cài sứ','2 Hàm',45000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea'),('99b216db-241b-4619-aad3-971834b53380','Trụ Neoden – Thụy Sĩ','Răng',30000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da'),('a64a5e8d-96a4-4194-84cf-2242d58048f8','Răng sứ Cercon','Răng',5000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('ab7da778-e310-4e81-97d3-9949651ba9ce','Răng sứ Katana','Răng',4000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('af4b6ad0-5b86-4c5e-815a-321a1fe01525','Chốt sợi','Răng',1000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('b3776e8f-3b72-4195-91e6-21e6c9941054','Chỉnh nha người lớn (1 – 2 răng)','Trọn gói',10000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea'),('b3acfb62-94c7-4843-9d3a-f391874f1a59','Trụ Nobel','Răng',40000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da'),('bd33f5cf-09ef-424f-8555-def23f3b65db','Lấy cao răng độ 2','1 Ca',300000,'52e8d218-3c5c-45ce-9464-438c573653ca'),('bf715c40-d084-4a26-87ba-3f38d8d13a05','Nhổ chân răng','Răng',800000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('c31c95d8-460b-4729-9d89-4ea800bd7326','Răng sứ Orodent Gold','Răng',12000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('c4516a65-a81a-4cfa-a76c-179cedec1d61','Răng sứ Ceramill','Răng',5500000,'0d6f425e-577b-44c3-806e-d616c02a9b5d'),('d4b055cd-e4c8-42ba-aa86-6cdd36baef4f','Lấy cao răng độ 1','1 Ca',200000,'52e8d218-3c5c-45ce-9464-438c573653ca'),('e3812d42-243f-4f7a-bc93-477feba7319b','Nhổ răng sữa','Răng',100000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1'),('f0a497f2-b98d-45fe-a593-cebcb3571d60','Lấy cao răng bằng công nghệ thổi cát','1 Ca',600000,'52e8d218-3c5c-45ce-9464-438c573653ca'),('f81f0fb6-682f-4c9a-aea3-3bdf3a1139f4','Niềng răng tháo lắp','1 Hàm',5000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea');
+INSERT INTO `dental_services_entity` VALUES ('12d50d4c-e075-4be6-b07a-259395db2cd8','Trụ Implant Mỹ','Răng',23000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da',0),('1a9ec7ea-193d-4ba7-817a-dc341c2c332d','Nhổ răng khôn hàm trên mọc thẳng','Răng',1300000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('1da9e760-6181-4d2a-8cbd-19fcd9289aaa','Nhổ răng khôn hàm dưới mọc lệch 45 độ','Răng',2500000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('2075642f-de85-458b-9e18-442f690c3a91','Răng sứ Titan','Răng',2500000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('208bf601-827f-4fbf-84f3-72a1741e441f','Mắc cài tự động','1 Hàm',5000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea',0),('26686096-cc6b-450b-a584-3a8dfc74a9bf','Trụ Implant Hàn Quốc thế hệ 1','Răng',15000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da',0),('3302b02a-5d67-460e-ad67-354af0b70f8a','Nhổ răng khôn hàm dưới mọc thẳng','Răng',2000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('3ae42d2c-4007-4271-ab8d-88c449bc2ca0','Rạch lợi trùm','Răng',1100000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('3ecb6672-1ff1-409f-9ca3-a54a4c4a9024','Phẫu thuật lấy trụ Implant cũ','Răng',5000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da',0),('46259e94-7c5e-4ce7-a48f-eb9df9515398','Chỉnh nha trẻ em (1 – 2 răng)','Trọn gói',5000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea',0),('485e30f6-bcfd-4c57-a7a4-5f02cac6be08','Đánh bóng răng','1 Ca',100000,'52e8d218-3c5c-45ce-9464-438c573653ca',0),('48bf8b1d-10e1-4d14-9e1e-60e310f57f89','Lấy cao răng độ 3','1 Ca',400000,'52e8d218-3c5c-45ce-9464-438c573653ca',0),('48cca822-d243-4800-9617-4c2d1f5265f6','Gắn lại mão răng','Răng',500000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('4d82c2ce-bd78-40d0-8398-b8a7ecdc6390','Răng sứ Ziconia','Răng',4000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('5557288f-d84d-4981-9dfe-30fa037ef37f','Răng sứ Nacera','Răng',6000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('594b8779-92ea-4712-8d57-1a84665aa755','Phẫu thuật tạo hình nướu quanh Implant','Răng',2000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da',0),('59f09e80-5f7c-43d6-a07f-3abb1d700bce','Niềng răng mắc cài kim loại','2 Hàm',35000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea',0),('5e016c1e-3e3b-48b3-8143-8ad921ac9efa','Răng sứ Venus','Răng',3500000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('608e5edb-958b-48ba-b68d-4ea5e2fb1326','Nhổ răng khôn hàm dưới mọc lệch ngầm','Răng',4000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('61601930-e811-4662-b9eb-317a194387b8','Nhổ răng hàm lớn (6,7)','Răng',2000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('61ab9da1-492f-4ced-ab6c-339c434bac76','Đúc cùi giả toàn sứ','Răng',3000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('62a5d1bb-e30e-46a4-af53-1f04087431f2','Nhổ răng khôn hàm trên mọc lệch','Răng',2000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('62dcf052-52af-4803-a71c-77e56bae6d90','Trụ Neoden – Thụy Sĩ','Răng',30000000,NULL,0),('64c0d3fe-0464-4e72-baa6-0790857e9a1c','Nhổ răng khôn hàm trên mọc ngầm','Răng',3000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('7c5f7b44-6a11-42e8-8f28-bf66718385a7','Nhổ răng hàm nhỏ (4,5)','Răng',900000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('80831500-a21a-439e-9116-2dcfd26e8c02','Nhổ răng khôn hàm dưới mọc lệch 90 độ','Răng',3000000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('88261112-6186-442a-9267-133ce25d5c52','Răng sứ Veneer Lisi','Răng',11000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('9826c34c-f8b0-4ade-97b1-d314ef4789ff','Trụ Implant Hàn Quốc thế hệ 2','Răng',13500000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da',0),('98bc7ff7-aa36-42e5-8f52-169a297ca0f8','Niềng răng mắc cài sứ','2 Hàm',45000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea',0),('99b216db-241b-4619-aad3-971834b53380','Trụ Neoden – Thụy Sĩ','Răng',30000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da',0),('a64a5e8d-96a4-4194-84cf-2242d58048f8','Răng sứ Cercon','Răng',5000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('ab7da778-e310-4e81-97d3-9949651ba9ce','Răng sứ Katana','Răng',4000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('af4b6ad0-5b86-4c5e-815a-321a1fe01525','Chốt sợi','Răng',1000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('b3776e8f-3b72-4195-91e6-21e6c9941054','Chỉnh nha người lớn (1 – 2 răng)','Trọn gói',10000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea',0),('b3acfb62-94c7-4843-9d3a-f391874f1a59','Trụ Nobel','Răng',40000000,'e7b17c2c-8aac-4d04-96b6-a1265d8592da',0),('bd33f5cf-09ef-424f-8555-def23f3b65db','Lấy cao răng độ 2','1 Ca',300000,'52e8d218-3c5c-45ce-9464-438c573653ca',0),('bf715c40-d084-4a26-87ba-3f38d8d13a05','Nhổ chân răng','Răng',800000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('c31c95d8-460b-4729-9d89-4ea800bd7326','Răng sứ Orodent Gold','Răng',12000000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('c4516a65-a81a-4cfa-a76c-179cedec1d61','Răng sứ Ceramill','Răng',5500000,'0d6f425e-577b-44c3-806e-d616c02a9b5d',0),('d4b055cd-e4c8-42ba-aa86-6cdd36baef4f','Lấy cao răng độ 1','1 Ca',200000,'52e8d218-3c5c-45ce-9464-438c573653ca',0),('e3812d42-243f-4f7a-bc93-477feba7319b','Nhổ răng sữa','Răng',100000,'5c70a5c4-9125-4684-aa7d-32a6c440f4d1',0),('f0a497f2-b98d-45fe-a593-cebcb3571d60','Lấy cao răng bằng công nghệ thổi cát','1 Ca',600000,'52e8d218-3c5c-45ce-9464-438c573653ca',0),('f81f0fb6-682f-4c9a-aea3-3bdf3a1139f4','Niềng răng tháo lắp','1 Hàm',5000000,'75fe2d18-110c-43d6-b1d0-a5331e4cc6ea',0);
 /*!40000 ALTER TABLE `dental_services_entity` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -792,4 +857,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-05 15:11:54
+-- Dump completed on 2025-11-14 19:31:16
