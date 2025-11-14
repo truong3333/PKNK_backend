@@ -1,6 +1,7 @@
 package com.example.pknk.domain.entity.user;
 
 import com.example.pknk.domain.entity.clinic.Appointment;
+import com.example.pknk.domain.entity.clinic.Cost;
 import com.example.pknk.domain.entity.clinic.TreatmentPlans;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,6 +40,6 @@ public class Patient {
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     List<TreatmentPlans> listTreatmentPlans = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "patient_id")
-//    List<MedicalHistory> medicalHistory = new ArrayList();
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    List<Cost> listCosts = new ArrayList<>();
 }

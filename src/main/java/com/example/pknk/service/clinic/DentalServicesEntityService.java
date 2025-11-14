@@ -6,7 +6,7 @@ import com.example.pknk.domain.entity.clinic.CategoryDental;
 import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
-import com.example.pknk.repository.CategoryDentalRepository;
+import com.example.pknk.repository.clinic.CategoryDentalRepository;
 import com.example.pknk.repository.clinic.DentalServicesEntityServiceRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -27,3 +27,13 @@ spring:
 
 jwt:
   signerKey: "QU+SwOanBr5XdqvBrRMEu07JkXekyENmTcEpklJ2hSB3QjE/hicft/WwBl1JK+v/"
+
+payment:
+  vnPay:
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    tmnCode: J0QP3IIG
+    secretKey: 6RDVAEF0IU968HPPWK931M7Z1G3Q9N0F
+    returnUrl: http://localhost:5173/payment/paymentCallback
+    version: 2.1.0
+    command: pay
+    orderType: other

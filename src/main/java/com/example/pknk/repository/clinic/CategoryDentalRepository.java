@@ -1,4 +1,4 @@
-package com.example.pknk.repository;
+package com.example.pknk.repository.clinic;
 
 import com.example.pknk.domain.entity.clinic.CategoryDental;
 import org.springframework.data.jpa.repository.JpaRepository;

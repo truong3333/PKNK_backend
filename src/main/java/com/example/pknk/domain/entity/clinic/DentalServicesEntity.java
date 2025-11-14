@@ -20,6 +20,7 @@ public class DentalServicesEntity {
     String name;
     String unit;
     double unitPrice;
+    int discount;
 
     @ManyToOne
     @JoinColumn(name = "categoryDental_id")

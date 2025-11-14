@@ -8,15 +8,13 @@ import com.example.pknk.domain.dto.response.clinic.AppointmentResponse;
 import com.example.pknk.domain.dto.response.clinic.ExaminationResponse;
 import com.example.pknk.domain.dto.response.clinic.ImageResponse;
 import com.example.pknk.domain.dto.response.doctor.DoctorSummaryResponse;
+import com.example.pknk.domain.entity.clinic.*;
 import com.example.pknk.domain.entity.user.Doctor;
-import com.example.pknk.domain.entity.clinic.Appointment;
-import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
-import com.example.pknk.domain.entity.clinic.Examination;
-import com.example.pknk.domain.entity.clinic.Image;
 import com.example.pknk.domain.entity.user.User;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
 import com.example.pknk.repository.clinic.AppointmentRepository;
+import com.example.pknk.repository.clinic.CostRepository;
 import com.example.pknk.repository.clinic.ExaminationRepository;
 import com.example.pknk.repository.clinic.ImageRepository;
 import com.example.pknk.repository.doctor.DoctorRepository;
@@ -45,6 +43,7 @@ public class DoctorService {
     AppointmentRepository appointmentRepository;
     ExaminationRepository examinationRepository;
     ImageRepository imageRepository;
+    CostRepository costRepository;
 
     Cloudinary cloudinary;
 
@@ -208,10 +207,22 @@ public class DoctorService {
             }
         }
 
+        Cost cost = Cost.builder()
+                .id(examination.getId())
+                .title("Khám theo lịch hẹn: " + appointment.getDateTime())
+                .status("wait")
+                .totalCost(request.getTotalCost())
+                .listDentalServiceEntityOrder(request.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(request.getListPrescriptionOrder())
+                .patient(appointment.getPatient())
+                .build();
+
         examination.setAppointment(appointment);
         appointment.setExamination(examination);
 
+
         examinationRepository.save(examination);
+        costRepository.save(cost);
         log.info("Kết quả khám của lịch hẹn id: {} được thêm thành công.", appointmentId);
 
 
@@ -240,6 +251,11 @@ public class DoctorService {
         Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
             log.error("Kết quả khám id: {} không tồn tại, cập nhật kết quả khám thất bại.", examinationId);
             throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
+        });
+
+        Cost cost = costRepository.findById(examinationId).orElseThrow(() -> {
+            log.error("Hoá đơn của kết quả khám id: {} không tồn tại, cập nhật kết quả khám thất bại.", examinationId);
+            throw new AppException(ErrorCode.COST_NOT_EXISTED);
         });
 
         examination.setSymptoms(request.getSymptoms());
@@ -310,7 +326,12 @@ public class DoctorService {
             }
         }
 
+        cost.setListDentalServiceEntityOrder(request.getListDentalServicesEntityOrder());
+        cost.setListPrescriptionOrder(request.getListPrescriptionOrder());
+        cost.setTotalCost(request.getTotalCost());
+
         examinationRepository.save(examination);
+        costRepository.save(cost);
         log.info("Kết quả khám id: {} được cập nhật thành công.", examinationId);
 
         return ExaminationResponse.builder()

@@ -44,6 +44,8 @@ public enum ErrorCode {
 
     SERVICE_NOT_EXISTED(100,"Dịch vụ không tồn tại", HttpStatus.BAD_REQUEST),
 
+    COST_NOT_EXISTED(100,"Hoá đơn không tồn tại", HttpStatus.BAD_REQUEST),
+
     ;
 
 

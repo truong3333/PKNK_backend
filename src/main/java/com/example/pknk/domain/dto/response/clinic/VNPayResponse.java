@@ -9,12 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DentalServicesEntityResponse {
-
-    String id;
-    String name;
-    String unit;
-    double unitPrice;
-
-
+public class VNPayResponse {
+    String code;
+    String message;
+    String paymentUrl;
 }
