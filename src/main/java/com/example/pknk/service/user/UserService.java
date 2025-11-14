@@ -25,8 +25,6 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
 @Slf4j
 public class UserService {
-        AuditLogService auditLogService;
-
         PasswordEncoder passwordEncoder;
         UserRepository userRepository;
 
@@ -91,7 +89,6 @@ public class UserService {
 
                 userRepository.save(user);
                 log.info("Cập nhật thông tin người dùng ID: {} thành công.",userId);
-                auditLogService.log("Cập nhật thông tin cá nhân");
 
                 return UserResponse.builder()
                         .id(user.getId())
@@ -143,7 +140,6 @@ public class UserService {
 
                 userRepository.save(user);
                 log.info("UserId: {} đổi mật khẩu thành công.", userId);
-                auditLogService.log("Đổi mật khẩu");
 
                 return "Đôi mật khẩu thành công";
         }
@@ -158,7 +154,6 @@ public class UserService {
 
                 userRepository.save(user);
                 log.info("UserId: {} vô hiệu hoá thành công.",userId);
-                auditLogService.log("Vô hiệu hoá userId: " + userId);
 
                 return "Vô hiệu hoá tài khoản thành công";
         }
@@ -173,7 +168,6 @@ public class UserService {
 
                 userRepository.save(user);
                 log.info("UserId: {} mở khoá thành công.",userId);
-                auditLogService.log("Mở khoá userId: " + userId);
 
                 return "Mở khoá tài khoản thành công";
         }

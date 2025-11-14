@@ -58,11 +58,19 @@ public class UserController {
                 .build();
     }
 
-    @DeleteMapping("/{userId}")
-    ApiResponses<String> deleteUser(@PathVariable String userId){
+    @PutMapping("/disableUser/{userId}")
+    ApiResponses<String> disableUser(@PathVariable String userId){
         return ApiResponses.<String>builder()
                 .code(1000)
                 .result(userService.disableUser(userId))
+                .build();
+    }
+
+    @PutMapping("/enableUser/{userId}")
+    ApiResponses<String> enableUser(@PathVariable String userId){
+        return ApiResponses.<String>builder()
+                .code(1000)
+                .result(userService.enableUser(userId))
                 .build();
     }
 }

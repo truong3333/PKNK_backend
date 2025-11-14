@@ -41,8 +41,6 @@ public class AuthenticationService {
     PasswordEncoder passwordEncoder;
     JavaMailSender mailSender;
 
-    AuditLogService auditLogService;
-
     UserRepository userRepository;
     VerificationCodeRepository verificationCodeRepository;
     RoleRepository roleRepository;
@@ -273,7 +271,6 @@ public class AuthenticationService {
 
         invalidatedTokenRepository.save(invalidatedToken);
         log.info("Người dùng: {} đã đăng xuất.", signToken.getJWTClaimsSet().getSubject());
-        auditLogService.logFree("Đăng xuất", signToken.getJWTClaimsSet().getSubject());
 
     }
 
@@ -335,7 +332,6 @@ public class AuthenticationService {
         }
 
         String token = generateToken(user);
-        auditLogService.logFree("Đăng nhập", user.getUsername());
 
         return AuthenticationResponse.builder()
                 .authenticated(isAuthenticated)
