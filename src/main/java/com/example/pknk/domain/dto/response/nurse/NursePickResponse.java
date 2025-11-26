@@ -1,4 +1,4 @@
-package com.example.pknk.domain.dto.response.doctor;
+package com.example.pknk.domain.dto.response.nurse;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,10 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DoctorSummaryResponse {
-
+public class NursePickResponse {
     String id;
     String fullName;
-    String specialization;
-    String phone;
 }

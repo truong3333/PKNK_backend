@@ -10,4 +10,5 @@ import java.util.List;
 public interface TreatmentPlansRepository extends JpaRepository<TreatmentPlans, String> {
     List<TreatmentPlans> findAllByPatientId(String patientId);
     List<TreatmentPlans> findAllByDoctorId(String doctorId);
+    List<TreatmentPlans> findAllByNurseId(String NurseId);
 }

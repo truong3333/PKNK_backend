@@ -35,7 +35,7 @@ public class TreatmentPhases {
     LocalDate endDate;
 
     @JsonFormat(pattern = "HH:mm dd/MM/yyyy")
-    LocalDateTime nextAppointment;
+     LocalDateTime nextAppointment;
 
     @ElementCollection
     List<DentalServicesEntityOrderRequest> listDentalServiceEntityOrder = new ArrayList<>();

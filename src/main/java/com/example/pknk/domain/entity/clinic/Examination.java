@@ -28,6 +28,7 @@ public class Examination {
     String treatment;
     String examined_at;
     double totalCost;
+    List<String> listComment = new ArrayList<>();
 
     @ElementCollection
     List<DentalServicesEntityOrderRequest> listDentalServicesEntityOrder = new ArrayList<>();

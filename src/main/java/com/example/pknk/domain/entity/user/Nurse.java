@@ -1,8 +1,12 @@
 package com.example.pknk.domain.entity.user;
 
+import com.example.pknk.domain.entity.clinic.TreatmentPlans;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,7 +21,8 @@ public class Nurse {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    String department;
+    @OneToMany(mappedBy = "nurse", cascade = CascadeType.ALL)
+    List<TreatmentPlans> listTreatmentPlans = new ArrayList<>();
 
     @OneToOne
     @JoinColumn(name = "user_id")

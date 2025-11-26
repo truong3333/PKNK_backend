@@ -22,5 +22,6 @@ public class TreatmentPlansRequest {
     String duration;
     String notes;
     String examinationId;
+    String nurseId;
 
 }

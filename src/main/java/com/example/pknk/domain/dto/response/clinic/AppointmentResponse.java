@@ -24,7 +24,7 @@ public class AppointmentResponse {
 
     List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
 
-    String doctorFullName;
-    String doctorSpecialization;
+    String doctorId;
+    String patientId;
 
 }

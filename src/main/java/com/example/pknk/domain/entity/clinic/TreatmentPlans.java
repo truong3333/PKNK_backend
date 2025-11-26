@@ -1,6 +1,7 @@
 package com.example.pknk.domain.entity.clinic;
 
 import com.example.pknk.domain.entity.user.Doctor;
+import com.example.pknk.domain.entity.user.Nurse;
 import com.example.pknk.domain.entity.user.Patient;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -30,6 +31,7 @@ public class TreatmentPlans {
     String notes;
     double totalCost;
     String status;
+    List<String> listComment = new ArrayList<>();
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate createAt;
@@ -41,6 +43,10 @@ public class TreatmentPlans {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     Doctor doctor;
+
+    @ManyToOne
+    @JoinColumn(name = "nurse_id")
+    Nurse nurse;
 
     @OneToMany(mappedBy = "treatmentPlans", cascade = CascadeType.ALL)
     List<TreatmentPhases> listTreatmentPhases = new ArrayList<>();

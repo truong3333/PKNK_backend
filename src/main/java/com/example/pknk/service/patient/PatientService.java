@@ -171,8 +171,7 @@ public class PatientService {
                     .type(request.getType())
                     .notes(request.getNotes())
                     .listDentalServicesEntity(request.getListDentalServicesEntity())
-                    .doctorFullName(doctor.getUser().getUserDetail().getFullName())
-                    .doctorSpecialization(doctor.getSpecialization())
+                    .doctorId(doctor.getId())
                     .build();
         }
 
@@ -206,8 +205,7 @@ public class PatientService {
                     .type(appointment.getType())
                     .notes(appointment.getNotes())
                     .listDentalServicesEntity(appointment.getListDentalServicesEntity())
-                    .doctorFullName(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                    .doctorSpecialization(appointment.getDoctor().getSpecialization())
+                    .doctorId(appointment.getDoctor().getId())
                     .build();
         }
 
@@ -263,8 +261,7 @@ public class PatientService {
                     .type(request.getType())
                     .notes(request.getNotes())
                     .listDentalServicesEntity(request.getListDentalServicesEntity())
-                    .doctorFullName(doctor.getUser().getUserDetail().getFullName())
-                    .doctorSpecialization(doctor.getSpecialization())
+                    .doctorId(appointment.getDoctor().getId())
                     .build();
         }
 
@@ -283,8 +280,7 @@ public class PatientService {
                     .type(appointment.getType())
                     .notes(appointment.getNotes())
                     .listDentalServicesEntity(appointment.getListDentalServicesEntity())
-                    .doctorFullName(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                    .doctorSpecialization(appointment.getDoctor().getSpecialization())
+                    .doctorId(appointment.getDoctor().getId())
                     .build()
             ).toList();
         }

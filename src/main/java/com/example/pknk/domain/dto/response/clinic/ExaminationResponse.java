@@ -25,6 +25,7 @@ public class ExaminationResponse {
     String treatment;
     String examined_at;
     double totalCost;
+    List<String> listComment = new ArrayList<>();
 
     List<ImageResponse> listImage = new ArrayList<>();
 

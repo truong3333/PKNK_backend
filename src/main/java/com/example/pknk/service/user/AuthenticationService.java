@@ -187,7 +187,6 @@ public class AuthenticationService {
         userDetail.setCreateAt(LocalDate.now());
 
         Nurse nurse = Nurse.builder()
-                .department(request.getDepartment())
                 .build();
 
         User user = User.builder()

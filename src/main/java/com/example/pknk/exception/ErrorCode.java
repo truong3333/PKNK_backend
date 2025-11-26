@@ -27,6 +27,8 @@ public enum ErrorCode {
 
     DOCTOR_NOT_EXISTED(100,"Bác sĩ không tồn tại", HttpStatus.NOT_FOUND),
 
+    NURSE_NOT_EXISTED(100,"Y tá không tồn tại", HttpStatus.NOT_FOUND),
+
     APPOINTMENT_NOT_EXISTED(100,"Lịch hẹn không tồn tại", HttpStatus.NOT_FOUND),
     APPOINTMENT_EXISTED(100,"Lịch hẹn đã tồn tại", HttpStatus.BAD_REQUEST),
 

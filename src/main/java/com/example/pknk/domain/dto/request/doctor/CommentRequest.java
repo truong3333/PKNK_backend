@@ -9,13 +9,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TreatmentPlansUpdateRequest {
-
-    String title;
-    String description;
-    String duration;
-    String notes;
-    String status;
-    String nurseId;
-
+public class CommentRequest {
+    String comment;
 }

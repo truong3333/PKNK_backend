@@ -114,6 +114,7 @@ public class TreatmentPhasesService {
             }
         }
 
+        treatmentPlans.setTotalCost(treatmentPlans.getTotalCost() + request.getCost());
         treatmentPhases.setTreatmentPlans(treatmentPlans);
         treatmentPlans.getListTreatmentPhases().add(treatmentPhases);
 
@@ -150,6 +151,8 @@ public class TreatmentPhasesService {
             log.error("Phác đồ điều trị id: {} không tồn tại, cập nhật tiến trình điều trị thất bại.", treatmentPhases.getTreatmentPlans().getId());
             throw new AppException(ErrorCode.TREATMENTPLANS_NOT_EXISTED);
         });
+
+        treatmentPlans.setTotalCost(treatmentPlans.getTotalCost() - treatmentPhases.getCost() + request.getCost());
 
         DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 

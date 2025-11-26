@@ -36,6 +36,14 @@ public class DoctorController {
                 .build();
     }
 
+    @GetMapping("/{doctorId}")
+    ApiResponses<DoctorSummaryResponse> getInfoDoctorById(@PathVariable String doctorId){
+        return ApiResponses.<DoctorSummaryResponse>builder()
+                .code(1000)
+                .result(doctorService.getInfoDoctorById(doctorId))
+                .build();
+    }
+
     // Appointment
     @GetMapping("/appointment/scheduled/{doctorId}")
     ApiResponses<List<AppointmentResponse>> getAppointmentScheduledOfDoctor(@PathVariable String doctorId){
@@ -167,6 +175,16 @@ public class DoctorController {
         return ApiResponses.<List<TreatmentPhasesResponse>>builder()
                 .code(1000)
                 .result(treatmentPhasesService.getAllTreatmentPhasesOfTreatmentPlansId(treatmentPlansId))
+                .build();
+    }
+
+
+    //DOCTOR LV2
+    @PostMapping("/comment/{examinationId}")
+    ApiResponses<ExaminationResponse> addCommentByDoctorLV2(@PathVariable String examinationId, @RequestBody CommentRequest request){
+        return ApiResponses.<ExaminationResponse>builder()
+                .code(1000)
+                .result(doctorService.addCommentByDoctorLV2(examinationId, request))
                 .build();
     }
 

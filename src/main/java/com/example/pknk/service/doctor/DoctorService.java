@@ -2,6 +2,7 @@ package com.example.pknk.service.doctor;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.pknk.domain.dto.request.doctor.CommentRequest;
 import com.example.pknk.domain.dto.request.doctor.ExaminationRequest;
 import com.example.pknk.domain.dto.request.doctor.ExaminationUpdateRequest;
 import com.example.pknk.domain.dto.response.clinic.AppointmentResponse;
@@ -29,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,20 @@ public class DoctorService {
     CostRepository costRepository;
 
     Cloudinary cloudinary;
+
+    public DoctorSummaryResponse getInfoDoctorById(String doctorId){
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> {
+            log.info("Bác sĩ id: {} không tồn tại, lấy thông tin thất bại.");
+            throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
+        });
+
+        return DoctorSummaryResponse.builder()
+                .id(doctorId)
+                .fullName(doctor.getUser().getUserDetail().getFullName())
+                .specialization(doctor.getSpecialization())
+                .phone(doctor.getUser().getUserDetail().getPhone())
+                .build();
+    }
 
     public List<DoctorSummaryResponse> getAllDoctors(){
         List<Doctor> doctors = new ArrayList<>(doctorRepository.findAll());
@@ -70,8 +87,8 @@ public class DoctorService {
                 .type(appointment.getType())
                 .notes(appointment.getNotes())
                 .listDentalServicesEntity(appointment.getListDentalServicesEntity())
-                .doctorFullName(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                .doctorSpecialization(appointment.getDoctor().getSpecialization())
+                .doctorId(doctorId)
+                .patientId(appointment.getPatient().getId())
                 .build()
         ).toList();
     }
@@ -89,8 +106,8 @@ public class DoctorService {
                 .type(appointment.getType())
                 .notes(appointment.getNotes())
                 .listDentalServicesEntity(appointment.getListDentalServicesEntity())
-                .doctorFullName(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                .doctorSpecialization(appointment.getDoctor().getSpecialization())
+                .doctorId(doctorId)
+                .patientId(appointment.getPatient().getId())
                 .build()
         ).toList();
     }
@@ -110,8 +127,8 @@ public class DoctorService {
                 .type(appointment.getType())
                 .notes(appointment.getNotes())
                 .listDentalServicesEntity(appointment.getListDentalServicesEntity())
-                .doctorFullName(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                .doctorSpecialization(appointment.getDoctor().getSpecialization())
+                .doctorId(user.getDoctor().getId())
+                .patientId(appointment.getPatient().getId())
                 .build()
         ).toList();
     }
@@ -131,8 +148,8 @@ public class DoctorService {
                 .type(appointment.getType())
                 .notes(appointment.getNotes())
                 .listDentalServicesEntity(appointment.getListDentalServicesEntity())
-                .doctorFullName(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                .doctorSpecialization(appointment.getDoctor().getSpecialization())
+                .doctorId(user.getDoctor().getId())
+                .patientId(appointment.getPatient().getId())
                 .build()
         ).toList();
     }
@@ -243,6 +260,7 @@ public class DoctorService {
                         .build()
                 ).toList())
                 .createAt(examination.getAppointment().getDateTime().toLocalDate())
+                .listComment(examination.getListComment())
                 .build();
     }
 
@@ -351,6 +369,7 @@ public class DoctorService {
                         .build()
                 ).toList())
                 .createAt(examination.getAppointment().getDateTime().toLocalDate())
+                .listComment(examination.getListComment())
                 .build();
     }
 
@@ -423,6 +442,52 @@ public class DoctorService {
                             .build()
                     ).toList())
                     .createAt(examination.getAppointment().getDateTime().toLocalDate())
+                    .listComment(examination.getListComment())
                     .build();
+    }
+
+
+    // DOCTOR LV2
+    public ExaminationResponse addCommentByDoctorLV2(String examinationId, CommentRequest request){
+        Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
+            log.error("Kết quả khám id: {} không tồn tại, thêm nhận xét thất bại.", examinationId);
+            throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
+        });
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> {
+            log.error("Username: {} không tồn tại, thêm nhận xét thất bại.", username);
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        });
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+        String now = LocalDateTime.now().format(formatter);
+
+        String comment = "[" + user.getDoctor().getId() + "]" + "[" + now + "]" + user.getUserDetail().getFullName() + ": " + request.getComment()  ;
+
+        examination.getListComment().add(comment);
+        examinationRepository.save(examination);
+        log.info("Bác sĩ id: {} thêm nhận xét cho kết quả khám id: {} thành công.", user.getDoctor().getId(), examinationId);
+
+        return ExaminationResponse.builder()
+                .id(examination.getId())
+                .symptoms(examination.getSymptoms())
+                .diagnosis(examination.getDiagnosis())
+                .notes(examination.getNotes())
+                .treatment(examination.getTreatment())
+                .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(examination.getListPrescriptionOrder())
+                .totalCost(examination.getTotalCost())
+                .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
+                        .publicId(image.getPublicId())
+                        .type(image.getType())
+                        .url(image.getUrl())
+                        .build()
+                ).toList())
+                .createAt(examination.getAppointment().getDateTime().toLocalDate())
+                .listComment(examination.getListComment())
+                .build();
     }
 }

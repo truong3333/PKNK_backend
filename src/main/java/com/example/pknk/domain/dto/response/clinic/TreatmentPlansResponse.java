@@ -21,7 +21,9 @@ public class TreatmentPlansResponse {
     String notes;
     String status;
     double totalCost;
-    String doctorFullname;
+    String doctorId;
+    String nurseId;
+    String patientId;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate createAt;
