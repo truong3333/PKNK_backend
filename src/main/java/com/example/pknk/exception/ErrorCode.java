@@ -24,7 +24,6 @@ public enum ErrorCode {
 
     PATIENT_NOT_EXISTED(100,"Bệnh nhân không tồn tại", HttpStatus.NOT_FOUND),
 
-
     DOCTOR_NOT_EXISTED(100,"Bác sĩ không tồn tại", HttpStatus.NOT_FOUND),
 
     NURSE_NOT_EXISTED(100,"Y tá không tồn tại", HttpStatus.NOT_FOUND),
@@ -43,6 +42,9 @@ public enum ErrorCode {
 
     CATEGORY_SERVICE_NOT_EXISTED(100,"Loại dịch vụ không tồn tại", HttpStatus.BAD_REQUEST),
     CATEGORY_SERVICE_EXISTED(100,"Loại dịch vụ đã tồn tại", HttpStatus.BAD_REQUEST),
+
+    TOOTH_NUMBER_EXISTED(100,"Răng này đã tồn tại thông tin", HttpStatus.BAD_REQUEST),
+    TOOTH_NOT_EXISTED(100,"Răng này không tồn tại thông tin", HttpStatus.BAD_REQUEST),
 
     SERVICE_NOT_EXISTED(100,"Dịch vụ không tồn tại", HttpStatus.BAD_REQUEST),
 
