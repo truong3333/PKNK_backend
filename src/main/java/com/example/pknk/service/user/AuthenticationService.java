@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -106,6 +107,7 @@ public class AuthenticationService {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     public String createDoctor(DoctorCreateRequest request){
         if(userRepository.existsByUsername(request.getUsername())){
             log.error("Tài khoản: {} đã tồn tại, đăng kí tài khoản bác sĩ thất bại", request.getUsername());
@@ -163,6 +165,7 @@ public class AuthenticationService {
         return "Đăng kí tài khoản bác sĩ thành công.";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public String createNurse(NurseCreateRequest request){
         if(userRepository.existsByUsername(request.getUsername())){
             log.error("Tài khoản: {} đã tồn tại, đăng kí tài khoản y tá thất bại", request.getUsername());
@@ -272,6 +275,7 @@ public class AuthenticationService {
         log.info("Người dùng: {} đã đăng xuất.", signToken.getJWTClaimsSet().getSubject());
 
     }
+
 
     public IntrospectResponse introspect(IntrospectRequest request) throws ParseException, JOSEException {
         var token = request.getToken();

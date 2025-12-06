@@ -1,14 +1,13 @@
 package com.example.pknk.controller.clinic;
 
+import com.example.pknk.domain.dto.request.clinic.CostPaymentUpdateRequest;
 import com.example.pknk.domain.dto.response.clinic.CostResponse;
 import com.example.pknk.domain.dto.response.user.ApiResponses;
 import com.example.pknk.service.clinic.CostService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,4 +25,13 @@ public class CostController {
                 .result(costService.getAllMyCost())
                 .build();
     }
+
+    @PutMapping("/{costId}")
+    ApiResponses<CostResponse> updatePaymentCost(@PathVariable String costId, @RequestBody CostPaymentUpdateRequest request){
+        return ApiResponses.<CostResponse>builder()
+                .code(1000)
+                .result(costService.updatePaymentCost(costId, request))
+                .build();
+    }
+
 }

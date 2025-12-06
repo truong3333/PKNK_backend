@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class ToothService {
     ToothRepository toothRepository;
     PatientRepository patientRepository;
 
+    @PreAuthorize("hasAuthority('CREATE_TOOTH_STATUS','ADMIN')")
     public ToothResponse createToothStatus(String patientId, ToothRequest request){
         Patient patient = patientRepository.findById(patientId).orElseThrow(() -> {
             log.error("Bệnh nhân id: {} không tồn tại, thêm thông tin răng thất bại.", patientId);
@@ -53,6 +55,7 @@ public class ToothService {
                 .build();
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_TOOTH_STATUS','ADMIN')")
     public ToothResponse updateToothStatus(String toothId, ToothUpdateRequest request){
         Tooth tooth = toothRepository.findById(toothId).orElseThrow(() -> {
             log.error("Trạng thái răng id: {} không tồn tại, cập nhật thất bại.", toothId);
@@ -71,6 +74,7 @@ public class ToothService {
                 .build();
     }
 
+    @PreAuthorize("hasAuthority('GET_TOOTH_STATUS','ADMIN')")
     public List<ToothResponse> getAllToothStatusOfPatient(String patientId){
         List<Tooth> listTooth = new ArrayList<>(toothRepository.findAllByPatientId(patientId));
 

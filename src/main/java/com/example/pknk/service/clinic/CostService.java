@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class CostService {
     CostRepository costRepository;
     UserRepository userRepository;
 
+    @PreAuthorize("hasRole('PATIENT')")
     public List<CostResponse> getAllMyCost(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -51,6 +53,7 @@ public class CostService {
         ).toList();
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_PAYMENT_COST','ADMIN')")
     public CostResponse updatePaymentCost(String costId, CostPaymentUpdateRequest request){
         Cost cost = costRepository.findById(costId).orElseThrow(() -> {
             log.error("Chi phí id: {} không tồn tại, cập nhật thanh toán thất bại.", costId);

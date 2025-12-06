@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.List;
 public class PermissionService {
     PermissionRepository permissionRepository;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public String create(PermissionRequest request){
         if(permissionRepository.existsById(request.getName())){
             log.error("Quyền: {} đã tồn tại, thêm mới thất bại.", request.getName());
@@ -40,6 +42,7 @@ public class PermissionService {
         return "Tạo quyền thành công.";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<PermissionResponse> getAll(){
         List<Permission> permissions = new ArrayList<>(permissionRepository.findAll());
 

@@ -22,6 +22,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,7 @@ public class TreatmentPlansService {
     TreatmentPlansRepository treatmentPlansRepository;
     ExaminationRepository examinationRepository;
 
+    @PreAuthorize("hasAuthority('CREATE_TREATMENT_PLANS','ADMIN')")
     public TreatmentPlansResponse createTreatmentPlans(TreatmentPlansRequest request){
         Examination examination = examinationRepository.findById(request.getExaminationId()).orElseThrow(() -> {
             log.error("Kết quả khám id: {} không tồn tại, xem chi tiết kết quả khám thất bại.", request.getExaminationId());
@@ -94,6 +96,7 @@ public class TreatmentPlansService {
                 .build();
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_TREATMENT_PLANS','ADMIN')")
     public TreatmentPlansResponse updateTreatmentPlans(String treatmentPlansId, TreatmentPlansUpdateRequest request){
         TreatmentPlans treatmentPlans = treatmentPlansRepository.findById(treatmentPlansId).orElseThrow(() -> {
             log.error("Phác đồ điều trị id: {} không tồn tại, cập nhật thất bại.", treatmentPlansId);
@@ -136,6 +139,7 @@ public class TreatmentPlansService {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<TreatmentPlansResponse> getAllTreatmentPlans(){
         return treatmentPlansRepository.findAll().stream().map(treatmentPlans -> TreatmentPlansResponse.builder()
                         .id(treatmentPlans.getId())
@@ -152,6 +156,7 @@ public class TreatmentPlansService {
                 ).toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<TreatmentPlansResponse> getAllTreatmentPlansByPatientId(String patientId){
         List<TreatmentPlans> listTreatmentPlans = new ArrayList<>(treatmentPlansRepository.findAllByPatientId(patientId)) ;
 
@@ -170,6 +175,7 @@ public class TreatmentPlansService {
                 .build()).toList();
     }
 
+    @PreAuthorize("hasAnyRole('DOCTOR','DOCTORLV2')")
     public List<TreatmentPlansResponse> getMyTreatmentPlansOfDoctor(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -195,6 +201,7 @@ public class TreatmentPlansService {
                 .build()).toList();
     }
 
+    @PreAuthorize("hasRole('NURSE')")
     public List<TreatmentPlansResponse> getMyTreatmentPlansOfNurse(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -220,6 +227,7 @@ public class TreatmentPlansService {
                 .build()).toList();
     }
 
+    @PreAuthorize("hasRole('PATIENT')")
     public List<TreatmentPlansResponse> getMyTreatmentPlansOfPatient(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 

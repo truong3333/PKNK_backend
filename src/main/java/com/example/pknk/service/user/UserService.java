@@ -48,24 +48,25 @@ public class UserService {
         }
 
 
+        @PreAuthorize("hasRole('ADMIN')")
         public UserResponse getById(String userId){
-                User user = userRepository.findById(userId).orElseThrow(() -> {
-                        log.error("UserId: {} không tồn tại, xem thông tin người dùng thất bại", userId);
-                        throw new AppException(ErrorCode.USER_NOT_EXISTED);
-                });
+            User user = userRepository.findById(userId).orElseThrow(() -> {
+                log.error("UserId: {} không tồn tại, xem thông tin người dùng thất bại", userId);
+                throw new AppException(ErrorCode.USER_NOT_EXISTED);
+            });
 
-                log.info("UserId: {} lấy thông tin thành công theo id", userId);
+            log.info("UserId: {} lấy thông tin thành công theo id", userId);
 
-                return UserResponse.builder()
-                        .id(user.getId())
-                        .username(user.getUsername())
-                        .fullName(user.getUserDetail().getFullName())
-                        .phone(user.getUserDetail().getPhone())
-                        .email(user.getUserDetail().getEmail())
-                        .address(user.getUserDetail().getAddress())
-                        .gender(user.getUserDetail().getGender())
-                        .dob(user.getUserDetail().getDob())
-                        .build();
+            return UserResponse.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .fullName(user.getUserDetail().getFullName())
+                    .phone(user.getUserDetail().getPhone())
+                    .email(user.getUserDetail().getEmail())
+                    .address(user.getUserDetail().getAddress())
+                    .gender(user.getUserDetail().getGender())
+                    .dob(user.getUserDetail().getDob())
+                    .build();
         }
 
 
@@ -144,6 +145,7 @@ public class UserService {
                 return "Đôi mật khẩu thành công";
         }
 
+        @PreAuthorize("hasRole('ADMIN')")
         public String disableUser(String userId){
                 User user = userRepository.findById(userId).orElseThrow(() -> {
                         log.error("UserId: {} không tồn tại, đổi mật khẩu thất bại", userId);
@@ -158,6 +160,7 @@ public class UserService {
                 return "Vô hiệu hoá tài khoản thành công";
         }
 
+        @PreAuthorize("hasRole('ADMIN')")
         public String enableUser(String userId){
                 User user = userRepository.findById(userId).orElseThrow(() -> {
                         log.error("UserId: {} không tồn tại, đổi mật khẩu thất bại", userId);

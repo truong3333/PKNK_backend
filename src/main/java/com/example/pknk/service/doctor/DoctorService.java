@@ -24,6 +24,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,9 +51,10 @@ public class DoctorService {
 
     Cloudinary cloudinary;
 
+    @PreAuthorize("hasAuthority('GET_INFO_DOCTOR','ADMIN')")
     public DoctorSummaryResponse getInfoDoctorById(String doctorId){
         Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> {
-            log.info("Bác sĩ id: {} không tồn tại, lấy thông tin thất bại.");
+            log.info("Bác sĩ id: {} không tồn tại, lấy thông tin thất bại.", doctorId);
             throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
         });
 
@@ -64,6 +66,7 @@ public class DoctorService {
                 .build();
     }
 
+    @PreAuthorize("hasAnyRole('PATIENT','ADMIN','NURSE')")
     public List<DoctorSummaryResponse> getAllDoctors(){
         List<Doctor> doctors = new ArrayList<>(doctorRepository.findAll());
         return doctors.stream().map(d -> DoctorSummaryResponse.builder()
@@ -74,6 +77,7 @@ public class DoctorService {
         ).toList();
     }
 
+    @PreAuthorize("hasAnyRole('NURSE','ADMIN')")
     public List<AppointmentResponse> getAppointmentScheduledOfDoctor(String doctorId){
         if(!doctorRepository.existsById(doctorId)){
             log.error("Bác sĩ id: {} không tồn tại, lấy danh sách lịch hẹn thất bại.", doctorId);
@@ -93,6 +97,7 @@ public class DoctorService {
         ).toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<AppointmentResponse> getAllAppointmentOfDoctor(String doctorId){
         if(!doctorRepository.existsById(doctorId)){
             log.error("Bác sĩ id: {} không tồn tại, lấy danh sách lịch hẹn thất bại.", doctorId);
@@ -112,6 +117,7 @@ public class DoctorService {
         ).toList();
     }
 
+    @PreAuthorize("hasAnyRole('DOCTOR','DOCTORLV2')")
     public List<AppointmentResponse> getAppointmentScheduledOfMyDoctor(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -133,6 +139,7 @@ public class DoctorService {
         ).toList();
     }
 
+    @PreAuthorize("hasAnyRole('DOCTOR','DOCTORLV2')")
     public List<AppointmentResponse> getAllAppointmentOfMyDoctor(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -154,6 +161,7 @@ public class DoctorService {
         ).toList();
     }
 
+    @PreAuthorize("hasAuthority('CREATE_EXAMINATION','ADMIN')")
     public ExaminationResponse createExamination(String appointmentId, ExaminationRequest request) throws IOException {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> {
             log.error("Lịch hẹn id: {} không tồn tại, thêm kết quả khám thất bại.", appointmentId);
@@ -264,6 +272,7 @@ public class DoctorService {
                 .build();
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_EXAMINATION','ADMIN')")
     @Transactional
     public ExaminationResponse updateExamination(String examinationId, ExaminationUpdateRequest request) throws IOException {
         Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
@@ -373,6 +382,7 @@ public class DoctorService {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public ExaminationResponse getExaminationByAppointmentId(String appointmentId){
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> {
             log.error("Lịch hẹn id: {} không tồn tại, xem kết quả khám thất bại.", appointmentId);
@@ -395,6 +405,7 @@ public class DoctorService {
                 .build();
     }
 
+    @PreAuthorize("hasAnyRole('DOCTOR','DOCTORLV2')")
     public List<ExaminationResponse> getMyExamination() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -419,6 +430,7 @@ public class DoctorService {
         ).toList();
     }
 
+    @PreAuthorize("hasAuthority('GET_EXAMINATION_DETAIL','ADMIN')")
     public ExaminationResponse getExaminationDetailById(String examinationId){
         Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
             log.error("Kết quả khám id: {} không tồn tại, xem chi tiết kết quả khám thất bại.", examinationId);
@@ -448,6 +460,7 @@ public class DoctorService {
 
 
     // DOCTOR LV2
+    @PreAuthorize("hasRole('DOCTORLV2')")
     public ExaminationResponse addCommentByDoctorLV2(String examinationId, CommentRequest request){
         Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
             log.error("Kết quả khám id: {} không tồn tại, thêm nhận xét thất bại.", examinationId);

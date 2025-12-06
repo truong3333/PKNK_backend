@@ -28,6 +28,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,7 @@ public class PatientService {
         AppointmentRepository appointmentRepository;
         ExaminationRepository examinationRepository;
 
+        @PreAuthorize("hasAuthority('GET_BASIC_INFO','ADMIN')")
         public PatientResponse getBasicInfo(String patientId){
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> {
                 log.error("Bệnh nhân id: {} không tồn tại, lấy thông tin cơ bản thất bại.", patientId);
@@ -70,6 +72,8 @@ public class PatientService {
                     .medicalHistory(patient.getMedicalHistory())
                     .build();
         }
+
+        @PreAuthorize("hasRole('PATIENT')")
         public PatientResponse getMyPatientInfo() {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
             Patient patient = patientRepository.findByUserUsername(username)
@@ -89,6 +93,8 @@ public class PatientService {
                     .medicalHistory(patient.getMedicalHistory())
                     .build();
         }
+
+        @PreAuthorize("hasAnyRole('PATIENT','ADMIN')")
         public EmergencyContactResponse updateEmergencyContact(String patientId, EmergencyContactRequest request){
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> {
                 log.error("Bệnh nhân id: {} không tồn tại, cập nhật thông tin liên hệ khẩn cấp thất bại.", patientId);
@@ -107,6 +113,7 @@ public class PatientService {
                     .build();
         }
 
+        @PreAuthorize("hasAnyRole('PATIENT','ADMIN')")
         public MedicalInformationResponse updateMedicalInformation(String patientId, MedicalInformationRequest request){
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> {
                 log.error("Bệnh nhân id: {} không tồn tại, cập nhật thông tin y tế thất bại.", patientId);
@@ -127,6 +134,7 @@ public class PatientService {
                     .build();
         }
 
+        @PreAuthorize("hasRole('PATIENT')")
         public AppointmentResponse bookingAppointment(AppointmentRequest request){
             Doctor doctor = doctorRepository.findById(request.getDoctorId()).orElseThrow(() -> {
                 log.error("Bác sĩ id: {} không tồn tại, đặt lịch hẹn thất bại.", request.getDoctorId());
@@ -175,6 +183,7 @@ public class PatientService {
                     .build();
         }
 
+        @PreAuthorize("hasAnyRole('PATIENT','ADMIN')")
         public List<BookingDateTimeResponse> getAllBookingOfDoctor(String doctorId){
             List<BookingDateTime> listBooking = new ArrayList<>(bookingDateTimeRepository.findAllByDoctorId(doctorId));
 
@@ -184,6 +193,7 @@ public class PatientService {
             ).toList();
         }
 
+        @PreAuthorize("hasAnyRole('PATIENT','ADMIN')")
         @Transactional
         public AppointmentResponse cancelBookingAppointment(String appointmentId){
             Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> {
@@ -209,6 +219,7 @@ public class PatientService {
                     .build();
         }
 
+        @PreAuthorize("hasAnyRole('PATIENT','ADMIN')")
         @Transactional
         public AppointmentResponse updateBookingAppointment(String appointmentId, AppointmentRequest request){
             Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> {
@@ -265,6 +276,7 @@ public class PatientService {
                     .build();
         }
 
+        @PreAuthorize("hasRole('PATIENT')")
         public List<AppointmentResponse> getMyAppointment(){
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -285,6 +297,7 @@ public class PatientService {
             ).toList();
         }
 
+        @PreAuthorize("hasRole('PATIENT')")
         public List<ExaminationResponse> getMyExamination(){
             String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -309,29 +322,30 @@ public class PatientService {
             ).toList();
         }
 
-    public ExaminationResponse getExaminationDetailById(String examinationId){
-        Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
-            log.error("Kết quả khám id: {} không tồn tại, xem chi tiết kết quả khám thất bại.", examinationId);
-            throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
-        });
+        @PreAuthorize("hasAnyRole('PATIENT','ADMIN')")
+        public ExaminationResponse getExaminationDetailById(String examinationId){
+            Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
+                log.error("Kết quả khám id: {} không tồn tại, xem chi tiết kết quả khám thất bại.", examinationId);
+                throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
+            });
 
-        return ExaminationResponse.builder()
-                .id(examination.getId())
-                .symptoms(examination.getSymptoms())
-                .diagnosis(examination.getDiagnosis())
-                .notes(examination.getNotes())
-                .treatment(examination.getTreatment())
-                .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
-                .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
-                .listPrescriptionOrder(examination.getListPrescriptionOrder())
-                .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
-                        .publicId(image.getPublicId())
-                        .type(image.getType())
-                        .url(image.getUrl())
-                        .build()
-                ).toList())
-                .createAt(examination.getAppointment().getDateTime().toLocalDate())
-                .build();
-    }
+            return ExaminationResponse.builder()
+                    .id(examination.getId())
+                    .symptoms(examination.getSymptoms())
+                    .diagnosis(examination.getDiagnosis())
+                    .notes(examination.getNotes())
+                    .treatment(examination.getTreatment())
+                    .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                    .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
+                    .listPrescriptionOrder(examination.getListPrescriptionOrder())
+                    .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
+                            .publicId(image.getPublicId())
+                            .type(image.getType())
+                            .url(image.getUrl())
+                            .build()
+                    ).toList())
+                    .createAt(examination.getAppointment().getDateTime().toLocalDate())
+                    .build();
+        }
 
 }

@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.sql.Struct;
@@ -23,6 +24,7 @@ import java.util.List;
 public class PrescriptionService {
     PrescriptionRepository prescriptionRepository;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public PrescriptionResponse createPrescription(PrescriptionRequest request){
         if(prescriptionRepository.existsById(request.getName())){
             log.error("Thuốc: {} đã tồn tại, thêm thuốc thất bại.", request.getName());
@@ -51,6 +53,7 @@ public class PrescriptionService {
                 .build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public PrescriptionResponse updatePrescription(String prescriptionName, PrescriptionUpdateRequest request){
         Prescription prescription = prescriptionRepository.findById(prescriptionName).orElseThrow(() -> {
             log.error("Thuốc: {} không tồn tại, cập nhật thất bại.", prescriptionName);

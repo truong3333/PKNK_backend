@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +28,7 @@ public class RoleService {
     RoleRepository roleRepository;
     PermissionRepository permissionRepository;
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public String create(RoleRequest request){
         if(roleRepository.existsById(request.getName())){
             log.error("Vai trò {} đã tồn tại, tao mới thất bại.",request.getName());
@@ -45,7 +46,7 @@ public class RoleService {
         return "Tạo vai trò thành công.";
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<RoleResponse> getAll(){
         List<Role> roles = new ArrayList<>(roleRepository.findAll());
 
@@ -60,7 +61,7 @@ public class RoleService {
                 .build()).toList();
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public String createPermission(String roleName, String permissionName){
         Role role = roleRepository.findById(roleName).orElseThrow(() -> {
@@ -80,7 +81,7 @@ public class RoleService {
         return "Thêm quyền cho vai trò thành công";
     }
 
-//    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public String deletePermission(String roleName, String permissionName){
         Role role = roleRepository.findById(roleName).orElseThrow(() -> {

@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import java.util.List;
 public class CategoryDentalService {
         CategoryDentalRepository categoryDentalRepository;
 
+        @PreAuthorize("hasRole('ADMIN')")
         public CategoryDentalServiceResponse createCategoryDentalService(CategoryDentalServiceRequest request){
                 if(categoryDentalRepository.existsByName(request.getName())){
                         log.error("Loại dịch vụ: {} đã tồn tại, thêm thất bại.", request.getName());
@@ -42,6 +44,7 @@ public class CategoryDentalService {
                         .build();
         }
 
+        @PreAuthorize("hasRole('ADMIN')")
         public CategoryDentalServiceResponse updateCategoryDentalService(String categoryId, CategoryDentalServiceRequest request){
                 CategoryDental categoryDental = categoryDentalRepository.findById(categoryId).orElseThrow(() -> {
                         log.error("Loại dịch vụ: {} không tồn tại, cập nhật thất bại.", request.getName());

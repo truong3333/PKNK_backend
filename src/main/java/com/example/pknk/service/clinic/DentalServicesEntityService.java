@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,7 +26,8 @@ public class DentalServicesEntityService {
         DentalServicesEntityServiceRepository dentalServicesEntityServiceRepository;
         CategoryDentalRepository categoryDentalRepository;
 
-        public DentalServicesEntityResponse createService(String categoryDentalServiceId, DentalServicesEntityRequest request){
+    @PreAuthorize("hasRole('ADMIN')")
+    public DentalServicesEntityResponse createService(String categoryDentalServiceId, DentalServicesEntityRequest request){
             CategoryDental categoryDental = categoryDentalRepository.findById(categoryDentalServiceId).orElseThrow(() -> {
                 log.error("Loại dịch vụ: {} không tồn tại, thêm dịch vụ mới thất bại.", request.getName());
                 throw new AppException(ErrorCode.CATEGORY_SERVICE_NOT_EXISTED);
@@ -51,7 +53,8 @@ public class DentalServicesEntityService {
                     .build();
         }
 
-        public DentalServicesEntityResponse updateService(String serviceId, DentalServicesEntityRequest request){
+    @PreAuthorize("hasRole('ADMIN')")
+    public DentalServicesEntityResponse updateService(String serviceId, DentalServicesEntityRequest request){
             DentalServicesEntity dentalServicesEntity = dentalServicesEntityServiceRepository.findById(serviceId).orElseThrow(() -> {
                 log.error("Dịch vụ id: {} không tồn tại, cập nhật dịch vụ thất bại.", serviceId);
                 throw new AppException(ErrorCode.SERVICE_NOT_EXISTED);
