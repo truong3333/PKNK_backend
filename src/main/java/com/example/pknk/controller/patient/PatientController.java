@@ -1,0 +1,158 @@
+package com.example.pknk.controller.patient;
+
+import com.example.pknk.domain.dto.request.patient.*;
+import com.example.pknk.domain.dto.response.clinic.AppointmentResponse;
+import com.example.pknk.domain.dto.response.clinic.ExaminationResponse;
+import com.example.pknk.domain.dto.response.clinic.TreatmentPlansResponse;
+import com.example.pknk.domain.dto.response.patient.*;
+import com.example.pknk.domain.dto.response.user.ApiResponses;
+import com.example.pknk.service.patient.PatientService;
+import com.example.pknk.service.patient.ToothService;
+import com.example.pknk.service.patient.TreatmentPlansService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1/patient")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class PatientController {
+    PatientService patientService;
+    TreatmentPlansService treatmentPlansService;
+    ToothService toothService;
+
+    @GetMapping("/{patientId}")
+    ApiResponses<PatientResponse> getBasicInfo(@PathVariable String patientId){
+        return ApiResponses.<PatientResponse>builder()
+                .code(1000)
+                .result(patientService.getBasicInfo(patientId))
+                .build();
+    }
+    @GetMapping("/myInfo")
+    public ApiResponses<PatientResponse> getMyInfo(){
+        return ApiResponses.<PatientResponse>builder()
+                .code(1000)
+                .result(patientService.getMyPatientInfo())
+                .build();
+    }
+    @PutMapping("/emergencyContact/{patientId}")
+    ApiResponses<EmergencyContactResponse> updateEmergencyContact(@PathVariable String patientId, @RequestBody EmergencyContactRequest request){
+        return ApiResponses.<EmergencyContactResponse>builder()
+                .code(1000)
+                .result(patientService.updateEmergencyContact(patientId, request))
+                .build();
+    }
+
+    @PutMapping("/medicalInformation/{patientId}")
+    ApiResponses<MedicalInformationResponse> updateMedicalInformation(@PathVariable String patientId, @RequestBody MedicalInformationRequest request){
+        return  ApiResponses.<MedicalInformationResponse>builder()
+                .code(1000)
+                .result(patientService.updateMedicalInformation(patientId, request))
+                .build();
+    }
+
+    @PostMapping("/appointment/booking")
+    ApiResponses<AppointmentResponse> bookAppointment(@RequestBody AppointmentRequest request){
+        return ApiResponses.<AppointmentResponse>builder()
+                .code(1000)
+                .result(patientService.bookingAppointment(request))
+                .build();
+    }
+
+    @GetMapping("/appointment/bookingDateTime/{doctorId}")
+    ApiResponses<List<BookingDateTimeResponse>> getAllBookingForPatient(@PathVariable String doctorId){
+        return ApiResponses.<List<BookingDateTimeResponse>>builder()
+                .code(1000)
+                .result(patientService.getAllBookingOfDoctor(doctorId))
+                .build();
+    }
+
+    @PutMapping("/appointment/booking/cancel/{appointmentId}")
+    ApiResponses<AppointmentResponse> cancelBookingAppointment(@PathVariable String appointmentId){
+        return ApiResponses.<AppointmentResponse>builder()
+                .code(1000)
+                .result(patientService.cancelBookingAppointment(appointmentId))
+                .build();
+    }
+
+    @PutMapping("/appointment/booking/update/{appointmentId}")
+    ApiResponses<AppointmentResponse> updateBookingAppointment(@PathVariable String appointmentId, @RequestBody AppointmentRequest request){
+        return ApiResponses.<AppointmentResponse>builder()
+                .code(1000)
+                .result(patientService.updateBookingAppointment(appointmentId, request))
+                .build();
+    }
+
+    @GetMapping("/myAppointment")
+    ApiResponses<List<AppointmentResponse>> getMyAppointment(){
+        return ApiResponses.<List<AppointmentResponse>>builder()
+                .code(1000)
+                .result(patientService.getMyAppointment())
+                .build();
+    }
+
+    @GetMapping("/myExamination")
+    ApiResponses<List<ExaminationResponse>> getMyExamination(){
+        return ApiResponses.<List<ExaminationResponse>>builder()
+                .code(1000)
+                .result(patientService.getMyExamination())
+                .build();
+    }
+
+    @GetMapping("/examination/{examinationId}")
+    ApiResponses<ExaminationResponse> getExaminationDetailById(@PathVariable String examinationId){
+        return ApiResponses.<ExaminationResponse>builder()
+                .code(1000)
+                .result(patientService.getExaminationDetailById(examinationId))
+                .build();
+    }
+
+    @GetMapping("/treatmentPlans/{patientId}")
+    ApiResponses<List<TreatmentPlansResponse>> getAllTreatmentPlansByPatientId(@PathVariable String patientId){
+        return ApiResponses.<List<TreatmentPlansResponse>>builder()
+                .code(1000)
+                .result(treatmentPlansService.getAllTreatmentPlansByPatientId(patientId))
+                .build();
+    }
+
+    @GetMapping("/myTreatmentPlans")
+    ApiResponses<List<TreatmentPlansResponse>> getMyTreatmentPlansOfPatient(){
+        return ApiResponses.<List<TreatmentPlansResponse>>builder()
+                .code(1000)
+                .result(treatmentPlansService.getMyTreatmentPlansOfPatient())
+                .build();
+    }
+
+
+    //Tooth
+    @PostMapping("/{patientId}/tooth")
+    ApiResponses<ToothResponse> createToothStatus(@PathVariable String patientId, @RequestBody ToothRequest request){
+        return ApiResponses.<ToothResponse>builder()
+                .code(1000)
+                .result(toothService.createToothStatus(patientId, request))
+                .build();
+    }
+
+    @PutMapping("/tooth/{toothId}")
+    ApiResponses<ToothResponse> updateToothStatus(@PathVariable String toothId, @RequestBody ToothUpdateRequest request){
+        return ApiResponses.<ToothResponse>builder()
+                .code(1000)
+                .result(toothService.updateToothStatus(toothId, request))
+                .build();
+    }
+
+    @GetMapping("/{patientId}/tooth")
+    ApiResponses<List<ToothResponse>> getAllToothStatusOfPatient(@PathVariable String patientId){
+        return ApiResponses.<List<ToothResponse>>builder()
+                .code(1000)
+                .result(toothService.getAllToothStatusOfPatient(patientId))
+                .build();
+    }
+
+
+}

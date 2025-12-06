@@ -1,0 +1,53 @@
+package com.example.pknk.domain.entity.clinic;
+
+import com.example.pknk.domain.entity.user.Doctor;
+import com.example.pknk.domain.entity.user.Nurse;
+import com.example.pknk.domain.entity.user.Patient;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class TreatmentPlans {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
+
+    String title;
+    String description;
+    String duration;
+    String notes;
+    double totalCost;
+    String status;
+    List<String> listComment = new ArrayList<>();
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    LocalDate createAt;
+
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
+    Patient patient;
+
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    Doctor doctor;
+
+    @ManyToOne
+    @JoinColumn(name = "nurse_id")
+    Nurse nurse;
+
+    @OneToMany(mappedBy = "treatmentPlans", cascade = CascadeType.ALL)
+    List<TreatmentPhases> listTreatmentPhases = new ArrayList<>();
+}
