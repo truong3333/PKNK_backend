@@ -47,6 +47,14 @@ public class NurseController {
                 .build();
     }
 
+    @GetMapping("/appointment/scheduled/{doctorId}")
+    ApiResponses<List<AppointmentResponse>> getAppointmentScheduledOfDoctor(@PathVariable String doctorId){
+        return ApiResponses.<List<AppointmentResponse>>builder()
+                .code(1000)
+                .result(doctorService.getAppointmentScheduledOfDoctor(doctorId))
+                .build();
+    }
+
     @GetMapping("/myTreatmentPlans")
     ApiResponses<List<TreatmentPlansResponse>> getMyTreatmentPlansOfNurse(){
         return ApiResponses.<List<TreatmentPlansResponse>>builder()
@@ -78,14 +86,6 @@ public class NurseController {
         return ApiResponses.<DoctorSummaryResponse>builder()
                 .code(1000)
                 .result(doctorService.getInfoDoctorById(doctorId))
-                .build();
-    }
-
-    @GetMapping("/appointment/scheduled/{doctorId}")
-    ApiResponses<List<AppointmentResponse>> getAppointmentScheduledOfDoctor(@PathVariable String doctorId){
-        return ApiResponses.<List<AppointmentResponse>>builder()
-                .code(1000)
-                .result(doctorService.getAppointmentScheduledOfDoctor(doctorId))
                 .build();
     }
 }

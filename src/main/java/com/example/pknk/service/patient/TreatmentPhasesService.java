@@ -159,10 +159,10 @@ public class TreatmentPhasesService {
 
         DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        LocalDateTime inputDateTime = LocalDateTime.parse(request.getNextAppointment(), formatter);
-
-        if(request.getNextAppointment() != null){
+        // Chỉ xử lý nextAppointment nếu có giá trị và không rỗng
+        if(request.getNextAppointment() != null && !request.getNextAppointment().trim().isEmpty()){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+            LocalDateTime inputDateTime = LocalDateTime.parse(request.getNextAppointment(), formatter);
             if(treatmentPhases.getNextAppointment() != null){
                 appointmentRepository.deleteByDoctorIdAndDateTime(treatmentPhases.getTreatmentPlans().getDoctor().getId(), treatmentPhases.getNextAppointment());
                 bookingDateTimeRepository.deleteByDoctorIdAndDateTime(treatmentPhases.getTreatmentPlans().getDoctor().getId(), treatmentPhases.getNextAppointment());
@@ -189,14 +189,27 @@ public class TreatmentPhasesService {
 
             appointmentRepository.save(appointment);
             bookingDateTimeRepository.save(bookingDateTime);
+            
+            treatmentPhases.setNextAppointment(inputDateTime);
+        } else {
+            // Nếu không có nextAppointment mới, xóa appointment cũ nếu có
+            if(treatmentPhases.getNextAppointment() != null){
+                appointmentRepository.deleteByDoctorIdAndDateTime(treatmentPhases.getTreatmentPlans().getDoctor().getId(), treatmentPhases.getNextAppointment());
+                bookingDateTimeRepository.deleteByDoctorIdAndDateTime(treatmentPhases.getTreatmentPlans().getDoctor().getId(), treatmentPhases.getNextAppointment());
+                treatmentPhases.setNextAppointment(null);
+            }
         }
 
         treatmentPhases.setPhaseNumber(request.getPhaseNumber());
         treatmentPhases.setDescription(request.getDescription());
         treatmentPhases.setStatus(request.getStatus());
         treatmentPhases.setStartDate(LocalDate.parse(request.getStartDate(), formatterDate));
-        treatmentPhases.setEndDate(LocalDate.parse(request.getEndDate(), formatterDate));
-        treatmentPhases.setNextAppointment(inputDateTime);
+        // Chỉ set endDate nếu có giá trị
+        if(request.getEndDate() != null && !request.getEndDate().trim().isEmpty()){
+            treatmentPhases.setEndDate(LocalDate.parse(request.getEndDate(), formatterDate));
+        } else {
+            treatmentPhases.setEndDate(null);
+        }
         treatmentPhases.setListDentalServiceEntityOrder(request.getListDentalServicesEntityOrder());
         treatmentPhases.setListPrescriptionOrder(request.getListPrescriptionOrder());
 

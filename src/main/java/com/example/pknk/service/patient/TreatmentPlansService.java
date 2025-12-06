@@ -149,7 +149,7 @@ public class TreatmentPlansService {
                         .notes(treatmentPlans.getNotes())
                         .totalCost(treatmentPlans.getTotalCost())
                         .doctorId(treatmentPlans.getDoctor().getId())
-                        .nurseId(treatmentPlans.getNurse().getId())
+                        .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null)
                         .patientId(treatmentPlans.getPatient().getId())
                         .createAt(LocalDate.now())
                         .build()
@@ -169,7 +169,7 @@ public class TreatmentPlansService {
                 .totalCost(treatmentPlans.getTotalCost())
                 .status(treatmentPlans.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
-                .nurseId(treatmentPlans.getNurse().getId())
+                .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null)
                 .patientId(treatmentPlans.getPatient().getId())
                 .createAt(LocalDate.now())
                 .build()).toList();
@@ -195,7 +195,7 @@ public class TreatmentPlansService {
                 .totalCost(treatmentPlans.getTotalCost())
                 .status(treatmentPlans.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
-                .nurseId(treatmentPlans.getNurse().getId())
+                .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null)
                 .patientId(treatmentPlans.getPatient().getId())
                 .createAt(LocalDate.now())
                 .build()).toList();
@@ -221,7 +221,7 @@ public class TreatmentPlansService {
                 .totalCost(treatmentPlans.getTotalCost())
                 .status(treatmentPlans.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
-                .nurseId(treatmentPlans.getNurse().getId())
+                .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null)
                 .patientId(treatmentPlans.getPatient().getId())
                 .createAt(LocalDate.now())
                 .build()).toList();
@@ -247,7 +247,7 @@ public class TreatmentPlansService {
                 .totalCost(treatmentPlans.getTotalCost())
                 .status(treatmentPlans.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
-                .nurseId(treatmentPlans.getNurse().getId())
+                .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null) // Handle null nurse
                 .patientId(treatmentPlans.getPatient().getId())
                 .createAt(LocalDate.now())
                 .build()).toList();

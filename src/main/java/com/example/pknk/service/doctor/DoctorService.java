@@ -118,6 +118,30 @@ public class DoctorService {
     }
 
     @PreAuthorize("hasAnyRole('DOCTOR','DOCTORLV2')")
+    /**
+     * Get all appointments (including cancelled) for a specific doctor
+     * @param doctorId - Doctor ID
+     * @returns List of all appointments (scheduled, done, cancelled)
+     */
+    public List<AppointmentResponse> getAllAppointmentsIncludingCancelledOfDoctor(String doctorId){
+        if(!doctorRepository.existsById(doctorId)){
+            log.error("Bác sĩ id: {} không tồn tại, lấy danh sách lịch hẹn thất bại.", doctorId);
+            throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
+        }
+
+        return appointmentRepository.findAllByDoctorId(doctorId).stream().map(appointment -> AppointmentResponse.builder()
+                .id(appointment.getId())
+                .dateTime(appointment.getDateTime().toString())
+                .status(appointment.getStatus())
+                .type(appointment.getType())
+                .notes(appointment.getNotes())
+                .listDentalServicesEntity(appointment.getListDentalServicesEntity())
+                .doctorId(doctorId)
+                .patientId(appointment.getPatient().getId())
+                .build()
+        ).toList();
+    }
+
     public List<AppointmentResponse> getAppointmentScheduledOfMyDoctor(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
