@@ -24,6 +24,8 @@ public class TreatmentPhasesResponse {
     String description;
     double cost;
     String status;
+    List<String> listComment = new ArrayList<>();
+
     @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate startDate;
     @JsonFormat(pattern = "dd/MM/yyyy")

@@ -49,4 +49,12 @@ public class RoleController {
                 .result(roleService.deletePermission(roleName, permissionName))
                 .build();
     }
+
+    @PostMapping("/{doctorId}/updateLevel")
+    ApiResponses<String> updateLevelDoctor(@PathVariable String doctorId){
+        return ApiResponses.<String>builder()
+                .code(1000)
+                .result(roleService.updateLevelDoctor(doctorId))
+                .build();
+    }
 }

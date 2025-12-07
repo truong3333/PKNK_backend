@@ -180,11 +180,19 @@ public class DoctorController {
 
 
     //DOCTOR LV2
-    @PostMapping("/comment/{examinationId}")
-    ApiResponses<ExaminationResponse> addCommentByDoctorLV2(@PathVariable String examinationId, @RequestBody CommentRequest request){
+    @PostMapping("/commentExamination/{examinationId}")
+    ApiResponses<ExaminationResponse> addCommentExaminationByDoctorLV2(@PathVariable String examinationId, @RequestBody CommentRequest request){
         return ApiResponses.<ExaminationResponse>builder()
                 .code(1000)
-                .result(doctorService.addCommentByDoctorLV2(examinationId, request))
+                .result(doctorService.addCommentExaminationByDoctorLV2(examinationId, request))
+                .build();
+    }
+
+    @PostMapping("/commentTreatmentPhases/{examinationId}")
+    ApiResponses<TreatmentPhasesResponse> addCommentTreatmentPhasesByDoctorLV2(@PathVariable String treatmentPhasesId, @RequestBody CommentRequest request){
+        return ApiResponses.<TreatmentPhasesResponse>builder()
+                .code(1000)
+                .result(doctorService.addCommentTreatmentPhasesByDoctorLV2(treatmentPhasesId, request))
                 .build();
     }
 

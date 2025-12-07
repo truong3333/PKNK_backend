@@ -3,10 +3,12 @@ package com.example.pknk.service.user;
 import com.example.pknk.domain.dto.request.user.RoleRequest;
 import com.example.pknk.domain.dto.response.user.PermissionResponse;
 import com.example.pknk.domain.dto.response.user.RoleResponse;
+import com.example.pknk.domain.entity.user.Doctor;
 import com.example.pknk.domain.entity.user.Permission;
 import com.example.pknk.domain.entity.user.Role;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
+import com.example.pknk.repository.doctor.DoctorRepository;
 import com.example.pknk.repository.user.PermissionRepository;
 import com.example.pknk.repository.user.RoleRepository;
 import lombok.AccessLevel;
@@ -18,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ import java.util.List;
 public class RoleService {
     RoleRepository roleRepository;
     PermissionRepository permissionRepository;
+    DoctorRepository doctorRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
     public String create(RoleRequest request){
@@ -99,6 +104,29 @@ public class RoleService {
         log.info("Xoá quyền: {} cho vai trò: {} thành công", permissionName, roleName);
 
         return "Xoá quyền cho vai trò thành công";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public String updateLevelDoctor(String doctorId){
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> {
+            log.info("Bác sĩ id: {} không tồn tại, nâng cấp vai trò thất bại.", doctorId);
+            throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
+        });
+
+        Role role = roleRepository.findById("DOCTORLV2").orElseThrow(() -> {
+            log.error("Vai trò: DOCTORLV2 không tồn tại, nâng cấp vai trò thất bại.");
+            throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
+        });
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+
+        doctor.getUser().setRoles(roles);
+
+        doctorRepository.save(doctor);
+        log.info("Bác sĩ id: {} nâng cấp vai trò thành công.", doctorId);
+
+        return "Nâng cấp vai trò thành công";
     }
 
 }

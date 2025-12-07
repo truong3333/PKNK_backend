@@ -8,16 +8,14 @@ import com.example.pknk.domain.dto.request.doctor.ExaminationUpdateRequest;
 import com.example.pknk.domain.dto.response.clinic.AppointmentResponse;
 import com.example.pknk.domain.dto.response.clinic.ExaminationResponse;
 import com.example.pknk.domain.dto.response.clinic.ImageResponse;
+import com.example.pknk.domain.dto.response.clinic.TreatmentPhasesResponse;
 import com.example.pknk.domain.dto.response.doctor.DoctorSummaryResponse;
 import com.example.pknk.domain.entity.clinic.*;
 import com.example.pknk.domain.entity.user.Doctor;
 import com.example.pknk.domain.entity.user.User;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
-import com.example.pknk.repository.clinic.AppointmentRepository;
-import com.example.pknk.repository.clinic.CostRepository;
-import com.example.pknk.repository.clinic.ExaminationRepository;
-import com.example.pknk.repository.clinic.ImageRepository;
+import com.example.pknk.repository.clinic.*;
 import com.example.pknk.repository.doctor.DoctorRepository;
 import com.example.pknk.repository.user.UserRepository;
 import lombok.AccessLevel;
@@ -31,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -46,6 +45,7 @@ public class DoctorService {
     DoctorRepository doctorRepository;
     AppointmentRepository appointmentRepository;
     ExaminationRepository examinationRepository;
+    TreatmentPhasesRepository treatmentPhasesRepository;
     ImageRepository imageRepository;
     CostRepository costRepository;
 
@@ -485,7 +485,7 @@ public class DoctorService {
 
     // DOCTOR LV2
     @PreAuthorize("hasRole('DOCTORLV2')")
-    public ExaminationResponse addCommentByDoctorLV2(String examinationId, CommentRequest request){
+    public ExaminationResponse addCommentExaminationByDoctorLV2(String examinationId, CommentRequest request){
         Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
             log.error("Kết quả khám id: {} không tồn tại, thêm nhận xét thất bại.", examinationId);
             throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
@@ -525,6 +525,50 @@ public class DoctorService {
                 ).toList())
                 .createAt(examination.getAppointment().getDateTime().toLocalDate())
                 .listComment(examination.getListComment())
+                .build();
+    }
+
+    @PreAuthorize("hasRole('DOCTORLV2')")
+    public TreatmentPhasesResponse addCommentTreatmentPhasesByDoctorLV2(String treatmentPhasesId, CommentRequest request){
+        TreatmentPhases treatmentPhases = treatmentPhasesRepository.findById(treatmentPhasesId).orElseThrow(() -> {
+            log.error("Tiến trình điều trị id: {} không tồn tại, thêm nhận xét thất bại.", treatmentPhasesId);
+            throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
+        });
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username).orElseThrow(() -> {
+            log.error("Username: {} không tồn tại, thêm nhận xét thất bại.", username);
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        });
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+        String now = LocalDateTime.now().format(formatter);
+
+        String comment = "[" + user.getDoctor().getId() + "]" + "[" + now + "]" + user.getUserDetail().getFullName() + ": " + request.getComment()  ;
+
+        treatmentPhases.getListComment().add(comment);
+        treatmentPhasesRepository.save(treatmentPhases);
+        log.info("Bác sĩ id: {} thêm nhận xét cho tiến trình điều trị id: {} thành công.", user.getDoctor().getId(), treatmentPhasesId);
+
+        return TreatmentPhasesResponse.builder()
+                .id(treatmentPhases.getId())
+                .phaseNumber(treatmentPhases.getPhaseNumber())
+                .description(treatmentPhases.getDescription())
+                .listDentalServicesEntityOrder(treatmentPhases.getListDentalServiceEntityOrder())
+                .listPrescriptionOrder(treatmentPhases.getListPrescriptionOrder())
+                .cost(treatmentPhases.getCost())
+                .status(treatmentPhases.getStatus())
+                .listComment(treatmentPhases.getListComment())
+                .startDate(treatmentPhases.getStartDate())
+                .endDate(treatmentPhases.getEndDate())
+                .nextAppointment(treatmentPhases.getNextAppointment())
+                .listImage(treatmentPhases.getListImage().stream().map(image -> ImageResponse.builder()
+                        .publicId(image.getPublicId())
+                        .type(image.getType())
+                        .url(image.getUrl())
+                        .build()
+                ).toList())
                 .build();
     }
 }
