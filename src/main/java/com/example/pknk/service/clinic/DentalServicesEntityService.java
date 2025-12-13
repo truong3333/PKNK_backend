@@ -75,15 +75,15 @@ public class DentalServicesEntityService {
                     .build();
         }
 
-        public List<DentalServicesEntityResponse> getAllService(){
-            List<DentalServicesEntity> listService = new ArrayList<>(dentalServicesEntityServiceRepository.findAll());
+    public List<DentalServicesEntityResponse> getAllService(){
+        List<DentalServicesEntity> listService = new ArrayList<>(dentalServicesEntityServiceRepository.findAll());
 
-            return listService.stream().map(dentalServicesEntity -> DentalServicesEntityResponse.builder()
-                    .id(dentalServicesEntity.getId())
-                    .name(dentalServicesEntity.getName())
-                    .unit(dentalServicesEntity.getUnit())
-                    .unitPrice(dentalServicesEntity.getUnitPrice())
-                    .build()
-            ).toList();
-        }
+        return listService.stream().map(dentalServicesEntity -> DentalServicesEntityResponse.builder()
+                .id(dentalServicesEntity.getId())
+                .name(dentalServicesEntity.getName())
+                .unit(dentalServicesEntity.getUnit())
+                .unitPrice(dentalServicesEntity.getUnitPrice())
+                .build()
+        ).toList();
+    }
 }

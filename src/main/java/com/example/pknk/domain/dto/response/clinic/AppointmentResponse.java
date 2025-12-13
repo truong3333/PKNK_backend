@@ -21,6 +21,7 @@ public class AppointmentResponse {
     String type;
     String notes;
     String status;
+    String notification;
 
     List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
 

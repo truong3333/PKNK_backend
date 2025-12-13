@@ -106,7 +106,6 @@ public class AuthenticationService {
         return "Đăng kí tài khoản thành công.";
     }
 
-
     @PreAuthorize("hasRole('ADMIN')")
     public String createDoctor(DoctorCreateRequest request){
         if(userRepository.existsByUsername(request.getUsername())){
@@ -156,7 +155,7 @@ public class AuthenticationService {
 
         if(request.getVerifiedCode().equals(verificationCode.getCode()) && verificationCode.getExpiredAt().isAfter(LocalDateTime.now())){
             userRepository.save(user);
-            log.info("Tài khoản: {} đăng kí thành công.", request.getUsername());
+            log.info("Tài khoản bác sĩ: {} đăng kí thành công.", request.getUsername());
         }else{
             log.error("Mã xác thực của email: {} không hợp lệ hoặc đã hết hạn, đăng kí tài khoản bác sĩ thất bại.", request.getEmail());
             throw new AppException(ErrorCode.VERIFIED_CODE_INVALID);
@@ -211,7 +210,7 @@ public class AuthenticationService {
 
         if(request.getVerifiedCode().equals(verificationCode.getCode()) && verificationCode.getExpiredAt().isAfter(LocalDateTime.now())){
             userRepository.save(user);
-            log.info("Tài khoản: {} đăng kí thành công.", request.getUsername());
+            log.info("Tài khoản y tá: {} đăng kí thành công.", request.getUsername());
         }else{
             log.error("Mã xác thực của email: {} không hợp lệ hoặc đã hết hạn, đăng kí tài khoản y tá thất bại.", request.getEmail());
             throw new AppException(ErrorCode.VERIFIED_CODE_INVALID);

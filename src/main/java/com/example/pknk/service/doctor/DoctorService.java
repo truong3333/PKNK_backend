@@ -66,7 +66,7 @@ public class DoctorService {
                 .build();
     }
 
-    @PreAuthorize("hasAnyRole('PATIENT','ADMIN','NURSE')")
+    @PreAuthorize("hasAnyRole('PICK_DOCTOR','ADMIN')")
     public List<DoctorSummaryResponse> getAllDoctors(){
         List<Doctor> doctors = new ArrayList<>(doctorRepository.findAll());
         return doctors.stream().map(d -> DoctorSummaryResponse.builder()
@@ -142,6 +142,7 @@ public class DoctorService {
         ).toList();
     }
 
+    @PreAuthorize("hasAnyRole('DOCTOR','DOCTORLV2')")
     public List<AppointmentResponse> getAppointmentScheduledOfMyDoctor(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 

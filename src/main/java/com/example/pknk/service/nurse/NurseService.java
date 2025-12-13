@@ -1,10 +1,13 @@
 package com.example.pknk.service.nurse;
 
+import com.example.pknk.domain.dto.response.clinic.AppointmentResponse;
 import com.example.pknk.domain.dto.response.nurse.NurseInfoResponse;
 import com.example.pknk.domain.dto.response.nurse.NursePickResponse;
+import com.example.pknk.domain.entity.clinic.Appointment;
 import com.example.pknk.domain.entity.user.Nurse;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
+import com.example.pknk.repository.clinic.AppointmentRepository;
 import com.example.pknk.repository.nurse.NurseRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import java.util.List;
 @Slf4j
 public class NurseService {
     NurseRepository nurseRepository;
+    AppointmentRepository appointmentRepository;
 
     @PreAuthorize("hasAuthority('PICK_NURSE','ADMIN')")
     public List<NursePickResponse> getAllNurseForPick(){
@@ -45,6 +49,35 @@ public class NurseService {
                 .id(nurseId)
                 .fullName(nurse.getUser().getUserDetail().getFullName())
                 .phone(nurse.getUser().getUserDetail().getPhone())
+                .build();
+    }
+
+    @PreAuthorize("hasAuthority('NOTIFICATION_APPOINMENT','ADMIN')")
+    public AppointmentResponse notificationUpdateAppointment(String appointmentId){
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> {
+            log.error("Lịch hẹn id: {} không tồn tại, cập nhật trạng thái thông báo thất bại.", appointmentId);
+            throw new AppException(ErrorCode.APPOINTMENT_NOT_EXISTED);
+        });
+
+        if(appointment.getNotification().equals("Done")){
+            log.error("Lịch hẹn id: {} đã được y tá khác thông báo tới cả bác sĩ và bệnh nhân.", appointmentId);
+            throw new AppException(ErrorCode.APPOINTMENT_NOTIFICATION_EXISTED);
+        }
+        appointment.setNotification("Done");
+
+        appointmentRepository.save(appointment);
+        log.info("Lịch hẹn id: {} cập nhật trạng thái thông báo thành công.", appointmentId);
+
+        return AppointmentResponse.builder()
+                .id(appointmentId)
+                .dateTime(appointment.getDateTime().toString())
+                .status(appointment.getStatus())
+                .type(appointment.getType())
+                .notes(appointment.getNotes())
+                .listDentalServicesEntity(appointment.getListDentalServicesEntity())
+                .doctorId(appointment.getDoctor().getId())
+                .patientId(appointment.getPatient().getId())
+                .notification(appointment.getNotification())
                 .build();
     }
 }

@@ -30,6 +30,7 @@ public enum ErrorCode {
 
     APPOINTMENT_NOT_EXISTED(100,"Lịch hẹn không tồn tại", HttpStatus.NOT_FOUND),
     APPOINTMENT_EXISTED(100,"Lịch hẹn đã tồn tại", HttpStatus.BAD_REQUEST),
+    APPOINTMENT_NOTIFICATION_EXISTED(100,"Lịch hẹn đã được y tá khác thông báo tới cả bác sĩ và bệnh nhân", HttpStatus.BAD_REQUEST),
 
     EXAMINATION_NOT_EXISTED(100,"Kết quả khám không tồn tại", HttpStatus.NOT_FOUND),
 

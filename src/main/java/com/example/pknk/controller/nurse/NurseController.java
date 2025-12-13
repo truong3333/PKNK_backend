@@ -14,10 +14,7 @@ import com.example.pknk.service.patient.TreatmentPlansService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -52,6 +49,14 @@ public class NurseController {
         return ApiResponses.<List<AppointmentResponse>>builder()
                 .code(1000)
                 .result(doctorService.getAppointmentScheduledOfDoctor(doctorId))
+                .build();
+    }
+
+    @PutMapping("/appointment/{appointmentId}")
+    ApiResponses<AppointmentResponse> notificationUpdateAppointment(@PathVariable String appointmentId){
+        return ApiResponses.<AppointmentResponse>builder()
+                .code(1000)
+                .result(nurseService.notificationUpdateAppointment(appointmentId))
                 .build();
     }
 

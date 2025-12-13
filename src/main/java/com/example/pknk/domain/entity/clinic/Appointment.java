@@ -29,6 +29,7 @@ public class Appointment {
     String status;
     String type;
     String notes;
+    String notification;
 
     @ElementCollection
     List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
