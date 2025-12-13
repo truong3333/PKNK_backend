@@ -42,7 +42,7 @@ public class TreatmentPlansService {
     TreatmentPlansRepository treatmentPlansRepository;
     ExaminationRepository examinationRepository;
 
-    @PreAuthorize("hasAuthority('CREATE_TREATMENT_PLANS','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('CREATE_TREATMENT_PLANS','ADMIN')")
     public TreatmentPlansResponse createTreatmentPlans(TreatmentPlansRequest request){
         Examination examination = examinationRepository.findById(request.getExaminationId()).orElseThrow(() -> {
             log.error("Kết quả khám id: {} không tồn tại, xem chi tiết kết quả khám thất bại.", request.getExaminationId());
@@ -96,7 +96,7 @@ public class TreatmentPlansService {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_TREATMENT_PLANS','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('UPDATE_TREATMENT_PLANS','ADMIN')")
     public TreatmentPlansResponse updateTreatmentPlans(String treatmentPlansId, TreatmentPlansUpdateRequest request){
         TreatmentPlans treatmentPlans = treatmentPlansRepository.findById(treatmentPlansId).orElseThrow(() -> {
             log.error("Phác đồ điều trị id: {} không tồn tại, cập nhật thất bại.", treatmentPlansId);

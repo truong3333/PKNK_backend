@@ -53,7 +53,7 @@ public class CostService {
         ).toList();
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_PAYMENT_COST','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('UPDATE_PAYMENT_COST','ADMIN')")
     public CostResponse updatePaymentCost(String costId, CostPaymentUpdateRequest request){
         Cost cost = costRepository.findById(costId).orElseThrow(() -> {
             log.error("Chi phí id: {} không tồn tại, cập nhật thanh toán thất bại.", costId);

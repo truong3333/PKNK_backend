@@ -51,7 +51,7 @@ public class DoctorService {
 
     Cloudinary cloudinary;
 
-    @PreAuthorize("hasAuthority('GET_INFO_DOCTOR','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('GET_INFO_DOCTOR','ADMIN')")
     public DoctorSummaryResponse getInfoDoctorById(String doctorId){
         Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> {
             log.info("Bác sĩ id: {} không tồn tại, lấy thông tin thất bại.", doctorId);
@@ -66,7 +66,7 @@ public class DoctorService {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('PICK_DOCTOR','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PICK_DOCTOR','ADMIN')")
     public List<DoctorSummaryResponse> getAllDoctors(){
         List<Doctor> doctors = new ArrayList<>(doctorRepository.findAll());
         return doctors.stream().map(d -> DoctorSummaryResponse.builder()
@@ -186,7 +186,7 @@ public class DoctorService {
         ).toList();
     }
 
-    @PreAuthorize("hasAuthority('CREATE_EXAMINATION','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('CREATE_EXAMINATION','ADMIN')")
     public ExaminationResponse createExamination(String appointmentId, ExaminationRequest request) throws IOException {
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> {
             log.error("Lịch hẹn id: {} không tồn tại, thêm kết quả khám thất bại.", appointmentId);
@@ -297,7 +297,7 @@ public class DoctorService {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_EXAMINATION','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('UPDATE_EXAMINATION','ADMIN')")
     @Transactional
     public ExaminationResponse updateExamination(String examinationId, ExaminationUpdateRequest request) throws IOException {
         Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
@@ -455,7 +455,7 @@ public class DoctorService {
         ).toList();
     }
 
-    @PreAuthorize("hasAuthority('GET_EXAMINATION_DETAIL','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('GET_EXAMINATION_DETAIL','ADMIN')")
     public ExaminationResponse getExaminationDetailById(String examinationId){
         Examination examination = examinationRepository.findById(examinationId).orElseThrow(() -> {
             log.error("Kết quả khám id: {} không tồn tại, xem chi tiết kết quả khám thất bại.", examinationId);

@@ -44,7 +44,7 @@ public class TreatmentPhasesService {
 
     Cloudinary cloudinary;
 
-    @PreAuthorize("hasAuthority('CREATE_TREATMENT_PHASES','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('CREATE_TREATMENT_PHASES','ADMIN')")
     public TreatmentPhasesResponse createTreatmentPhases(String treatmentPlansId,TreatmentPhasesRequest request) throws IOException {
         TreatmentPlans treatmentPlans = treatmentPlansRepository.findById(treatmentPlansId).orElseThrow(() -> {
             log.error("Phác đồ điều trị id: {} không tồn tại, thêm tiến trình điều trị thất bại.", treatmentPlansId);
@@ -143,7 +143,7 @@ public class TreatmentPhasesService {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_TREATMENT_PHASES','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('UPDATE_TREATMENT_PHASES','ADMIN')")
     @Transactional
     public TreatmentPhasesResponse updateTreatmentPhases(String treatmentPhasesId, TreatmentPhasesUpdateRequest request) throws IOException {
         TreatmentPhases treatmentPhases = treatmentPhasesRepository.findById(treatmentPhasesId).orElseThrow(() -> {
@@ -301,7 +301,7 @@ public class TreatmentPhasesService {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('GET_ALL_TREATMENT_PHASES','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('GET_ALL_TREATMENT_PHASES','ADMIN')")
     public List<TreatmentPhasesResponse> getAllTreatmentPhasesOfTreatmentPlansId(String treatmentPlansId){
         if(!treatmentPlansRepository.existsById(treatmentPlansId)){
             log.error("Phác đồ điều trị id: {} không tồn tại, lấy danh sách tiến trình điều trị thất bại.", treatmentPlansId);

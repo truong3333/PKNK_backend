@@ -27,7 +27,7 @@ public class NurseService {
     NurseRepository nurseRepository;
     AppointmentRepository appointmentRepository;
 
-    @PreAuthorize("hasAuthority('PICK_NURSE','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PICK_NURSE','ADMIN')")
     public List<NursePickResponse> getAllNurseForPick(){
         List<Nurse> listNurse = new ArrayList<>(nurseRepository.findAll());
 
@@ -38,7 +38,7 @@ public class NurseService {
         ).toList();
     }
 
-    @PreAuthorize("hasAuthority('GET_INFO_NURSE','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('GET_INFO_NURSE','ADMIN')")
     public NurseInfoResponse getInfoNurse(String nurseId){
         Nurse nurse = nurseRepository.findById(nurseId).orElseThrow(() -> {
             log.info("Y tá id: {} không tồn tại, lấy thông tin thất bại.", nurseId);
@@ -52,7 +52,7 @@ public class NurseService {
                 .build();
     }
 
-    @PreAuthorize("hasAuthority('NOTIFICATION_APPOINMENT','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('NOTIFICATION_APPOINMENT','ADMIN')")
     public AppointmentResponse notificationUpdateAppointment(String appointmentId){
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> {
             log.error("Lịch hẹn id: {} không tồn tại, cập nhật trạng thái thông báo thất bại.", appointmentId);

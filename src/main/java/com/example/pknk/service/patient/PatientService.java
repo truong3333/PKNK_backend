@@ -50,7 +50,7 @@ public class PatientService {
         AppointmentRepository appointmentRepository;
         ExaminationRepository examinationRepository;
 
-        @PreAuthorize("hasAuthority('GET_BASIC_INFO','ADMIN')")
+        @PreAuthorize("hasAnyAuthority('GET_BASIC_INFO','ADMIN')")
         public PatientResponse getBasicInfo(String patientId){
             Patient patient = patientRepository.findById(patientId).orElseThrow(() -> {
                 log.error("Bệnh nhân id: {} không tồn tại, lấy thông tin cơ bản thất bại.", patientId);
