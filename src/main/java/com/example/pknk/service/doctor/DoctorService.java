@@ -66,7 +66,7 @@ public class DoctorService {
                 .build();
     }
 
-    @PreAuthorize("hasAnyRole('PICK_DOCTOR','ADMIN')")
+    @PreAuthorize("hasAuthority('PICK_DOCTOR','ADMIN')")
     public List<DoctorSummaryResponse> getAllDoctors(){
         List<Doctor> doctors = new ArrayList<>(doctorRepository.findAll());
         return doctors.stream().map(d -> DoctorSummaryResponse.builder()
