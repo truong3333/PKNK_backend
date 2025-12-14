@@ -461,7 +461,7 @@ public class DoctorService {
                 .notes(examination.getNotes())
                 .treatment(examination.getTreatment())
                 .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                    .patientName(patientName)
+                .patientName(patientName)
                 .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
                 .listPrescriptionOrder(examination.getListPrescriptionOrder())
                 .totalCost(examination.getTotalCost())

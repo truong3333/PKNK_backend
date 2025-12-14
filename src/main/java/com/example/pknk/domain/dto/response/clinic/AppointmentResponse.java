@@ -1,5 +1,6 @@
 package com.example.pknk.domain.dto.response.clinic;
 
+import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityOrderRequest;
 import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -23,7 +24,7 @@ public class AppointmentResponse {
     String status;
     String notification;
 
-    List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
+    List<DentalServicesEntityOrderRequest> listDentalServicesEntity = new ArrayList<>();
 
     String doctorId;
     String patientId;

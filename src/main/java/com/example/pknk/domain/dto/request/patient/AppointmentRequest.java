@@ -1,5 +1,6 @@
 package com.example.pknk.domain.dto.request.patient;
 
+import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityOrderRequest;
 import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
 import com.example.pknk.domain.entity.clinic.Examination;
 import com.example.pknk.domain.entity.user.Doctor;
@@ -23,7 +24,7 @@ public class AppointmentRequest {
     String type;
     String notes;
 
-    List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
+    List<DentalServicesEntityOrderRequest> listDentalServicesEntity = new ArrayList<>();
 
     String doctorId;
 

@@ -1,5 +1,6 @@
 package com.example.pknk.domain.entity.clinic;
 
+import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityOrderRequest;
 import com.example.pknk.domain.entity.user.Doctor;
 import com.example.pknk.domain.entity.user.Patient;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -32,7 +33,7 @@ public class Appointment {
     String notification;
 
     @ElementCollection
-    List<DentalServicesEntity> listDentalServicesEntity = new ArrayList<>();
+    List<DentalServicesEntityOrderRequest> listDentalServicesEntity = new ArrayList<>();
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
     Examination examination;
