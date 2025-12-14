@@ -19,6 +19,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -221,30 +222,38 @@ public class AuthenticationService {
 
     @Transactional
     public String verifiedCode(String email){
-        if(verificationCodeRepository.existsByEmail(email)){
-            verificationCodeRepository.deleteAllByEmail(email);
+        try {
+            if(verificationCodeRepository.existsByEmail(email)){
+                verificationCodeRepository.deleteAllByEmail(email);
+            }
+
+            VerificationCode verificationCode = VerificationCode.builder()
+                    .email(email)
+                    .code(generateRandomCode())
+                    .expiredAt(LocalDateTime.now().plusMinutes(10))
+                    .build();
+
+            verificationCodeRepository.save(verificationCode);
+
+            StringBuilder content = new StringBuilder("Mã Xác thực đăng kí tài khoản phòng khám của bạn là: " + verificationCode.getCode() + ".\n\n");
+            content.append("Mã sẽ hết hạn sau 10 phút, hãy chú ý.");
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(email);
+            message.setSubject("Mã xác thực đăng kí tài khoản phòng khám");
+            message.setText(content.toString());
+
+            mailSender.send(message);
+            log.info("Gửi mã xác thực cho email: {} thành công.", email);
+
+            return "Gửi mã xác thực thành công.";
+        } catch (MailException e) {
+            log.error("Lỗi khi gửi email xác thực đến: {}. Lỗi: {}", email, e.getMessage(), e);
+            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
+        } catch (Exception e) {
+            log.error("Lỗi không xác định khi gửi mã xác thực đến: {}. Lỗi: {}", email, e.getMessage(), e);
+            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
         }
-
-        VerificationCode verificationCode = VerificationCode.builder()
-                .email(email)
-                .code(generateRandomCode())
-                .expiredAt(LocalDateTime.now().plusMinutes(10))
-                .build();
-
-        verificationCodeRepository.save(verificationCode);
-
-        StringBuilder content = new StringBuilder("Mã Xác thực đăng kí tài khoản phòng khám của bạn là: " + verificationCode.getCode() + ".\n\n");
-        content.append("Mã sẽ hết hạn sau 10 phút, hãy chú ý.");
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Mã xác thực đăng kí tài khoản phòng khám");
-        message.setText(content.toString());
-
-        mailSender.send(message);
-        log.info("Gửi mã xác thực cho email: {} thành công.", email);
-
-        return "Gửi mã xác thực thành công.";
     }
 
     private String generateRandomCode() {

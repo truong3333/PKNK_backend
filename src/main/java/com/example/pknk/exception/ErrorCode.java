@@ -9,6 +9,7 @@ public enum ErrorCode {
     USER_DISABLE(100, "Người dùng đã bị vô hiệu hoá.", HttpStatus.BAD_REQUEST),
     VERIFIED_CODE_NOT_EXISTED(100, "Email chưa có mã xác thực đăng kí tài khoản.", HttpStatus.NOT_FOUND),
     VERIFIED_CODE_INVALID(100, "Mã xác thực đăng kí tài khoản không hợp lệ hoặc đã hết hạn.", HttpStatus.BAD_REQUEST),
+    EMAIL_SEND_FAILED(100, "Không thể gửi email xác thực. Vui lòng kiểm tra cấu hình email hoặc thử lại sau.", HttpStatus.INTERNAL_SERVER_ERROR),
     VERIFY_FORGOT_PASSWORD_CODE_NOT_EXISTED(100, "Mã xác thực yêu cầu đổi mật khẩu không tồn tại.", HttpStatus.NOT_FOUND),
     VERIFY_FORGOT_PASSWORD_INVALID(100, "Mã xác thực yêu cầu đổi mật khẩu không hợp lệ hoặc đã hết hạn.", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(100, "Tài khoản chưa được xác thực, xác thực thất bại", HttpStatus.UNAUTHORIZED),

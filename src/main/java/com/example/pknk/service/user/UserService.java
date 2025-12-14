@@ -80,7 +80,6 @@ public class UserService {
 
                 userDetail.setFullName(request.getFullName());
                 userDetail.setPhone(request.getPhone());
-                userDetail.setEmail(request.getEmail());
                 userDetail.setAddress(request.getAddress());
                 userDetail.setGender(request.getGender());
                 userDetail.setDob(request.getDob());

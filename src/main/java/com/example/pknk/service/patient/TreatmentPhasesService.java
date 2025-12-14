@@ -10,6 +10,7 @@ import com.example.pknk.domain.entity.clinic.*;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
 import com.example.pknk.repository.clinic.AppointmentRepository;
+import com.example.pknk.repository.clinic.CostRepository;
 import com.example.pknk.repository.clinic.ImageRepository;
 import com.example.pknk.repository.clinic.TreatmentPhasesRepository;
 import com.example.pknk.repository.clinic.TreatmentPlansRepository;
@@ -41,6 +42,7 @@ public class TreatmentPhasesService {
     BookingDateTimeRepository bookingDateTimeRepository;
     AppointmentRepository appointmentRepository;
     ImageRepository imageRepository;
+    CostRepository costRepository;
 
     Cloudinary cloudinary;
 
@@ -121,6 +123,23 @@ public class TreatmentPhasesService {
         treatmentPlans.getListTreatmentPhases().add(treatmentPhases);
 
         treatmentPhasesRepository.save(treatmentPhases);
+        
+        // Create cost record for this treatment phase
+        if (request.getCost() > 0) {
+            Cost cost = Cost.builder()
+                    .id(treatmentPhases.getId()) // Use treatment phase ID as cost ID
+                    .title("Tiến trình điều trị: " + request.getPhaseNumber() + " - " + request.getDescription())
+                    .status("wait")
+                    .totalCost(request.getCost())
+                    .listDentalServiceEntityOrder(request.getListDentalServicesEntityOrder())
+                    .listPrescriptionOrder(request.getListPrescriptionOrder())
+                    .patient(treatmentPlans.getPatient())
+                    .build();
+            
+            costRepository.save(cost);
+            log.info("Cost record id: {} được tạo cho tiến trình điều trị id: {} thành công.", cost.getId(), treatmentPhases.getId());
+        }
+        
         log.info("Tiến trình: {} của phác đồ id: {} được thêm thành công.", treatmentPhases.getPhaseNumber(), treatmentPlansId);
 
         return TreatmentPhasesResponse.builder()

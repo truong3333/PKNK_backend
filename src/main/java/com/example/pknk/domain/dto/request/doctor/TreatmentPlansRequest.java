@@ -23,5 +23,6 @@ public class TreatmentPlansRequest {
     String notes;
     String examinationId;
     String nurseId;
+    String doctorId; // Optional - only for DOCTORLV2 with PICK_DOCTOR permission
 
 }

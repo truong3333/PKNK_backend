@@ -44,8 +44,8 @@ public class TreatmentPlansService {
 
     @PreAuthorize("hasAnyAuthority('CREATE_TREATMENT_PLANS','ADMIN')")
     public TreatmentPlansResponse createTreatmentPlans(TreatmentPlansRequest request){
-        log.info("Creating treatment plan with request: title={}, examinationId={}, nurseId={}", 
-                request.getTitle(), request.getExaminationId(), request.getNurseId());
+        log.info("Creating treatment plan with request: title={}, examinationId={}, nurseId={}, doctorId={}", 
+                request.getTitle(), request.getExaminationId(), request.getNurseId(), request.getDoctorId());
         
         // Use findByIdWithAppointment to avoid lazy loading issues
         Examination examination = examinationRepository.findByIdWithAppointment(request.getExaminationId()).orElseThrow(() -> {
@@ -58,10 +58,21 @@ public class TreatmentPlansService {
             throw new AppException(ErrorCode.APPOINTMENT_NOT_EXISTED);
         }
 
-        Doctor doctor = doctorRepository.findById(examination.getAppointment().getDoctor().getId()).orElseThrow(() -> {
-            log.error("Bác sĩ id: {} không tồn tại, thêm phác đồ điều trị thất bại.", examination.getAppointment().getDoctor().getId());
-            throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
-        });
+        // If doctorId is provided in request (for DOCTORLV2 with PICK_DOCTOR permission), use it
+        // Otherwise, use the doctor from the examination's appointment
+        Doctor doctor;
+        if (request.getDoctorId() != null && !request.getDoctorId().trim().isEmpty()) {
+            doctor = doctorRepository.findById(request.getDoctorId()).orElseThrow(() -> {
+                log.error("Bác sĩ id: {} không tồn tại, thêm phác đồ điều trị thất bại.", request.getDoctorId());
+                throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
+            });
+            log.info("Sử dụng bác sĩ id: {} từ request (DOCTORLV2 với PICK_DOCTOR permission).", request.getDoctorId());
+        } else {
+            doctor = doctorRepository.findById(examination.getAppointment().getDoctor().getId()).orElseThrow(() -> {
+                log.error("Bác sĩ id: {} không tồn tại, thêm phác đồ điều trị thất bại.", examination.getAppointment().getDoctor().getId());
+                throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
+            });
+        }
 
         Patient patient = patientRepository.findById(examination.getAppointment().getPatient().getId()).orElseThrow(() -> {
             log.error("Bệnh nhân id: {} không tồn tại, thêm phác đồ điều trị thất bại.", examination.getAppointment().getPatient().getId());
