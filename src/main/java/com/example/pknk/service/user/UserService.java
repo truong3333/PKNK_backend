@@ -113,6 +113,11 @@ public class UserService {
                 });
 
                 UserDetail userDetail = user.getUserDetail();
+                
+                if (userDetail == null) {
+                    log.error("UserDetail is null for user: {}", name);
+                    throw new AppException(ErrorCode.USER_NOT_EXISTED);
+                }
 
                 return UserResponse.builder()
                         .id(user.getId())

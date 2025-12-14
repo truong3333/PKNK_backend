@@ -45,11 +45,31 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
         );
 
-
+        // Configure OAuth2 Resource Server for JWT validation
+        // Note: JWT filter will still run for public endpoints if Authorization header is present
+        // But we allow public endpoints to proceed even if JWT validation fails
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())
-        ));
+                )
+                // Allow public endpoints to bypass JWT validation
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    // Check if this is a public endpoint
+                    String path = request.getRequestURI();
+                    boolean isPublicEndpoint = java.util.Arrays.stream(PUBLIC_ENDPOINT)
+                            .anyMatch(endpoint -> {
+                                String pattern = endpoint.replace("**", ".*");
+                                return path.matches(pattern) || path.equals(endpoint);
+                            });
+                    
+                    if (isPublicEndpoint && request.getMethod().equals("POST")) {
+                        // Allow public endpoints to proceed even if JWT validation fails
+                        // The controller will handle authentication from request body
+                        return;
+                    }
+                    response.setStatus(403);
+                })
+        );
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));

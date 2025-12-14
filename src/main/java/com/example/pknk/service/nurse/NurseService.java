@@ -59,7 +59,7 @@ public class NurseService {
             throw new AppException(ErrorCode.APPOINTMENT_NOT_EXISTED);
         });
 
-        if(appointment.getNotification().equals("Done")){
+        if("Done".equals(appointment.getNotification())){
             log.error("Lịch hẹn id: {} đã được y tá khác thông báo tới cả bác sĩ và bệnh nhân.", appointmentId);
             throw new AppException(ErrorCode.APPOINTMENT_NOTIFICATION_EXISTED);
         }

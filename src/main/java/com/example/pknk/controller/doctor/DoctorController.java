@@ -13,6 +13,7 @@ import com.example.pknk.service.patient.TreatmentPlansService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.List;
 @RequestMapping("/api/v1/doctor")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
+@Slf4j
 public class DoctorController {
     DoctorService doctorService;
     TreatmentPlansService treatmentPlansService;
@@ -123,6 +125,8 @@ public class DoctorController {
     // Treatment Plans
     @PostMapping("/treatmentPlans")
     ApiResponses<TreatmentPlansResponse> createTreatmentPlans(@RequestBody TreatmentPlansRequest request){
+        log.info("Received createTreatmentPlans request: title={}, examinationId={}, nurseId={}", 
+                request.getTitle(), request.getExaminationId(), request.getNurseId());
         return ApiResponses.<TreatmentPlansResponse>builder()
                 .code(1000)
                 .result(treatmentPlansService.createTreatmentPlans(request))
@@ -188,7 +192,7 @@ public class DoctorController {
                 .build();
     }
 
-    @PostMapping("/commentTreatmentPhases/{examinationId}")
+    @PostMapping("/commentTreatmentPhases/{treatmentPhasesId}")
     ApiResponses<TreatmentPhasesResponse> addCommentTreatmentPhasesByDoctorLV2(@PathVariable String treatmentPhasesId, @RequestBody CommentRequest request){
         return ApiResponses.<TreatmentPhasesResponse>builder()
                 .code(1000)

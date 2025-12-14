@@ -24,6 +24,7 @@ public class ExaminationResponse {
     String notes;
     String treatment;
     String examined_at;
+    String patientName;    // Tên bệnh nhân
     double totalCost;
     List<String> listComment = new ArrayList<>();
 

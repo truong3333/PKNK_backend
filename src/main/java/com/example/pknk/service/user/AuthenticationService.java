@@ -292,6 +292,43 @@ public class AuthenticationService {
                 .build();
     }
 
+    public AuthenticationResponse refresh(RefreshTokenRequest request) throws ParseException, JOSEException {
+        var refreshToken = verifyToken(request.getRefreshToken());
+        
+        // Verify this is a refresh token
+        String tokenType = refreshToken.getJWTClaimsSet().getClaim("type") != null 
+            ? refreshToken.getJWTClaimsSet().getClaim("type").toString() 
+            : null;
+        
+        if (!"refresh".equals(tokenType)) {
+            log.error("Token không phải là refresh token, refresh thất bại.");
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        String username = refreshToken.getJWTClaimsSet().getSubject();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> {
+            log.error("Tài khoản: {} không tồn tại, refresh token thất bại.", username);
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        });
+
+        if(user.isDisable()) {
+            log.error("Tài khoản: {} đã bị vô hiệu hoá, refresh token thất bại.", username);
+            throw new AppException(ErrorCode.USER_DISABLE);
+        }
+
+        // Generate new tokens
+        String newToken = generateToken(user);
+        String newRefreshToken = generateRefreshToken(user);
+
+        log.info("Tài khoản: {} refresh token thành công.", username);
+
+        return AuthenticationResponse.builder()
+                .authenticated(true)
+                .token(newToken)
+                .refreshToken(newRefreshToken)
+                .build();
+    }
+
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(signerKey.getBytes());
 
@@ -334,10 +371,12 @@ public class AuthenticationService {
         }
 
         String token = generateToken(user);
+        String refreshToken = generateRefreshToken(user);
 
         return AuthenticationResponse.builder()
                 .authenticated(isAuthenticated)
                 .token(token)
+                .refreshToken(refreshToken)
                 .build();
         }
 
@@ -446,10 +485,36 @@ public class AuthenticationService {
 
         try {
             jwsObject.sign(new MACSigner(signerKey.getBytes()));
-            log.info("Tài khoản: {} đăng nhập thành công.", user.getUsername());
             return jwsObject.serialize();
         } catch (JOSEException e) {
             log.error("Tài khoản: {} đăng nhập thất bại, tạo token thất bại.", user.getUsername());
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String generateRefreshToken(User user) {
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+
+        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
+                .subject(user.getUsername())
+                .issuer("truong.com")
+                .issueTime(new Date())
+                .expirationTime(new Date(
+                        Instant.now().plus(7, ChronoUnit.DAYS).toEpochMilli()
+                ))
+                .jwtID(UUID.randomUUID().toString())
+                .claim("type", "refresh")
+                .build();
+
+        Payload payload = new Payload(jwtClaimsSet.toJSONObject());
+
+        JWSObject jwsObject = new JWSObject(header,payload);
+
+        try {
+            jwsObject.sign(new MACSigner(signerKey.getBytes()));
+            return jwsObject.serialize();
+        } catch (JOSEException e) {
+            log.error("Tài khoản: {} tạo refresh token thất bại.", user.getUsername());
             throw new RuntimeException(e);
         }
     }

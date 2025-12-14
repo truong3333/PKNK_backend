@@ -52,6 +52,15 @@ public class NurseController {
                 .build();
     }
 
+    @GetMapping("/appointment/all/{doctorId}")
+    ApiResponses<List<AppointmentResponse>> getAllAppointmentsByDoctor(@PathVariable String doctorId){
+        // Lấy tất cả lịch hẹn của doctor (trừ các lịch đã bị patient hủy)
+        return ApiResponses.<List<AppointmentResponse>>builder()
+                .code(1000)
+                .result(doctorService.getAllAppointmentOfDoctor(doctorId))
+                .build();
+    }
+
     @PutMapping("/appointment/{appointmentId}")
     ApiResponses<AppointmentResponse> notificationUpdateAppointment(@PathVariable String appointmentId){
         return ApiResponses.<AppointmentResponse>builder()

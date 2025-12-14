@@ -63,6 +63,12 @@ public class DoctorService {
                 .fullName(doctor.getUser().getUserDetail().getFullName())
                 .specialization(doctor.getSpecialization())
                 .phone(doctor.getUser().getUserDetail().getPhone())
+                .email(doctor.getUser().getUserDetail().getEmail())
+                .address(doctor.getUser().getUserDetail().getAddress())
+                .gender(doctor.getUser().getUserDetail().getGender())
+                .dob(doctor.getUser().getUserDetail().getDob())
+                .licenseNumber(doctor.getLicenseNumber())
+                .yearsExperience(doctor.getYearsExperience())
                 .build();
     }
 
@@ -93,17 +99,19 @@ public class DoctorService {
                 .listDentalServicesEntity(appointment.getListDentalServicesEntity())
                 .doctorId(doctorId)
                 .patientId(appointment.getPatient().getId())
+                .notification(appointment.getNotification())
                 .build()
         ).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','NURSE')")
     public List<AppointmentResponse> getAllAppointmentOfDoctor(String doctorId){
         if(!doctorRepository.existsById(doctorId)){
             log.error("Bác sĩ id: {} không tồn tại, lấy danh sách lịch hẹn thất bại.", doctorId);
             throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
         }
 
+        // Loại bỏ các lịch hẹn đã bị patient hủy (status = "Cancel")
         return appointmentRepository.findAllByDoctorIdAndStatusNot(doctorId, "Cancel").stream().map(appointment -> AppointmentResponse.builder()
                 .id(appointment.getId())
                 .dateTime(appointment.getDateTime().toString())
@@ -111,8 +119,9 @@ public class DoctorService {
                 .type(appointment.getType())
                 .notes(appointment.getNotes())
                 .listDentalServicesEntity(appointment.getListDentalServicesEntity())
-                .doctorId(doctorId)
+                .doctorId(appointment.getDoctor() != null ? appointment.getDoctor().getId() : doctorId)
                 .patientId(appointment.getPatient().getId())
+                .notification(appointment.getNotification())
                 .build()
         ).toList();
     }
@@ -138,6 +147,7 @@ public class DoctorService {
                 .listDentalServicesEntity(appointment.getListDentalServicesEntity())
                 .doctorId(doctorId)
                 .patientId(appointment.getPatient().getId())
+                .notification(appointment.getNotification())
                 .build()
         ).toList();
     }
@@ -160,6 +170,7 @@ public class DoctorService {
                 .listDentalServicesEntity(appointment.getListDentalServicesEntity())
                 .doctorId(user.getDoctor().getId())
                 .patientId(appointment.getPatient().getId())
+                .notification(appointment.getNotification())
                 .build()
         ).toList();
     }
@@ -173,6 +184,7 @@ public class DoctorService {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         });
 
+        // Loại bỏ các lịch hẹn đã bị patient hủy (status = "Cancel")
         return appointmentRepository.findAllByDoctorIdAndStatusNot(user.getDoctor().getId(), "Cancel").stream().map(appointment -> AppointmentResponse.builder()
                 .id(appointment.getId())
                 .dateTime(appointment.getDateTime().toString())
@@ -182,6 +194,7 @@ public class DoctorService {
                 .listDentalServicesEntity(appointment.getListDentalServicesEntity())
                 .doctorId(user.getDoctor().getId())
                 .patientId(appointment.getPatient().getId())
+                .notification(appointment.getNotification())
                 .build()
         ).toList();
     }
@@ -275,6 +288,11 @@ public class DoctorService {
         costRepository.save(cost);
         log.info("Kết quả khám của lịch hẹn id: {} được thêm thành công.", appointmentId);
 
+        // Lấy tên bệnh nhân từ appointment
+        String patientName = appointment.getPatient() != null && appointment.getPatient().getUser() != null 
+                && appointment.getPatient().getUser().getUserDetail() != null
+                ? appointment.getPatient().getUser().getUserDetail().getFullName()
+                : null;
 
         return ExaminationResponse.builder()
                 .id(examination.getId())
@@ -283,6 +301,7 @@ public class DoctorService {
                 .notes(request.getNotes())
                 .treatment(request.getTreatment())
                 .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                .patientName(patientName)
                 .listDentalServicesEntityOrder(request.getListDentalServicesEntityOrder())
                 .listPrescriptionOrder(request.getListPrescriptionOrder())
                 .totalCost(request.getTotalCost())
@@ -386,6 +405,13 @@ public class DoctorService {
         costRepository.save(cost);
         log.info("Kết quả khám id: {} được cập nhật thành công.", examinationId);
 
+        // Lấy tên bệnh nhân từ appointment
+        String patientName = examination.getAppointment().getPatient() != null 
+                && examination.getAppointment().getPatient().getUser() != null 
+                && examination.getAppointment().getPatient().getUser().getUserDetail() != null
+                ? examination.getAppointment().getPatient().getUser().getUserDetail().getFullName()
+                : null;
+
         return ExaminationResponse.builder()
                 .id(examination.getId())
                 .symptoms(request.getSymptoms())
@@ -393,6 +419,7 @@ public class DoctorService {
                 .notes(request.getNotes())
                 .treatment(request.getTreatment())
                 .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                .patientName(patientName)
                 .listDentalServicesEntityOrder(request.getListDentalServicesEntityOrder())
                 .listPrescriptionOrder(request.getListPrescriptionOrder())
                 .totalCost(request.getTotalCost())
@@ -407,17 +434,25 @@ public class DoctorService {
                 .build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('GET_EXAMINATION_DETAIL','ADMIN')")
     public ExaminationResponse getExaminationByAppointmentId(String appointmentId){
+        // Verify appointment exists
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> {
             log.error("Lịch hẹn id: {} không tồn tại, xem kết quả khám thất bại.", appointmentId);
             throw new AppException(ErrorCode.APPOINTMENT_NOT_EXISTED);
         });
 
-        Examination examination = examinationRepository.findById(appointment.getExamination().getId()).orElseThrow(() -> {
-            log.error("Kết quả khám id: {} không tồn tại, xem kết quả khám thất bại.", appointment.getExamination().getId());
+        // Query examination directly by appointment_id to avoid lazy loading issues
+        Examination examination = examinationRepository.findByAppointmentId(appointmentId).orElseThrow(() -> {
+            log.error("Kết quả khám cho lịch hẹn id: {} không tồn tại, xem kết quả khám thất bại.", appointmentId);
             throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
         });
+
+        // Lấy tên bệnh nhân từ appointment
+        String patientName = appointment.getPatient() != null && appointment.getPatient().getUser() != null 
+                && appointment.getPatient().getUser().getUserDetail() != null
+                ? appointment.getPatient().getUser().getUserDetail().getFullName()
+                : null;
 
         return ExaminationResponse.builder()
                 .id(examination.getId())
@@ -426,7 +461,18 @@ public class DoctorService {
                 .notes(examination.getNotes())
                 .treatment(examination.getTreatment())
                 .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
+                    .patientName(patientName)
+                .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
+                .listPrescriptionOrder(examination.getListPrescriptionOrder())
+                .totalCost(examination.getTotalCost())
+                .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
+                        .publicId(image.getPublicId())
+                        .type(image.getType())
+                        .url(image.getUrl())
+                        .build()
+                ).toList())
                 .createAt(appointment.getDateTime().toLocalDate())
+                .listComment(examination.getListComment())
                 .build();
     }
 
@@ -443,16 +489,34 @@ public class DoctorService {
 
         return listAppointment.stream()
                 .filter(appointment -> appointment.getExamination() != null)
-                .map(appointment -> ExaminationResponse.builder()
-                        .id(appointment.getExamination().getId())
-                        .symptoms(appointment.getExamination().getSymptoms())
-                        .diagnosis(appointment.getExamination().getDiagnosis())
-                        .notes(appointment.getExamination().getNotes())
-                        .treatment(appointment.getExamination().getTreatment())
-                        .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                        .createAt(appointment.getDateTime().toLocalDate())
-                        .build()
-        ).toList();
+                .map(appointment -> {
+                    Examination examination = appointment.getExamination();
+                    // Lấy tên bệnh nhân từ appointment
+                    String patientName = appointment.getPatient() != null && appointment.getPatient().getUser() != null 
+                            && appointment.getPatient().getUser().getUserDetail() != null
+                            ? appointment.getPatient().getUser().getUserDetail().getFullName()
+                            : null;
+                    return ExaminationResponse.builder()
+                            .id(examination.getId())
+                            .symptoms(examination.getSymptoms())
+                            .diagnosis(examination.getDiagnosis())
+                            .notes(examination.getNotes())
+                            .treatment(examination.getTreatment())
+                            .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
+                            .patientName(patientName)
+                            .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
+                            .listPrescriptionOrder(examination.getListPrescriptionOrder())
+                            .totalCost(examination.getTotalCost())
+                            .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
+                                    .publicId(image.getPublicId())
+                                    .type(image.getType())
+                                    .url(image.getUrl())
+                                    .build()
+                            ).toList())
+                            .createAt(appointment.getDateTime().toLocalDate())
+                            .listComment(examination.getListComment())
+                            .build();
+                }).toList();
     }
 
     @PreAuthorize("hasAnyAuthority('GET_EXAMINATION_DETAIL','ADMIN')")
@@ -462,6 +526,13 @@ public class DoctorService {
             throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
         });
 
+        // Lấy tên bệnh nhân từ appointment
+        String patientName = examination.getAppointment().getPatient() != null 
+                && examination.getAppointment().getPatient().getUser() != null 
+                && examination.getAppointment().getPatient().getUser().getUserDetail() != null
+                ? examination.getAppointment().getPatient().getUser().getUserDetail().getFullName()
+                : null;
+
         return ExaminationResponse.builder()
                     .id(examination.getId())
                     .symptoms(examination.getSymptoms())
@@ -469,6 +540,7 @@ public class DoctorService {
                     .notes(examination.getNotes())
                     .treatment(examination.getTreatment())
                     .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                    .patientName(patientName)
                     .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
                     .listPrescriptionOrder(examination.getListPrescriptionOrder())
                     .totalCost(examination.getTotalCost())
@@ -508,6 +580,13 @@ public class DoctorService {
         examinationRepository.save(examination);
         log.info("Bác sĩ id: {} thêm nhận xét cho kết quả khám id: {} thành công.", user.getDoctor().getId(), examinationId);
 
+        // Lấy tên bệnh nhân từ appointment
+        String patientName = examination.getAppointment().getPatient() != null 
+                && examination.getAppointment().getPatient().getUser() != null 
+                && examination.getAppointment().getPatient().getUser().getUserDetail() != null
+                ? examination.getAppointment().getPatient().getUser().getUserDetail().getFullName()
+                : null;
+
         return ExaminationResponse.builder()
                 .id(examination.getId())
                 .symptoms(examination.getSymptoms())
@@ -515,6 +594,7 @@ public class DoctorService {
                 .notes(examination.getNotes())
                 .treatment(examination.getTreatment())
                 .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                .patientName(patientName)
                 .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
                 .listPrescriptionOrder(examination.getListPrescriptionOrder())
                 .totalCost(examination.getTotalCost())

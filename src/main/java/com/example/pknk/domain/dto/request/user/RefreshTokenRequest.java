@@ -1,4 +1,4 @@
-package com.example.pknk.domain.dto.response.user;
+package com.example.pknk.domain.dto.request.user;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,9 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationResponse {
-
-    boolean authenticated;
-    String token;
+public class RefreshTokenRequest {
     String refreshToken;
 }
+

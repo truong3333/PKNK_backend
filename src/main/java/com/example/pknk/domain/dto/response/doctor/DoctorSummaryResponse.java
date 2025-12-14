@@ -3,6 +3,8 @@ package com.example.pknk.domain.dto.response.doctor;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Builder
@@ -15,4 +17,10 @@ public class DoctorSummaryResponse {
     String fullName;
     String specialization;
     String phone;
+    String email;
+    String address;
+    String gender;
+    LocalDate dob;
+    String licenseNumber;
+    Integer yearsExperience;
 }

@@ -310,16 +310,23 @@ public class PatientService {
 
             return listAppointment.stream()
                     .filter(appointment -> appointment.getExamination() != null)
-                    .map(appointment -> ExaminationResponse.builder()
-                            .id(appointment.getExamination().getId())
-                            .symptoms(appointment.getExamination().getSymptoms())
-                            .diagnosis(appointment.getExamination().getDiagnosis())
-                            .notes(appointment.getExamination().getNotes())
-                            .treatment(appointment.getExamination().getTreatment())
-                            .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
-                            .createAt(appointment.getDateTime().toLocalDate())
-                            .build()
-            ).toList();
+                    .map(appointment -> {
+                        // Lấy tên bệnh nhân từ appointment
+                        String patientName = appointment.getPatient() != null && appointment.getPatient().getUser() != null 
+                                && appointment.getPatient().getUser().getUserDetail() != null
+                                ? appointment.getPatient().getUser().getUserDetail().getFullName()
+                                : null;
+                        return ExaminationResponse.builder()
+                                .id(appointment.getExamination().getId())
+                                .symptoms(appointment.getExamination().getSymptoms())
+                                .diagnosis(appointment.getExamination().getDiagnosis())
+                                .notes(appointment.getExamination().getNotes())
+                                .treatment(appointment.getExamination().getTreatment())
+                                .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
+                                .patientName(patientName)
+                                .createAt(appointment.getDateTime().toLocalDate())
+                                .build();
+                    }).toList();
         }
 
         @PreAuthorize("hasAnyRole('PATIENT','ADMIN')")
@@ -329,6 +336,13 @@ public class PatientService {
                 throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
             });
 
+            // Lấy tên bệnh nhân từ appointment
+            String patientName = examination.getAppointment().getPatient() != null 
+                    && examination.getAppointment().getPatient().getUser() != null 
+                    && examination.getAppointment().getPatient().getUser().getUserDetail() != null
+                    ? examination.getAppointment().getPatient().getUser().getUserDetail().getFullName()
+                    : null;
+
             return ExaminationResponse.builder()
                     .id(examination.getId())
                     .symptoms(examination.getSymptoms())
@@ -336,6 +350,7 @@ public class PatientService {
                     .notes(examination.getNotes())
                     .treatment(examination.getTreatment())
                     .examined_at(examination.getAppointment().getDoctor().getUser().getUserDetail().getFullName())
+                    .patientName(patientName)
                     .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
                     .listPrescriptionOrder(examination.getListPrescriptionOrder())
                     .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()

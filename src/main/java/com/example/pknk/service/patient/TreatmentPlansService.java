@@ -44,10 +44,19 @@ public class TreatmentPlansService {
 
     @PreAuthorize("hasAnyAuthority('CREATE_TREATMENT_PLANS','ADMIN')")
     public TreatmentPlansResponse createTreatmentPlans(TreatmentPlansRequest request){
-        Examination examination = examinationRepository.findById(request.getExaminationId()).orElseThrow(() -> {
+        log.info("Creating treatment plan with request: title={}, examinationId={}, nurseId={}", 
+                request.getTitle(), request.getExaminationId(), request.getNurseId());
+        
+        // Use findByIdWithAppointment to avoid lazy loading issues
+        Examination examination = examinationRepository.findByIdWithAppointment(request.getExaminationId()).orElseThrow(() -> {
             log.error("Kết quả khám id: {} không tồn tại, xem chi tiết kết quả khám thất bại.", request.getExaminationId());
             throw new AppException(ErrorCode.EXAMINATION_NOT_EXISTED);
         });
+
+        if (examination.getAppointment() == null) {
+            log.error("Kết quả khám id: {} không có lịch hẹn liên kết, thêm phác đồ điều trị thất bại.", request.getExaminationId());
+            throw new AppException(ErrorCode.APPOINTMENT_NOT_EXISTED);
+        }
 
         Doctor doctor = doctorRepository.findById(examination.getAppointment().getDoctor().getId()).orElseThrow(() -> {
             log.error("Bác sĩ id: {} không tồn tại, thêm phác đồ điều trị thất bại.", examination.getAppointment().getDoctor().getId());
@@ -59,11 +68,14 @@ public class TreatmentPlansService {
             throw new AppException(ErrorCode.PATIENT_NOT_EXISTED);
         });
 
-        Nurse nurse = nurseRepository.findById(request.getNurseId()).orElseThrow(() -> {
-            log.error("Y tá id: {} không tồn tại, thêm phác đồ điều trị thất bại.", request.getNurseId());
-            throw new AppException(ErrorCode.NURSE_NOT_EXISTED);
-        });
-
+        // nurseId is optional - only fetch nurse if nurseId is provided
+        Nurse nurse = null;
+        if (request.getNurseId() != null && !request.getNurseId().trim().isEmpty()) {
+            nurse = nurseRepository.findById(request.getNurseId()).orElseThrow(() -> {
+                log.error("Y tá id: {} không tồn tại, thêm phác đồ điều trị thất bại.", request.getNurseId());
+                throw new AppException(ErrorCode.NURSE_NOT_EXISTED);
+            });
+        }
 
         TreatmentPlans treatmentPlans = TreatmentPlans.builder()
                 .title(request.getTitle())
@@ -90,9 +102,12 @@ public class TreatmentPlansService {
                 .totalCost(0)
                 .status("Inprogress")
                 .doctorId(doctor.getId())
-                .nurseId(nurse.getId())
-                .createAt(LocalDate.now())
+                .doctorFullname(doctor.getUser().getUserDetail().getFullName())
+                .nurseId(nurse != null ? nurse.getId() : null) // Handle null nurse
+                .nurseFullname(nurse != null ? nurse.getUser().getUserDetail().getFullName() : null) // Handle null nurse
                 .patientId(patient.getId())
+                .patientName(patient.getUser().getUserDetail().getFullName())
+                .createAt(LocalDate.now())
                 .build();
     }
 
@@ -133,8 +148,11 @@ public class TreatmentPlansService {
                 .totalCost(cost)
                 .status(request.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
+                .doctorFullname(treatmentPlans.getDoctor().getUser().getUserDetail().getFullName())
                 .nurseId(nurse.getId())
+                .nurseFullname(nurse.getUser().getUserDetail().getFullName())
                 .patientId(treatmentPlans.getPatient().getId())
+                .patientName(treatmentPlans.getPatient().getUser().getUserDetail().getFullName())
                 .createAt(treatmentPlans.getCreateAt())
                 .build();
     }
@@ -148,9 +166,13 @@ public class TreatmentPlansService {
                         .duration(treatmentPlans.getDuration())
                         .notes(treatmentPlans.getNotes())
                         .totalCost(treatmentPlans.getTotalCost())
+                        .status(treatmentPlans.getStatus())
                         .doctorId(treatmentPlans.getDoctor().getId())
+                        .doctorFullname(treatmentPlans.getDoctor().getUser().getUserDetail().getFullName())
                         .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null)
+                        .nurseFullname(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getUser().getUserDetail().getFullName() : null)
                         .patientId(treatmentPlans.getPatient().getId())
+                        .patientName(treatmentPlans.getPatient().getUser().getUserDetail().getFullName())
                         .createAt(LocalDate.now())
                         .build()
                 ).toList();
@@ -169,8 +191,11 @@ public class TreatmentPlansService {
                 .totalCost(treatmentPlans.getTotalCost())
                 .status(treatmentPlans.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
+                .doctorFullname(treatmentPlans.getDoctor().getUser().getUserDetail().getFullName())
                 .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null)
+                .nurseFullname(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getUser().getUserDetail().getFullName() : null)
                 .patientId(treatmentPlans.getPatient().getId())
+                .patientName(treatmentPlans.getPatient().getUser().getUserDetail().getFullName())
                 .createAt(LocalDate.now())
                 .build()).toList();
     }
@@ -195,8 +220,11 @@ public class TreatmentPlansService {
                 .totalCost(treatmentPlans.getTotalCost())
                 .status(treatmentPlans.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
+                .doctorFullname(treatmentPlans.getDoctor().getUser().getUserDetail().getFullName())
                 .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null)
+                .nurseFullname(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getUser().getUserDetail().getFullName() : null)
                 .patientId(treatmentPlans.getPatient().getId())
+                .patientName(treatmentPlans.getPatient().getUser().getUserDetail().getFullName())
                 .createAt(LocalDate.now())
                 .build()).toList();
     }
@@ -221,8 +249,11 @@ public class TreatmentPlansService {
                 .totalCost(treatmentPlans.getTotalCost())
                 .status(treatmentPlans.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
+                .doctorFullname(treatmentPlans.getDoctor().getUser().getUserDetail().getFullName())
                 .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null)
+                .nurseFullname(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getUser().getUserDetail().getFullName() : null)
                 .patientId(treatmentPlans.getPatient().getId())
+                .patientName(treatmentPlans.getPatient().getUser().getUserDetail().getFullName())
                 .createAt(LocalDate.now())
                 .build()).toList();
     }
@@ -247,8 +278,11 @@ public class TreatmentPlansService {
                 .totalCost(treatmentPlans.getTotalCost())
                 .status(treatmentPlans.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
+                .doctorFullname(treatmentPlans.getDoctor().getUser().getUserDetail().getFullName())
                 .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null) // Handle null nurse
+                .nurseFullname(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getUser().getUserDetail().getFullName() : null) // Handle null nurse
                 .patientId(treatmentPlans.getPatient().getId())
+                .patientName(treatmentPlans.getPatient().getUser().getUserDetail().getFullName())
                 .createAt(LocalDate.now())
                 .build()).toList();
     }

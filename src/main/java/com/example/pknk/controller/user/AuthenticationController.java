@@ -77,6 +77,14 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/refresh")
+    ApiResponses<AuthenticationResponse> refresh(@RequestBody RefreshTokenRequest request) throws ParseException, JOSEException {
+        return ApiResponses.<AuthenticationResponse>builder()
+                .code(1000)
+                .result(authenticationService.refresh(request))
+                .build();
+    }
+
     @PostMapping("/forgotPassword")
     ApiResponses<String> forgotPassword(@RequestBody VerifyForgotPasswordRequest request){
         return ApiResponses.<String>builder()

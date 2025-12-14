@@ -22,8 +22,11 @@ public class TreatmentPlansResponse {
     String status;
     double totalCost;
     String doctorId;
+    String doctorFullname; // Tên bác sĩ
     String nurseId;
+    String nurseFullname; // Tên y tá
     String patientId;
+    String patientName; // Tên bệnh nhân
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate createAt;
