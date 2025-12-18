@@ -13,4 +13,8 @@ public class NurseInfoResponse {
     String id;
     String fullName;
     String phone;
+    String email;
+    String address;
+    String gender;
+    String dob;
 }

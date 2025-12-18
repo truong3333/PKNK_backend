@@ -45,10 +45,16 @@ public class NurseService {
             throw new AppException(ErrorCode.NURSE_NOT_EXISTED);
         });
 
+        var userDetail = nurse.getUser().getUserDetail();
+
         return NurseInfoResponse.builder()
                 .id(nurseId)
-                .fullName(nurse.getUser().getUserDetail().getFullName())
-                .phone(nurse.getUser().getUserDetail().getPhone())
+                .fullName(userDetail.getFullName())
+                .phone(userDetail.getPhone())
+                .email(userDetail.getEmail())
+                .address(userDetail.getAddress())
+                .gender(userDetail.getGender())
+                .dob(userDetail.getDob() != null ? userDetail.getDob().toString() : null)
                 .build();
     }
 
