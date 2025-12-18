@@ -211,6 +211,33 @@ public class TreatmentPlansService {
                 .build()).toList();
     }
 
+    @PreAuthorize("hasAnyAuthority('PICK_DOCTOR','ADMIN')")
+    public List<TreatmentPlansResponse> getTreatmentPlansByDoctorId(String doctorId) {
+        if (!doctorRepository.existsById(doctorId)) {
+            log.error("Bác sĩ id: {} không tồn tại, lấy danh sách phác đồ điều trị thất bại.", doctorId);
+            throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
+        }
+
+        List<TreatmentPlans> listTreatmentPlans = new ArrayList<>(treatmentPlansRepository.findAllByDoctorId(doctorId));
+
+        return listTreatmentPlans.stream().map(treatmentPlans -> TreatmentPlansResponse.builder()
+                .id(treatmentPlans.getId())
+                .title(treatmentPlans.getTitle())
+                .description(treatmentPlans.getDescription())
+                .duration(treatmentPlans.getDuration())
+                .notes(treatmentPlans.getNotes())
+                .totalCost(treatmentPlans.getTotalCost())
+                .status(treatmentPlans.getStatus())
+                .doctorId(treatmentPlans.getDoctor().getId())
+                .doctorFullname(treatmentPlans.getDoctor().getUser().getUserDetail().getFullName())
+                .nurseId(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getId() : null)
+                .nurseFullname(treatmentPlans.getNurse() != null ? treatmentPlans.getNurse().getUser().getUserDetail().getFullName() : null)
+                .patientId(treatmentPlans.getPatient().getId())
+                .patientName(treatmentPlans.getPatient().getUser().getUserDetail().getFullName())
+                .createAt(treatmentPlans.getCreateAt())
+                .build()).toList();
+    }
+
     @PreAuthorize("hasAnyRole('DOCTOR','DOCTORLV2')")
     public List<TreatmentPlansResponse> getMyTreatmentPlansOfDoctor(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

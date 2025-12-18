@@ -184,6 +184,24 @@ public class DoctorController {
 
 
     //DOCTOR LV2
+    @GetMapping("/{doctorId}/examinations")
+    @PreAuthorize("hasAnyAuthority('PICK_DOCTOR','ADMIN')")
+    ApiResponses<List<ExaminationResponse>> getExaminationsByDoctorId(@PathVariable String doctorId){
+        return ApiResponses.<List<ExaminationResponse>>builder()
+                .code(1000)
+                .result(doctorService.getExaminationsByDoctorId(doctorId))
+                .build();
+    }
+
+    @GetMapping("/{doctorId}/treatmentPlans")
+    @PreAuthorize("hasAnyAuthority('PICK_DOCTOR','ADMIN')")
+    ApiResponses<List<TreatmentPlansResponse>> getTreatmentPlansByDoctorId(@PathVariable String doctorId){
+        return ApiResponses.<List<TreatmentPlansResponse>>builder()
+                .code(1000)
+                .result(treatmentPlansService.getTreatmentPlansByDoctorId(doctorId))
+                .build();
+    }
+
     @PostMapping("/commentExamination/{examinationId}")
     ApiResponses<ExaminationResponse> addCommentExaminationByDoctorLV2(@PathVariable String examinationId, @RequestBody CommentRequest request){
         return ApiResponses.<ExaminationResponse>builder()

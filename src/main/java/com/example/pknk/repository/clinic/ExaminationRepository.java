@@ -15,4 +15,7 @@ public interface ExaminationRepository extends JpaRepository<Examination, String
     
     @Query("SELECT e FROM Examination e LEFT JOIN FETCH e.appointment a LEFT JOIN FETCH a.doctor d LEFT JOIN FETCH a.patient p WHERE e.id = :examinationId")
     Optional<Examination> findByIdWithAppointment(@Param("examinationId") String examinationId);
+    
+    @Query("SELECT e FROM Examination e LEFT JOIN FETCH e.appointment a LEFT JOIN FETCH a.doctor d LEFT JOIN FETCH a.patient p WHERE a.doctor.id = :doctorId")
+    List<Examination> findAllByDoctorId(@Param("doctorId") String doctorId);
 }

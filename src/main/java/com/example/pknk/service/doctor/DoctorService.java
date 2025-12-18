@@ -652,4 +652,43 @@ public class DoctorService {
                 ).toList())
                 .build();
     }
+
+    @PreAuthorize("hasAnyAuthority('PICK_DOCTOR','ADMIN')")
+    public List<ExaminationResponse> getExaminationsByDoctorId(String doctorId) {
+        if (!doctorRepository.existsById(doctorId)) {
+            log.error("Bác sĩ id: {} không tồn tại, lấy danh sách hồ sơ khám thất bại.", doctorId);
+            throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
+        }
+
+        List<Examination> examinations = examinationRepository.findAllByDoctorId(doctorId);
+
+        return examinations.stream().map(examination -> {
+            Appointment appointment = examination.getAppointment();
+            String patientName = appointment.getPatient() != null && appointment.getPatient().getUser() != null
+                    && appointment.getPatient().getUser().getUserDetail() != null
+                    ? appointment.getPatient().getUser().getUserDetail().getFullName()
+                    : null;
+
+            return ExaminationResponse.builder()
+                    .id(examination.getId())
+                    .symptoms(examination.getSymptoms())
+                    .diagnosis(examination.getDiagnosis())
+                    .notes(examination.getNotes())
+                    .treatment(examination.getTreatment())
+                    .examined_at(appointment.getDoctor().getUser().getUserDetail().getFullName())
+                    .patientName(patientName)
+                    .listDentalServicesEntityOrder(examination.getListDentalServicesEntityOrder())
+                    .listPrescriptionOrder(examination.getListPrescriptionOrder())
+                    .totalCost(examination.getTotalCost())
+                    .listImage(examination.getListImage().stream().map(image -> ImageResponse.builder()
+                            .publicId(image.getPublicId())
+                            .type(image.getType())
+                            .url(image.getUrl())
+                            .build()
+                    ).toList())
+                    .createAt(appointment.getDateTime().toLocalDate())
+                    .listComment(examination.getListComment())
+                    .build();
+        }).toList();
+    }
 }
