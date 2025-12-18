@@ -38,7 +38,7 @@ public class NurseService {
         ).toList();
     }
 
-    @PreAuthorize("hasAnyAuthority('GET_INFO_NURSE','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('GET_INFO_NURSE','ADMIN') OR hasRole('NURSE')")
     public NurseInfoResponse getInfoNurse(String nurseId){
         Nurse nurse = nurseRepository.findById(nurseId).orElseThrow(() -> {
             log.info("Y tá id: {} không tồn tại, lấy thông tin thất bại.", nurseId);
