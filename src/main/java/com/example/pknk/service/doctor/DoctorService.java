@@ -51,7 +51,7 @@ public class DoctorService {
 
     Cloudinary cloudinary;
 
-    @PreAuthorize("hasAnyAuthority('GET_INFO_DOCTOR','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('GET_INFO_DOCTOR','ADMIN') OR hasAnyRole('DOCTOR','DOCTORLV2','NURSE')")
     public DoctorSummaryResponse getInfoDoctorById(String doctorId){
         Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(() -> {
             log.info("Bác sĩ id: {} không tồn tại, lấy thông tin thất bại.", doctorId);
@@ -72,13 +72,20 @@ public class DoctorService {
                 .build();
     }
 
-    @PreAuthorize("hasAnyAuthority('PICK_DOCTOR','ADMIN')")
+    // Public method - no authentication required for landing page
     public List<DoctorSummaryResponse> getAllDoctors(){
         List<Doctor> doctors = new ArrayList<>(doctorRepository.findAll());
         return doctors.stream().map(d -> DoctorSummaryResponse.builder()
                 .id(d.getId())
                 .fullName(d.getUser().getUserDetail().getFullName())
                 .specialization(d.getSpecialization())
+                .phone(d.getUser().getUserDetail().getPhone())
+                .email(d.getUser().getUserDetail().getEmail())
+                .address(d.getUser().getUserDetail().getAddress())
+                .gender(d.getUser().getUserDetail().getGender())
+                .dob(d.getUser().getUserDetail().getDob())
+                .licenseNumber(d.getLicenseNumber())
+                .yearsExperience(d.getYearsExperience())
                 .build()
         ).toList();
     }

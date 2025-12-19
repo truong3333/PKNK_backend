@@ -33,6 +33,9 @@ public class SecurityConfig {
             "/api/v1/auth/forgotPassword",
             "/api/v1/auth/verifyResetPassword/**",
             "/api/v1/auth/resetPassword",
+            "/api/v1/categoryDentalService",
+            "/api/v1/dentalService",
+            "/api/v1/doctor/doctors",
     };
 
     @Autowired
@@ -42,6 +45,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request -> request
                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINT).permitAll()
+                .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINT).permitAll()
                 .anyRequest().authenticated()
         );
 
