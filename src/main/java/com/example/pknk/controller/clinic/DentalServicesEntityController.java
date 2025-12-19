@@ -41,4 +41,13 @@ public class DentalServicesEntityController {
                 .result(dentalServicesEntityService.getAllService())
                 .build();
     }
+
+    @DeleteMapping("/{serviceId}")
+    ApiResponses<String> deleteService(@PathVariable String serviceId){
+        dentalServicesEntityService.deleteService(serviceId);
+        return ApiResponses.<String>builder()
+                .code(1000)
+                .result("Xóa dịch vụ thành công")
+                .build();
+    }
 }

@@ -85,4 +85,21 @@ public class CategoryDentalService {
                                 .build()
                         ).toList();
         }
+
+        @PreAuthorize("hasRole('ADMIN')")
+        public void deleteCategoryDentalService(String categoryId){
+                CategoryDental categoryDental = categoryDentalRepository.findById(categoryId).orElseThrow(() -> {
+                        log.error("Loại dịch vụ id: {} không tồn tại, xóa thất bại.", categoryId);
+                        throw new AppException(ErrorCode.CATEGORY_SERVICE_NOT_EXISTED);
+                });
+
+                // Check if category has services
+                if(!categoryDental.getListDentalService().isEmpty()){
+                        log.error("Loại dịch vụ id: {} có dịch vụ, không thể xóa.", categoryId);
+                        throw new AppException(ErrorCode.CATEGORY_SERVICE_HAS_SERVICES);
+                }
+
+                categoryDentalRepository.delete(categoryDental);
+                log.info("Loại dịch vụ id: {} được xóa thành công.", categoryId);
+        }
 }

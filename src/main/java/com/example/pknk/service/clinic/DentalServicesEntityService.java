@@ -86,4 +86,15 @@ public class DentalServicesEntityService {
                 .build()
         ).toList();
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteService(String serviceId){
+            DentalServicesEntity dentalServicesEntity = dentalServicesEntityServiceRepository.findById(serviceId).orElseThrow(() -> {
+                log.error("Dịch vụ id: {} không tồn tại, xóa thất bại.", serviceId);
+                throw new AppException(ErrorCode.SERVICE_NOT_EXISTED);
+            });
+
+            dentalServicesEntityServiceRepository.delete(dentalServicesEntity);
+            log.info("Dịch vụ id: {} được xóa thành công.", serviceId);
+    }
 }

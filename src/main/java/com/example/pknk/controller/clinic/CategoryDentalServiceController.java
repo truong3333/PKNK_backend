@@ -41,4 +41,13 @@ public class CategoryDentalServiceController {
                 .result(categoryDentalService.getAllCategoryDentalService())
                 .build();
     }
+
+    @DeleteMapping("/{categoryDentalServiceId}")
+    ApiResponses<String> deleteCategoryDentalService(@PathVariable String categoryDentalServiceId){
+        categoryDentalService.deleteCategoryDentalService(categoryDentalServiceId);
+        return ApiResponses.<String>builder()
+                .code(1000)
+                .result("Xóa danh mục thành công")
+                .build();
+    }
 }

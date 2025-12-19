@@ -44,6 +44,7 @@ public enum ErrorCode {
 
     CATEGORY_SERVICE_NOT_EXISTED(100,"Loại dịch vụ không tồn tại", HttpStatus.BAD_REQUEST),
     CATEGORY_SERVICE_EXISTED(100,"Loại dịch vụ đã tồn tại", HttpStatus.BAD_REQUEST),
+    CATEGORY_SERVICE_HAS_SERVICES(100,"Loại dịch vụ đang có dịch vụ, không thể xóa", HttpStatus.BAD_REQUEST),
 
     TOOTH_NUMBER_EXISTED(100,"Răng này đã tồn tại thông tin", HttpStatus.BAD_REQUEST),
     TOOTH_NOT_EXISTED(100,"Răng này không tồn tại thông tin", HttpStatus.BAD_REQUEST),
