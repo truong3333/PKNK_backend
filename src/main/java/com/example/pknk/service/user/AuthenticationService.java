@@ -235,6 +235,7 @@ public class AuthenticationService {
 
             verificationCodeRepository.save(verificationCode);
 
+            // Prepare email content
             StringBuilder content = new StringBuilder("Mã Xác thực đăng kí tài khoản phòng khám của bạn là: " + verificationCode.getCode() + ".\n\n");
             content.append("Mã sẽ hết hạn sau 10 phút, hãy chú ý.");
 
@@ -243,15 +244,24 @@ public class AuthenticationService {
             message.setSubject("Mã xác thực đăng kí tài khoản phòng khám");
             message.setText(content.toString());
 
-            mailSender.send(message);
-            log.info("Gửi mã xác thực cho email: {} thành công.", email);
+            // Send email asynchronously to avoid blocking HTTP response
+            // This ensures the response is returned immediately while email is sent in background
+            java.util.concurrent.CompletableFuture.runAsync(() -> {
+                try {
+                    mailSender.send(message);
+                    log.info("Gửi mã xác thực cho email: {} thành công.", email);
+                } catch (MailException e) {
+                    log.error("Lỗi khi gửi email xác thực đến: {}. Lỗi: {}", email, e.getMessage(), e);
+                    // Don't throw exception here as it's async - just log the error
+                }
+            });
 
+            // Return response immediately after saving verification code
+            // Email will be sent in background thread
+            log.info("Mã xác thực đã được lưu cho email: {}, đang gửi email ở background.", email);
             return "Gửi mã xác thực thành công.";
-        } catch (MailException e) {
-            log.error("Lỗi khi gửi email xác thực đến: {}. Lỗi: {}", email, e.getMessage(), e);
-            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
         } catch (Exception e) {
-            log.error("Lỗi không xác định khi gửi mã xác thực đến: {}. Lỗi: {}", email, e.getMessage(), e);
+            log.error("Lỗi khi xử lý yêu cầu mã xác thực cho email: {}. Lỗi: {}", email, e.getMessage(), e);
             throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
         }
     }
