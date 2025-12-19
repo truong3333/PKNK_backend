@@ -125,8 +125,9 @@ public class TreatmentPhasesService {
         treatmentPhasesRepository.save(treatmentPhases);
         
         // Create cost record for this treatment phase
+        Cost cost = null;
         if (request.getCost() > 0) {
-            Cost cost = Cost.builder()
+            cost = Cost.builder()
                     .id(treatmentPhases.getId()) // Use treatment phase ID as cost ID
                     .title("Tiến trình điều trị: " + request.getPhaseNumber() + " - " + request.getDescription())
                     .status("wait")
@@ -135,8 +136,8 @@ public class TreatmentPhasesService {
                     .listPrescriptionOrder(request.getListPrescriptionOrder())
                     .patient(treatmentPlans.getPatient())
                     .build();
-            
-            costRepository.save(cost);
+
+            cost = costRepository.save(cost);
             log.info("Cost record id: {} được tạo cho tiến trình điều trị id: {} thành công.", cost.getId(), treatmentPhases.getId());
         }
         
@@ -150,6 +151,7 @@ public class TreatmentPhasesService {
                 .listPrescriptionOrder(request.getListPrescriptionOrder())
                 .cost(request.getCost())
                 .status("Inprogress")
+                .paymentStatus(cost != null ? cost.getStatus() : null)
                 .listComment(treatmentPhases.getListComment())
                 .startDate(LocalDate.parse(request.getStartDate(), formatter))
                 .endDate(LocalDate.parse(request.getEndDate(), formatter))
@@ -299,6 +301,8 @@ public class TreatmentPhasesService {
         treatmentPhasesRepository.save(treatmentPhases);
         log.info("Tiến trình điều trị id: {} được cập nhật thành công.", treatmentPhasesId);
 
+        Cost cost = costRepository.findById(treatmentPhasesId).orElse(null);
+
         return TreatmentPhasesResponse.builder()
                 .id(treatmentPhases.getId())
                 .phaseNumber(request.getPhaseNumber())
@@ -307,6 +311,7 @@ public class TreatmentPhasesService {
                 .listPrescriptionOrder(request.getListPrescriptionOrder())
                 .cost(request.getCost())
                 .status(request.getStatus())
+                .paymentStatus(cost != null ? cost.getStatus() : null)
                 .listComment(treatmentPhases.getListComment())
                 .startDate(LocalDate.parse(request.getStartDate(), formatterDate))
                 .endDate(LocalDate.parse(request.getEndDate(), formatterDate))
@@ -327,26 +332,30 @@ public class TreatmentPhasesService {
             throw new AppException(ErrorCode.TREATMENTPLANS_NOT_EXISTED);
         }
 
-        return treatmentPhasesRepository.findAllByTreatmentPlansId(treatmentPlansId).stream().map(treatmentPhases -> TreatmentPhasesResponse.builder()
-                        .id(treatmentPhases.getId())
-                        .phaseNumber(treatmentPhases.getPhaseNumber())
-                        .description(treatmentPhases.getDescription())
-                        .listDentalServicesEntityOrder(treatmentPhases.getListDentalServiceEntityOrder())
-                        .listPrescriptionOrder(treatmentPhases.getListPrescriptionOrder())
-                        .cost(treatmentPhases.getCost())
-                        .status(treatmentPhases.getStatus())
-                        .listComment(treatmentPhases.getListComment())
-                        .startDate(treatmentPhases.getStartDate())
-                        .endDate(treatmentPhases.getEndDate())
-                        .nextAppointment(treatmentPhases.getNextAppointment())
-                        .listImage(treatmentPhases.getListImage().stream().map(image -> ImageResponse.builder()
-                                .publicId(image.getPublicId())
-                                .type(image.getType())
-                                .url(image.getUrl())
-                                .build()
-                        ).toList())
-                        .build()
-                ).toList();
+        return treatmentPhasesRepository.findAllByTreatmentPlansId(treatmentPlansId).stream().map(treatmentPhases -> {
+                    Cost cost = costRepository.findById(treatmentPhases.getId()).orElse(null);
+                    return TreatmentPhasesResponse.builder()
+                            .id(treatmentPhases.getId())
+                            .phaseNumber(treatmentPhases.getPhaseNumber())
+                            .description(treatmentPhases.getDescription())
+                            .listDentalServicesEntityOrder(treatmentPhases.getListDentalServiceEntityOrder())
+                            .listPrescriptionOrder(treatmentPhases.getListPrescriptionOrder())
+                            .cost(treatmentPhases.getCost())
+                            .status(treatmentPhases.getStatus())
+                            .paymentStatus(cost != null ? cost.getStatus() : null)
+                            .listComment(treatmentPhases.getListComment())
+                            .startDate(treatmentPhases.getStartDate())
+                            .endDate(treatmentPhases.getEndDate())
+                            .nextAppointment(treatmentPhases.getNextAppointment())
+                            .listImage(treatmentPhases.getListImage().stream().map(image -> ImageResponse.builder()
+                                    .publicId(image.getPublicId())
+                                    .type(image.getType())
+                                    .url(image.getUrl())
+                                    .build()
+                            ).toList())
+                            .build();
+                }
+        ).toList();
     }
 
 }

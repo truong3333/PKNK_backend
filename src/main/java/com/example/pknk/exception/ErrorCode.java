@@ -52,6 +52,9 @@ public enum ErrorCode {
 
     COST_NOT_EXISTED(100,"Hoá đơn không tồn tại", HttpStatus.BAD_REQUEST),
 
+    PAYMENT_FAILED(100,"Thanh toán thất bại", HttpStatus.BAD_REQUEST),
+    INVALID_REQUEST(100,"Yêu cầu không hợp lệ", HttpStatus.BAD_REQUEST),
+
     ;
 
 
