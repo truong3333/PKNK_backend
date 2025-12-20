@@ -47,6 +47,14 @@ public class DoctorController {
                 .build();
     }
 
+    @GetMapping("/user/{userId}")
+    ApiResponses<DoctorSummaryResponse> getInfoDoctorByUserId(@PathVariable String userId){
+        return ApiResponses.<DoctorSummaryResponse>builder()
+                .code(1000)
+                .result(doctorService.getInfoDoctorByUserId(userId))
+                .build();
+    }
+
     // Appointment
     @GetMapping("/appointment/scheduled/{doctorId}")
     ApiResponses<List<AppointmentResponse>> getAppointmentScheduledOfDoctor(@PathVariable String doctorId){

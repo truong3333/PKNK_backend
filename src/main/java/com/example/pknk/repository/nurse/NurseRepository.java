@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface NurseRepository extends JpaRepository<Nurse, String> {
     @EntityGraph(attributePaths = {"user.userDetail"})
     Optional<Nurse> findById(String id);
+    
+    Optional<Nurse> findByUserId(String userId);
 }

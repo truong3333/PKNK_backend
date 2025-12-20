@@ -129,4 +129,28 @@ public class RoleService {
         return "Nâng cấp vai trò thành công";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public String updateLevelDoctorByUserId(String userId){
+        // Find doctor by user ID
+        Doctor doctor = doctorRepository.findByUserId(userId).orElseThrow(() -> {
+            log.info("User id: {} không tồn tại hoặc không phải là bác sĩ, nâng cấp vai trò thất bại.", userId);
+            throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
+        });
+
+        Role role = roleRepository.findById("DOCTORLV2").orElseThrow(() -> {
+            log.error("Vai trò: DOCTORLV2 không tồn tại, nâng cấp vai trò thất bại.");
+            throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
+        });
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+
+        doctor.getUser().setRoles(roles);
+
+        doctorRepository.save(doctor);
+        log.info("Bác sĩ với user id: {} nâng cấp vai trò thành công.", userId);
+
+        return "Nâng cấp vai trò thành công";
+    }
+
 }

@@ -58,6 +58,26 @@ public class NurseService {
                 .build();
     }
 
+    @PreAuthorize("hasAnyAuthority('GET_INFO_NURSE','ADMIN') OR hasRole('NURSE','ADMIN')")
+    public NurseInfoResponse getInfoNurseByUserId(String userId){
+        Nurse nurse = nurseRepository.findByUserId(userId).orElseThrow(() -> {
+            log.info("User id: {} không tồn tại hoặc không phải là y tá, lấy thông tin thất bại.", userId);
+            throw new AppException(ErrorCode.NURSE_NOT_EXISTED);
+        });
+
+        var userDetail = nurse.getUser().getUserDetail();
+
+        return NurseInfoResponse.builder()
+                .id(nurse.getId())
+                .fullName(userDetail.getFullName())
+                .phone(userDetail.getPhone())
+                .email(userDetail.getEmail())
+                .address(userDetail.getAddress())
+                .gender(userDetail.getGender())
+                .dob(userDetail.getDob() != null ? userDetail.getDob().toString() : null)
+                .build();
+    }
+
     @PreAuthorize("hasAnyAuthority('NOTIFICATION_APPOINMENT','ADMIN')")
     public AppointmentResponse notificationUpdateAppointment(String appointmentId){
         Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> {

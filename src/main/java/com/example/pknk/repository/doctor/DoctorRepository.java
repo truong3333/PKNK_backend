@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, String> {
-
+    java.util.Optional<Doctor> findByUserId(String userId);
 }

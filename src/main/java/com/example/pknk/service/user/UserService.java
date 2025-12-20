@@ -43,6 +43,10 @@ public class UserService {
                         .address(user.getUserDetail().getAddress())
                         .gender(user.getUserDetail().getGender())
                         .dob(user.getUserDetail().getDob())
+                        .disable(user.isDisable())
+                        .role(user.getRoles() != null && !user.getRoles().isEmpty() 
+                                ? user.getRoles().iterator().next().getName() 
+                                : null)
                         .build()
                 ).toList();
         }
@@ -66,6 +70,10 @@ public class UserService {
                     .address(user.getUserDetail().getAddress())
                     .gender(user.getUserDetail().getGender())
                     .dob(user.getUserDetail().getDob())
+                    .disable(user.isDisable())
+                    .role(user.getRoles() != null && !user.getRoles().isEmpty() 
+                            ? user.getRoles().iterator().next().getName() 
+                            : null)
                     .build();
         }
 
@@ -99,6 +107,10 @@ public class UserService {
                         .address(user.getUserDetail().getAddress())
                         .gender(user.getUserDetail().getGender())
                         .dob(user.getUserDetail().getDob())
+                        .disable(user.isDisable())
+                        .role(user.getRoles() != null && !user.getRoles().isEmpty() 
+                                ? user.getRoles().iterator().next().getName() 
+                                : null)
                         .build();
         }
 

@@ -72,6 +72,27 @@ public class DoctorService {
                 .build();
     }
 
+    @PreAuthorize("hasAnyAuthority('GET_INFO_DOCTOR','ADMIN') OR hasAnyRole('DOCTOR','DOCTORLV2','NURSE','ADMIN')")
+    public DoctorSummaryResponse getInfoDoctorByUserId(String userId){
+        Doctor doctor = doctorRepository.findByUserId(userId).orElseThrow(() -> {
+            log.info("User id: {} không tồn tại hoặc không phải là bác sĩ, lấy thông tin thất bại.", userId);
+            throw new AppException(ErrorCode.DOCTOR_NOT_EXISTED);
+        });
+
+        return DoctorSummaryResponse.builder()
+                .id(doctor.getId())
+                .fullName(doctor.getUser().getUserDetail().getFullName())
+                .specialization(doctor.getSpecialization())
+                .phone(doctor.getUser().getUserDetail().getPhone())
+                .email(doctor.getUser().getUserDetail().getEmail())
+                .address(doctor.getUser().getUserDetail().getAddress())
+                .gender(doctor.getUser().getUserDetail().getGender())
+                .dob(doctor.getUser().getUserDetail().getDob())
+                .licenseNumber(doctor.getLicenseNumber())
+                .yearsExperience(doctor.getYearsExperience())
+                .build();
+    }
+
     // Public method - no authentication required for landing page
     public List<DoctorSummaryResponse> getAllDoctors(){
         List<Doctor> doctors = new ArrayList<>(doctorRepository.findAll());

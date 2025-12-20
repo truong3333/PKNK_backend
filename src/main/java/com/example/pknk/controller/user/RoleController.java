@@ -57,4 +57,12 @@ public class RoleController {
                 .result(roleService.updateLevelDoctor(doctorId))
                 .build();
     }
+
+    @PostMapping("/user/{userId}/updateLevel")
+    ApiResponses<String> updateLevelDoctorByUserId(@PathVariable String userId){
+        return ApiResponses.<String>builder()
+                .code(1000)
+                .result(roleService.updateLevelDoctorByUserId(userId))
+                .build();
+    }
 }

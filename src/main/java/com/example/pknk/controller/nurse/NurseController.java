@@ -36,6 +36,14 @@ public class NurseController {
                 .build();
     }
 
+    @GetMapping("/user/{userId}")
+    ApiResponses<NurseInfoResponse> getInfoNurseByUserId(@PathVariable String userId){
+        return ApiResponses.<NurseInfoResponse>builder()
+                .code(1000)
+                .result(nurseService.getInfoNurseByUserId(userId))
+                .build();
+    }
+
     @GetMapping("/pick")
     ApiResponses<List<NursePickResponse>> getAllNurseForPick(){
         return ApiResponses.<List<NursePickResponse>>builder()
@@ -83,6 +91,14 @@ public class NurseController {
         return ApiResponses.<PatientResponse>builder()
                 .code(1000)
                 .result(patientService.getBasicInfo(patientId))
+                .build();
+    }
+
+    @GetMapping("/patient/user/{userId}")
+    ApiResponses<PatientResponse> getBasicInfoByUserId(@PathVariable String userId){
+        return ApiResponses.<PatientResponse>builder()
+                .code(1000)
+                .result(patientService.getBasicInfoByUserId(userId))
                 .build();
     }
 

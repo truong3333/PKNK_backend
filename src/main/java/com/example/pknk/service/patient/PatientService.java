@@ -73,6 +73,29 @@ public class PatientService {
                     .build();
         }
 
+        @PreAuthorize("hasAnyAuthority('GET_BASIC_INFO','ADMIN') or hasAnyRole('DOCTOR','DOCTORLV2','NURSE','ADMIN')")
+        public PatientResponse getBasicInfoByUserId(String userId){
+            Patient patient = patientRepository.findByUserId(userId).orElseThrow(() -> {
+                log.error("User id: {} không tồn tại hoặc không phải là bệnh nhân, lấy thông tin cơ bản thất bại.", userId);
+                throw new AppException(ErrorCode.PATIENT_NOT_EXISTED);
+            });
+
+            return PatientResponse.builder()
+                    .id(patient.getId())
+                    .fullName(patient.getUser().getUserDetail().getFullName())
+                    .email(patient.getUser().getUserDetail().getEmail())
+                    .phone(patient.getUser().getUserDetail().getPhone())
+                    .address(patient.getUser().getUserDetail().getAddress())
+                    .gender(patient.getUser().getUserDetail().getGender())
+                    .dob(patient.getUser().getUserDetail().getDob())
+                    .emergencyContactName(patient.getEmergencyContactName())
+                    .emergencyPhoneNumber(patient.getEmergencyPhoneNumber())
+                    .bloodGroup(patient.getBloodGroup())
+                    .allergy(patient.getAllergy())
+                    .medicalHistory(patient.getMedicalHistory())
+                    .build();
+        }
+
         @PreAuthorize("hasRole('PATIENT')")
         public PatientResponse getMyPatientInfo() {
             String username = SecurityContextHolder.getContext().getAuthentication().getName();

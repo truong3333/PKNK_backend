@@ -21,5 +21,7 @@ public class UserResponse {
     String address;
     String gender;
     LocalDate dob;
+    Boolean disable;
+    String role;
 
 }
