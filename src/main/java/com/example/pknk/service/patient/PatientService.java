@@ -18,7 +18,10 @@ import com.example.pknk.domain.entity.user.Patient;
 import com.example.pknk.domain.entity.user.User;
 import com.example.pknk.exception.AppException;
 import com.example.pknk.exception.ErrorCode;
+import com.example.pknk.domain.entity.clinic.DentalServicesEntity;
+import com.example.pknk.domain.dto.request.clinic.DentalServicesEntityOrderRequest;
 import com.example.pknk.repository.clinic.AppointmentRepository;
+import com.example.pknk.repository.clinic.DentalServicesEntityServiceRepository;
 import com.example.pknk.repository.clinic.ExaminationRepository;
 import com.example.pknk.repository.doctor.DoctorRepository;
 import com.example.pknk.repository.doctor.BookingDateTimeRepository;
@@ -49,6 +52,7 @@ public class PatientService {
         BookingDateTimeRepository bookingDateTimeRepository;
         AppointmentRepository appointmentRepository;
         ExaminationRepository examinationRepository;
+        DentalServicesEntityServiceRepository dentalServicesEntityServiceRepository;
 
         @PreAuthorize("hasAnyAuthority('GET_BASIC_INFO','ADMIN') or hasAnyRole('DOCTOR','DOCTORLV2','NURSE')")
         public PatientResponse getBasicInfo(String patientId){
@@ -176,12 +180,38 @@ public class PatientService {
                 throw new AppException(ErrorCode.APPOINTMENT_EXISTED);
             }
 
+            // Map listDentalServicesEntity from id to full DentalServicesEntityOrderRequest
+            List<DentalServicesEntityOrderRequest> mappedServices = new ArrayList<>();
+            if(request.getListDentalServicesEntity() != null && !request.getListDentalServicesEntity().isEmpty()){
+                for(DentalServicesEntityOrderRequest serviceRequest : request.getListDentalServicesEntity()){
+                    if(serviceRequest.getId() != null && !serviceRequest.getId().isEmpty()){
+                        DentalServicesEntity dentalService = dentalServicesEntityServiceRepository.findById(serviceRequest.getId()).orElseThrow(() -> {
+                            log.error("Dịch vụ id: {} không tồn tại, đặt lịch hẹn thất bại.", serviceRequest.getId());
+                            throw new AppException(ErrorCode.SERVICE_NOT_EXISTED);
+                        });
+                        
+                                        DentalServicesEntityOrderRequest mappedService = DentalServicesEntityOrderRequest.builder()
+                                                .id(dentalService.getId())
+                                                .name(dentalService.getName())
+                                                .unit(dentalService.getUnit())
+                                                .unitPrice(dentalService.getUnitPrice())
+                                                .quantity(serviceRequest.getQuantity() != null && serviceRequest.getQuantity() > 0 ? serviceRequest.getQuantity() : 1)
+                                                .cost(serviceRequest.getCost() != null && serviceRequest.getCost() > 0 ? serviceRequest.getCost() : dentalService.getUnitPrice())
+                                                .build();
+                        mappedServices.add(mappedService);
+                    } else {
+                        // If already has full info, use as is
+                        mappedServices.add(serviceRequest);
+                    }
+                }
+            }
+
             Appointment appointment = Appointment.builder()
                     .dateTime(inputDateTime)
                     .status("Scheduled")
                     .type(request.getType())
                     .notes(request.getNotes())
-                    .listDentalServicesEntity(request.getListDentalServicesEntity())
+                    .listDentalServicesEntity(mappedServices)
                     .doctor(doctor)
                     .patient(user.getPatient())
                     .build();
@@ -231,14 +261,19 @@ public class PatientService {
             appointmentRepository.save(appointment);
             log.info("Huỷ lịch hẹn id: {} thành công.", appointmentId);
 
+            List<DentalServicesEntityOrderRequest> services = appointment.getListDentalServicesEntity();
+            if(services == null){
+                services = new ArrayList<>();
+            }
+            
             return AppointmentResponse.builder()
                     .id(appointmentId)
                     .dateTime(appointment.getDateTime().toString())
                     .status("Cancel")
                     .type(appointment.getType())
                     .notes(appointment.getNotes())
-                    .listDentalServicesEntity(appointment.getListDentalServicesEntity())
-                    .doctorId(appointment.getDoctor().getId())
+                    .listDentalServicesEntity(services)
+                    .doctorId(appointment.getDoctor() != null ? appointment.getDoctor().getId() : null)
                     .build();
         }
 
@@ -272,10 +307,36 @@ public class PatientService {
                 appointment.getDoctor().getListAppointment().remove(appointment);
             }
 
+            // Map listDentalServicesEntity from id to full DentalServicesEntityOrderRequest
+            List<DentalServicesEntityOrderRequest> mappedServices = new ArrayList<>();
+            if(request.getListDentalServicesEntity() != null && !request.getListDentalServicesEntity().isEmpty()){
+                for(DentalServicesEntityOrderRequest serviceRequest : request.getListDentalServicesEntity()){
+                    if(serviceRequest.getId() != null && !serviceRequest.getId().isEmpty()){
+                        DentalServicesEntity dentalService = dentalServicesEntityServiceRepository.findById(serviceRequest.getId()).orElseThrow(() -> {
+                            log.error("Dịch vụ id: {} không tồn tại, cập nhật lịch hẹn thất bại.", serviceRequest.getId());
+                            throw new AppException(ErrorCode.SERVICE_NOT_EXISTED);
+                        });
+                        
+                                        DentalServicesEntityOrderRequest mappedService = DentalServicesEntityOrderRequest.builder()
+                                                .id(dentalService.getId())
+                                                .name(dentalService.getName())
+                                                .unit(dentalService.getUnit())
+                                                .unitPrice(dentalService.getUnitPrice())
+                                                .quantity(serviceRequest.getQuantity() != null && serviceRequest.getQuantity() > 0 ? serviceRequest.getQuantity() : 1)
+                                                .cost(serviceRequest.getCost() != null && serviceRequest.getCost() > 0 ? serviceRequest.getCost() : dentalService.getUnitPrice())
+                                                .build();
+                        mappedServices.add(mappedService);
+                    } else {
+                        // If already has full info, use as is
+                        mappedServices.add(serviceRequest);
+                    }
+                }
+            }
+
             appointment.setDateTime(inputDateTime);
             appointment.setType(request.getType());
             appointment.setNotes(request.getNotes());
-            appointment.setListDentalServicesEntity(request.getListDentalServicesEntity());
+            appointment.setListDentalServicesEntity(mappedServices);
             appointment.setDoctor(doctor);
             appointment.setPatient(user.getPatient());
 
@@ -288,14 +349,22 @@ public class PatientService {
             bookingDateTimeRepository.save(bookingDateTime);
             log.info("Cập nhật lịch khám thành công giữa bệnh nhân username: {} và bác sĩ username: {}", user.getUsername(), doctor.getUser().getUsername());
 
+            List<DentalServicesEntityOrderRequest> services = mappedServices;
+            if(services == null || services.isEmpty()){
+                services = request.getListDentalServicesEntity();
+                if(services == null){
+                    services = new ArrayList<>();
+                }
+            }
+
             return AppointmentResponse.builder()
                     .id(appointmentId)
                     .dateTime(request.getDateTime())
                     .status("Scheduled")
                     .type(request.getType())
                     .notes(request.getNotes())
-                    .listDentalServicesEntity(request.getListDentalServicesEntity())
-                    .doctorId(appointment.getDoctor().getId())
+                    .listDentalServicesEntity(services)
+                    .doctorId(doctor.getId())
                     .build();
         }
 
@@ -308,16 +377,103 @@ public class PatientService {
                 throw new AppException(ErrorCode.USER_NOT_EXISTED);
             });
 
-            return appointmentRepository.findAllByPatientId(user.getPatient().getId()).stream().map(appointment -> AppointmentResponse.builder()
-                    .id(appointment.getId())
-                    .dateTime(appointment.getDateTime().toString())
-                    .status(appointment.getStatus())
-                    .type(appointment.getType())
-                    .notes(appointment.getNotes())
-                    .listDentalServicesEntity(appointment.getListDentalServicesEntity())
-                    .doctorId(appointment.getDoctor().getId())
-                    .build()
-            ).toList();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+            
+            try {
+                return appointmentRepository.findAllByPatientId(user.getPatient().getId()).stream().map(appointment -> {
+                    try {
+                        // Handle null listDentalServicesEntity and map properly
+                        List<DentalServicesEntityOrderRequest> services = new ArrayList<>();
+                        List<DentalServicesEntityOrderRequest> rawServices = null;
+                        
+                        try {
+                            rawServices = appointment.getListDentalServicesEntity();
+                        } catch (Exception e) {
+                            log.warn("Không thể đọc listDentalServicesEntity cho appointment id: {}, sử dụng danh sách rỗng", appointment.getId());
+                            rawServices = new ArrayList<>();
+                        }
+                        
+                        if(rawServices != null && !rawServices.isEmpty()){
+                            for(DentalServicesEntityOrderRequest rawService : rawServices){
+                                try {
+                                    // If service has id but missing other fields, fetch from database
+                                    if(rawService != null && rawService.getId() != null && !rawService.getId().isEmpty() && 
+                                       (rawService.getName() == null || rawService.getName().isEmpty())){
+                                        try {
+                                            DentalServicesEntity dentalService = dentalServicesEntityServiceRepository.findById(rawService.getId()).orElse(null);
+                                            if(dentalService != null){
+                                                DentalServicesEntityOrderRequest mappedService = DentalServicesEntityOrderRequest.builder()
+                                                        .id(dentalService.getId())
+                                                        .name(dentalService.getName())
+                                                        .unit(dentalService.getUnit())
+                                                        .unitPrice(dentalService.getUnitPrice())
+                                                        .quantity(rawService.getQuantity() != null && rawService.getQuantity() > 0 ? rawService.getQuantity() : 1)
+                                                        .cost(rawService.getCost() != null && rawService.getCost() > 0 ? rawService.getCost() : dentalService.getUnitPrice())
+                                                        .build();
+                                                services.add(mappedService);
+                                            } else {
+                                                // If service not found, use raw data as is
+                                                services.add(rawService);
+                                            }
+                                        } catch (Exception e) {
+                                            log.warn("Không thể lấy thông tin dịch vụ id: {}, sử dụng dữ liệu gốc", rawService.getId());
+                                            services.add(rawService);
+                                        }
+                                    } else if(rawService != null) {
+                                        // If service has full info, use as is
+                                        services.add(rawService);
+                                    }
+                                } catch (Exception e) {
+                                    log.warn("Lỗi khi xử lý service trong appointment id: {}", appointment.getId());
+                                }
+                            }
+                        }
+                        
+                        // Format dateTime properly
+                        String dateTimeStr = "";
+                        if(appointment.getDateTime() != null){
+                            try {
+                                dateTimeStr = appointment.getDateTime().format(formatter);
+                            } catch (Exception e) {
+                                dateTimeStr = appointment.getDateTime().toString();
+                            }
+                        }
+                        
+                        return AppointmentResponse.builder()
+                                .id(appointment.getId())
+                                .dateTime(dateTimeStr)
+                                .status(appointment.getStatus() != null ? appointment.getStatus() : "")
+                                .type(appointment.getType() != null ? appointment.getType() : "")
+                                .notes(appointment.getNotes() != null ? appointment.getNotes() : "")
+                                .listDentalServicesEntity(services)
+                                .doctorId(appointment.getDoctor() != null ? appointment.getDoctor().getId() : null)
+                                .build();
+                    } catch (Exception e) {
+                        log.error("Lỗi khi xử lý appointment id: {}", appointment.getId(), e);
+                        // Return minimal response to avoid breaking the entire list
+                        String dateTimeStr = "";
+                        if(appointment.getDateTime() != null){
+                            try {
+                                dateTimeStr = appointment.getDateTime().format(formatter);
+                            } catch (Exception ex) {
+                                dateTimeStr = appointment.getDateTime().toString();
+                            }
+                        }
+                        return AppointmentResponse.builder()
+                                .id(appointment.getId())
+                                .dateTime(dateTimeStr)
+                                .status(appointment.getStatus() != null ? appointment.getStatus() : "")
+                                .type(appointment.getType() != null ? appointment.getType() : "")
+                                .notes(appointment.getNotes() != null ? appointment.getNotes() : "")
+                                .listDentalServicesEntity(new ArrayList<>())
+                                .doctorId(appointment.getDoctor() != null ? appointment.getDoctor().getId() : null)
+                                .build();
+                    }
+                }).toList();
+            } catch (Exception e) {
+                log.error("Lỗi khi lấy danh sách lịch hẹn cho patient id: {}", user.getPatient().getId(), e);
+                return new ArrayList<>(); // Return empty list instead of throwing exception
+            }
         }
 
         @PreAuthorize("hasRole('PATIENT')")

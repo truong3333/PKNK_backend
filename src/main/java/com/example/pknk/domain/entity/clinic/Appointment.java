@@ -33,6 +33,13 @@ public class Appointment {
     String notification;
 
     @ElementCollection
+    @CollectionTable(
+        name = "appointment_list_dental_services_entity",
+        joinColumns = @JoinColumn(name = "appointment_id")
+    )
+    @AttributeOverrides({
+        @AttributeOverride(name = "id", column = @Column(name = "list_dental_services_entity_id"))
+    })
     List<DentalServicesEntityOrderRequest> listDentalServicesEntity = new ArrayList<>();
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)

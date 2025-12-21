@@ -13,10 +13,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DentalServicesEntityOrderRequest {
 
+    String id; // ID của DentalServicesEntity để map vào list_dental_services_entity_id (mapped via @AttributeOverride)
     String name;
     String unit;
-    double unitPrice;
-    int quantity;
-    double cost;
+    Double unitPrice; // Changed from double to Double to allow null values
+    Integer quantity; // Changed from int to Integer to allow null values
+    Double cost; // Changed from double to Double to allow null values
 
 }
