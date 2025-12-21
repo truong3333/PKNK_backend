@@ -28,6 +28,8 @@ public class Examination {
     String treatment;
     String examined_at;
     double totalCost;
+
+    @ElementCollection
     List<String> listComment = new ArrayList<>();
 
     @ElementCollection

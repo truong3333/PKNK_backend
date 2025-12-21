@@ -29,6 +29,8 @@ public class TreatmentPhases {
     String description;
     double cost;
     String status;
+
+    @ElementCollection
     List<String> listComment = new ArrayList<>();
 
     @JsonFormat(pattern = "dd/MM/yyyy")
