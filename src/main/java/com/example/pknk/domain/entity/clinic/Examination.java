@@ -45,4 +45,8 @@ public class Examination {
     @OneToOne
     @JoinColumn(name = "appointment_id")
     Appointment appointment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dicom_study_id", nullable = true)
+    DicomStudy dicomStudy;
 }

@@ -49,6 +49,13 @@ public enum ErrorCode {
     TOOTH_NUMBER_EXISTED(100,"Răng này đã tồn tại thông tin", HttpStatus.BAD_REQUEST),
     TOOTH_NOT_EXISTED(100,"Răng này không tồn tại thông tin", HttpStatus.BAD_REQUEST),
 
+    DICOM_STUDY_NOT_EXISTED(100,"DICOM Study không tồn tại", HttpStatus.NOT_FOUND),
+    DICOM_SERIES_NOT_EXISTED(100,"DICOM Series không tồn tại", HttpStatus.NOT_FOUND),
+    DICOM_INSTANCE_NOT_EXISTED(100,"DICOM Instance không tồn tại", HttpStatus.NOT_FOUND),
+    DICOM_UPLOAD_FAILED(100,"Upload DICOM file thất bại", HttpStatus.INTERNAL_SERVER_ERROR),
+    DICOM_FILE_INVALID(100,"File DICOM không hợp lệ", HttpStatus.BAD_REQUEST),
+    ORTHANC_CONNECTION_FAILED(100,"Không thể kết nối với Orthanc server", HttpStatus.SERVICE_UNAVAILABLE),
+
     SERVICE_NOT_EXISTED(100,"Dịch vụ không tồn tại", HttpStatus.BAD_REQUEST),
 
     COST_NOT_EXISTED(100,"Hoá đơn không tồn tại", HttpStatus.BAD_REQUEST),

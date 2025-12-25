@@ -54,4 +54,8 @@ public class TreatmentPhases {
     @ManyToOne
     @JoinColumn(name = "treatmentPlans_id")
     TreatmentPlans treatmentPlans;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dicom_study_id", nullable = true)
+    DicomStudy dicomStudy;
 }
