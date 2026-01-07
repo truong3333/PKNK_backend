@@ -4,6 +4,10 @@ import com.example.pknk.domain.dto.request.clinic.DicomUploadRequest;
 import com.example.pknk.domain.dto.response.clinic.DicomStudyResponse;
 import com.example.pknk.domain.dto.response.user.ApiResponses;
 import com.example.pknk.service.clinic.DicomService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,7 @@ import java.util.List;
 @RequestMapping("/api/v1/dicom")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Tag(name = "DICOM Picture", description = "Quản lý ảnh Dicom")
 public class DicomController {
     
     DicomService dicomService;
@@ -36,6 +41,8 @@ public class DicomController {
      * @param treatmentPhaseId Treatment Phase ID (optional)
      * @return DicomStudyResponse
      */
+    @Operation(summary = "Thêm ảnh dicom", description = "Thêm ảnh dicom cho tiến trình điều trị theo id",security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "Thêm ảnh dicom thành công")
     @PreAuthorize("hasAuthority('UPLOAD_DICOM')")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponses<DicomStudyResponse> uploadDicom(
@@ -68,6 +75,8 @@ public class DicomController {
      * Get DICOM study by ID
      * GET /api/v1/dicom/studies/{studyId}
      */
+    @Operation(summary = "Xem ảnh dicom", description = "Xem ảnh dicom theo id",security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "Ảnh dicom")
     @PreAuthorize("hasAuthority('VIEW_DICOM')")
     @GetMapping("/studies/{studyId}")
     public ApiResponses<DicomStudyResponse> getStudyById(@PathVariable String studyId) {
@@ -82,6 +91,8 @@ public class DicomController {
      * Get all DICOM studies for a patient
      * GET /api/v1/dicom/patients/{patientId}/studies
      */
+    @Operation(summary = "Xem ảnh dicom", description = "Xem ảnh dicom theo id bênh nhân",security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "Ảnh dicom")
     @PreAuthorize("hasAuthority('VIEW_DICOM')")
     @GetMapping("/patients/{patientId}/studies")
     public ApiResponses<List<DicomStudyResponse>> getStudiesByPatientId(@PathVariable String patientId) {
@@ -96,6 +107,8 @@ public class DicomController {
      * Get DICOM studies for an examination
      * GET /api/v1/dicom/examinations/{examinationId}/studies
      */
+    @Operation(summary = "Xem ảnh dicom", description = "Xem ảnh dicom theo id hồ sơ khám",security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "Ảnh dicom")
     @PreAuthorize("hasAuthority('VIEW_DICOM')")
     @GetMapping("/examinations/{examinationId}/studies")
     public ApiResponses<List<DicomStudyResponse>> getStudiesByExaminationId(@PathVariable String examinationId) {
@@ -110,6 +123,8 @@ public class DicomController {
      * Get DICOM studies for a treatment phase
      * GET /api/v1/dicom/treatment-phases/{treatmentPhaseId}/studies
      */
+    @Operation(summary = "Xem ảnh dicom", description = "Xem ảnh dicom theo id tiến trình điều trị",security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "Ảnh dicom")
     @PreAuthorize("hasAuthority('VIEW_DICOM')")
     @GetMapping("/treatment-phases/{treatmentPhaseId}/studies")
     public ApiResponses<List<DicomStudyResponse>> getStudiesByTreatmentPhaseId(@PathVariable String treatmentPhaseId) {
@@ -124,6 +139,8 @@ public class DicomController {
      * Delete DICOM study
      * DELETE /api/v1/dicom/studies/{studyId}
      */
+    @Operation(summary = "Xoá ảnh dicom", description = "Xoá ảnh dicom theo id",security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "Xoá ảnh dicom thành công")
     @PreAuthorize("hasAuthority('DELETE_DICOM')")
     @DeleteMapping("/studies/{studyId}")
     public ApiResponses<String> deleteStudy(@PathVariable String studyId) {

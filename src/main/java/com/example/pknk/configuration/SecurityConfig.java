@@ -36,6 +36,9 @@ public class SecurityConfig {
             "/api/v1/categoryDentalService",
             "/api/v1/dentalService",
             "/api/v1/doctor/doctors",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html"
     };
 
     @Autowired
