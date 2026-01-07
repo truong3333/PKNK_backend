@@ -63,6 +63,12 @@ public enum ErrorCode {
     PAYMENT_FAILED(100,"Thanh toán thất bại", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST(100,"Yêu cầu không hợp lệ", HttpStatus.BAD_REQUEST),
 
+    AI_SERVICE_DISABLED(100,"AI Service đã bị vô hiệu hóa", HttpStatus.SERVICE_UNAVAILABLE),
+    AI_SERVICE_UNAVAILABLE(100,"AI Service không khả dụng", HttpStatus.SERVICE_UNAVAILABLE),
+    AI_ANALYSIS_FAILED(100,"Phân tích AI thất bại", HttpStatus.INTERNAL_SERVER_ERROR),
+    AI_ANALYSIS_NOT_EXISTED(100,"Kết quả phân tích AI không tồn tại", HttpStatus.NOT_FOUND),
+    IMAGE_NOT_EXISTED(100,"Hình ảnh không tồn tại", HttpStatus.NOT_FOUND),
+
     ;
 
 

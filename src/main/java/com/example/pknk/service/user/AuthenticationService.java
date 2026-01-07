@@ -279,19 +279,28 @@ public class AuthenticationService {
     }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
-        var signToken = verifyToken(request.getToken());
+        try {
+            var signToken = verifyToken(request.getToken());
 
-        String jit = signToken.getJWTClaimsSet().getJWTID();
-        Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
+            String jit = signToken.getJWTClaimsSet().getJWTID();
+            Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
 
-        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
-                .id(jit)
-                .expiryTime(expiryTime)
-                .build();
+            InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                    .id(jit)
+                    .expiryTime(expiryTime)
+                    .build();
 
-        invalidatedTokenRepository.save(invalidatedToken);
-        log.info("Người dùng: {} đã đăng xuất.", signToken.getJWTClaimsSet().getSubject());
-
+            invalidatedTokenRepository.save(invalidatedToken);
+            log.info("Người dùng: {} đã đăng xuất.", signToken.getJWTClaimsSet().getSubject());
+        } catch (AppException e) {
+            // Nếu token không hợp lệ hoặc đã hết hạn / đã bị logout trước đó,
+            // ta coi như đã đăng xuất thành công và không ném lỗi nữa để tránh 401.
+            if (e.getErrorCode() == ErrorCode.UNAUTHENTICATED) {
+                log.warn("Yêu cầu logout với token không hợp lệ hoặc đã hết hạn. Bỏ qua và trả về thành công.");
+                return;
+            }
+            throw e;
+        }
     }
 
 
