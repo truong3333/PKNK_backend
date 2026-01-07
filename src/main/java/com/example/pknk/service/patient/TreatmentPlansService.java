@@ -129,10 +129,15 @@ public class TreatmentPlansService {
             throw new AppException(ErrorCode.TREATMENTPLANS_NOT_EXISTED);
         });
 
-        Nurse nurse = nurseRepository.findById(request.getNurseId()).orElseThrow(() -> {
-            log.error("Y tá id: {} không tồn tại, cập nhật phác đồ điều trị thất bại.", request.getNurseId());
-            throw new AppException(ErrorCode.NURSE_NOT_EXISTED);
-        });
+        // nurseId trong request là OPTIONAL giống như khi tạo mới
+        // Nếu không gửi nurseId thì giữ nguyên y tá hiện tại của phác đồ
+        Nurse nurse = treatmentPlans.getNurse();
+        if (request.getNurseId() != null && !request.getNurseId().trim().isEmpty()) {
+            nurse = nurseRepository.findById(request.getNurseId()).orElseThrow(() -> {
+                log.error("Y tá id: {} không tồn tại, cập nhật phác đồ điều trị thất bại.", request.getNurseId());
+                throw new AppException(ErrorCode.NURSE_NOT_EXISTED);
+            });
+        }
 
         double cost = 0;
         for(TreatmentPhases phases : treatmentPlans.getListTreatmentPhases()){
@@ -160,8 +165,8 @@ public class TreatmentPlansService {
                 .status(request.getStatus())
                 .doctorId(treatmentPlans.getDoctor().getId())
                 .doctorFullname(treatmentPlans.getDoctor().getUser().getUserDetail().getFullName())
-                .nurseId(nurse.getId())
-                .nurseFullname(nurse.getUser().getUserDetail().getFullName())
+                .nurseId(nurse != null ? nurse.getId() : null)
+                .nurseFullname(nurse != null ? nurse.getUser().getUserDetail().getFullName() : null)
                 .patientId(treatmentPlans.getPatient().getId())
                 .patientName(treatmentPlans.getPatient().getUser().getUserDetail().getFullName())
                 .createAt(treatmentPlans.getCreateAt())
