@@ -26,11 +26,15 @@ public class CostResponse {
     String status;
     double totalCost;
     String vnpTxnRef;
+    String type; // 'deposit' | 'phase_payment' | 'examination'
+    String treatmentPlanId; // ID of treatment plan if type is 'deposit' or 'phase_payment'
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     LocalDate paymentDate;
 
+    @Builder.Default
     List<DentalServicesEntityOrderRequest> listDentalServiceEntityOrder = new ArrayList<>();
 
+    @Builder.Default
     List<PrescriptionOrderRequest> listPrescriptionOrder = new ArrayList<>();
 }

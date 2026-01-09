@@ -37,9 +37,17 @@ public class Cost {
     @JoinColumn(name = "patient_id")
     Patient patient;
 
+    String type; // 'deposit' | 'phase_payment' | 'examination'
+    
+    @ManyToOne
+    @JoinColumn(name = "treatment_plan_id")
+    TreatmentPlans treatmentPlan;
+
     @ElementCollection
+    @Builder.Default
     List<DentalServicesEntityOrderRequest> listDentalServiceEntityOrder = new ArrayList<>();
 
     @ElementCollection
+    @Builder.Default
     List<PrescriptionOrderRequest> listPrescriptionOrder = new ArrayList<>();
 }
