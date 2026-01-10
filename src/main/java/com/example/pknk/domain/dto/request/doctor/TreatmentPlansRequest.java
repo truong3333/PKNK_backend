@@ -24,6 +24,5 @@ public class TreatmentPlansRequest {
     String examinationId;
     String nurseId;
     String doctorId; // Optional - only for DOCTORLV2 with PICK_DOCTOR permission
-    Double depositAmount; // Optional - tiền đặt cọc (0 nếu không yêu cầu)
 
 }

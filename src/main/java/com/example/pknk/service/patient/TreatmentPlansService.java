@@ -91,19 +91,13 @@ public class TreatmentPlansService {
             });
         }
 
-        // Determine plan status based on deposit
-        String planStatus = "Inprogress";
-        if (request.getDepositAmount() != null && request.getDepositAmount() > 0) {
-            planStatus = "PendingDeposit";
-        }
-
         TreatmentPlans treatmentPlans = TreatmentPlans.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .duration(request.getDuration())
                 .notes(request.getNotes())
                 .totalCost(0)
-                .status(planStatus)
+                .status("Inprogress")
                 .patient(patient)
                 .doctor(doctor)
                 .nurse(nurse)
@@ -113,24 +107,6 @@ public class TreatmentPlansService {
         treatmentPlansRepository.save(treatmentPlans);
         log.info("phác đồ điều trị của bệnh nhân id: {} được bác sĩ id: {} thêm thành công.", examination.getAppointment().getPatient().getId(), examination.getAppointment().getDoctor().getId());
 
-        // Create deposit cost if depositAmount > 0
-        if (request.getDepositAmount() != null && request.getDepositAmount() > 0) {
-            String depositCostId = "deposit_" + treatmentPlans.getId();
-            Cost depositCost = Cost.builder()
-                    .id(depositCostId)
-                    .title("Tiền đặt cọc - " + treatmentPlans.getTitle())
-                    .status("wait")
-                    .totalCost(request.getDepositAmount())
-                    .type("deposit")
-                    .treatmentPlan(treatmentPlans)
-                    .patient(patient)
-                    .build();
-            
-            costRepository.save(depositCost);
-            log.info("Đã tạo cost record đặt cọc id: {} cho treatment plan id: {}, số tiền: {}", 
-                    depositCostId, treatmentPlans.getId(), request.getDepositAmount());
-        }
-
         return TreatmentPlansResponse.builder()
                 .id(treatmentPlans.getId())
                 .title(request.getTitle())
@@ -138,7 +114,7 @@ public class TreatmentPlansService {
                 .duration(request.getDuration())
                 .notes(request.getNotes())
                 .totalCost(0)
-                .status(planStatus)
+                .status(treatmentPlans.getStatus())
                 .doctorId(doctor.getId())
                 .doctorFullname(doctor.getUser().getUserDetail().getFullName())
                 .nurseId(nurse != null ? nurse.getId() : null) // Handle null nurse

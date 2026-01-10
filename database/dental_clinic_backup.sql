@@ -221,7 +221,8 @@ CREATE TABLE `cost` (
   `treatment_plan_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FKexauo4htrd4c6j98vv31lp372` (`patient_id`),
-  KEY `FKoonc1etmdkipahoaglmp3ntvi` (`treatment_plan_id`),
+  KEY `FK_cost_treatment_plans` (`treatment_plan_id`),
+  CONSTRAINT `FK_cost_treatment_plans` FOREIGN KEY (`treatment_plan_id`) REFERENCES `treatment_plans` (`id`),
   CONSTRAINT `FKexauo4htrd4c6j98vv31lp372` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`id`),
   CONSTRAINT `FKoonc1etmdkipahoaglmp3ntvi` FOREIGN KEY (`treatment_plan_id`) REFERENCES `treatment_plans` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -233,7 +234,7 @@ CREATE TABLE `cost` (
 
 LOCK TABLES `cost` WRITE;
 /*!40000 ALTER TABLE `cost` DISABLE KEYS */;
-INSERT INTO `cost` VALUES ('5847aef3-8076-4eff-af43-a03276839d9d','2025-12-19','VNPay-NCB','paid','Tiến trình điều trị: Phase 1 - Sửa soạn xoang trám, trám bít Composite, đánh bóng.\r\n\r\nGhi chú: Đã loại bỏ hoàn toàn mô sâu. Bệnh nhân không có biểu hiện đau. Xoang trám được cách ly tốt và trám bằng Composite khối A2. Hướng dẫn bệnh nhân chăm sóc tại nhà.',4155000,'62203959','a68e2737-ae82-4e1a-abd1-c985d14912de','phase_payment',NULL),('716aa04d-afbc-420f-bd62-73b03d4824c0','2026-01-10','VNPay-NCB','paid','Tiến trình điều trị: Phase 2 - Testtttt\r\n\r\nGhi chú: Testttt',2625000,'88776950','a68e2737-ae82-4e1a-abd1-c985d14912de','phase_payment',NULL),('741932d7-500f-49b9-8a77-2cce87e94a31',NULL,NULL,'wait','Tiến trình điều trị: Test - Test\r\n\r\nGhi chú: Test',5035000,NULL,'a68e2737-ae82-4e1a-abd1-c985d14912de','phase_payment',NULL),('9b4fe49b-71ee-4497-890d-ff42a5fc57fc',NULL,NULL,'wait','Khám theo lịch hẹn: 2025-12-11T14:00',20000000,NULL,'a68e2737-ae82-4e1a-abd1-c985d14912de','phase_payment',NULL);
+INSERT INTO `cost` VALUES ('5847aef3-8076-4eff-af43-a03276839d9d','2025-12-19','VNPay-NCB','paid','Tiến trình điều trị: Phase 1 - Sửa soạn xoang trám, trám bít Composite, đánh bóng.\r\n\r\nGhi chú: Đã loại bỏ hoàn toàn mô sâu. Bệnh nhân không có biểu hiện đau. Xoang trám được cách ly tốt và trám bằng Composite khối A2. Hướng dẫn bệnh nhân chăm sóc tại nhà.',4155000,'62203959','a68e2737-ae82-4e1a-abd1-c985d14912de','phase_payment','7e2663c4-21ea-483e-a80c-e0bfecd487e1'),('716aa04d-afbc-420f-bd62-73b03d4824c0','2026-01-10','VNPay-NCB','paid','Tiến trình điều trị: Phase 2 - Testtttt\r\n\r\nGhi chú: Testttt',2625000,'88776950','a68e2737-ae82-4e1a-abd1-c985d14912de','phase_payment','7e2663c4-21ea-483e-a80c-e0bfecd487e1'),('741932d7-500f-49b9-8a77-2cce87e94a31',NULL,NULL,'wait','Tiến trình điều trị: Test - Test\r\n\r\nGhi chú: Test',5035000,NULL,'a68e2737-ae82-4e1a-abd1-c985d14912de','phase_payment','7e2663c4-21ea-483e-a80c-e0bfecd487e1'),('9b4fe49b-71ee-4497-890d-ff42a5fc57fc',NULL,NULL,'wait','Khám theo lịch hẹn: 2025-12-11T14:00',20000000,NULL,'a68e2737-ae82-4e1a-abd1-c985d14912de','phase_payment',NULL);
 /*!40000 ALTER TABLE `cost` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1222,4 +1223,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-10  6:49:53
+-- Dump completed on 2026-01-10  6:53:05
